@@ -1,5 +1,5 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/bloc/task_bloc.dart';
+import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
