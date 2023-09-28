@@ -44,7 +44,6 @@ class MainApp extends StatelessWidget {
           home: Scaffold(
             body: Center(
               child: TaskList(),
-              // Text('Hello World!'),
             ),
           ),
         ),
@@ -60,7 +59,6 @@ class MainApp extends StatelessWidget {
   //       home: Scaffold(
   //         body: Center(
   //           child: CounterPage(),
-  //           // Text('Hello World!'),
   //         ),
   //       ),
   //     ),
