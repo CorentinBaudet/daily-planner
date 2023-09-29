@@ -3,8 +3,13 @@ import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/task/presentation/pages/task_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+
   runApp(const MainApp());
 }
 
@@ -33,19 +38,19 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider<TaskBaseRepository>(
-      create: (context) => TaskFakeRepository(),
+      create: (context) => TaskLocalStorageRepository(),
       child: BlocProvider(
         create: (context) => TasksCubit(
           repository: context.read<TaskBaseRepository>(),
         ),
-        child: const MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: TaskList(),
+        child: const MaterialApp(home: TaskList()
+            // Scaffold(
+            //   body: Center(
+            //     child: TaskList(),
             ),
-          ),
-        ),
       ),
     );
+    // ),
+    // );
   }
 }

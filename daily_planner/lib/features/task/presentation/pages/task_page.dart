@@ -16,10 +16,10 @@ class TaskList extends StatelessWidget {
         return ListTile(
           title: Text(tasks[index].name),
           subtitle: Text(tasks[index].priority.toString()),
-          trailing: Checkbox(
-            value: true,
-            onChanged: (bool? value) {},
-          ),
+          // trailing: Checkbox(
+          //   value: true,
+          //   onChanged: (bool? value) {},
+          // ),
         );
       },
     );
@@ -27,28 +27,36 @@ class TaskList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TasksCubit, TasksState>(
-      builder: (context, state) {
-        if (state is InitialState) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is LoadingState) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (state is LoadedState) {
-          return _buildTaskList(state.tasks);
-        } else if (state is ErrorState) {
-          return const Center(
-            child: Text('Error'),
-          );
-        } else {
-          return const Center(
-            child: Text('Unknown State'),
-          );
-        }
-      },
+    return Scaffold(
+      body: Center(
+        child: BlocBuilder<TasksCubit, TasksState>(
+          builder: (context, state) {
+            if (state is InitialState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is LoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is LoadedState) {
+              return Container(child: _buildTaskList(state.tasks));
+            } else if (state is ErrorState) {
+              return const Center(
+                child: Text('Error'),
+              );
+            } else {
+              return const Center(
+                child: Text('Unknown State'),
+              );
+            }
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddTaskDialog(context),
+        child: const Icon(Icons.add),
+      ),
     );
 
     // return ListView.builder(
@@ -66,5 +74,37 @@ class TaskList extends StatelessWidget {
     //     );
     //   },
     // );
+  }
+
+  Future<void> _createTask(Map<String, String> newTask) async {
+    // final task = Task.fromJson(map);
+  }
+
+  _showAddTaskDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Add Task'),
+            content: const TextField(
+              decoration: InputDecoration(hintText: 'Task Name'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _createTask({
+                    'name': 'New Task',
+                    'priority': 'normal',
+                  });
+                },
+                child: const Text('Add'),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Cancel'),
+              ),
+            ],
+          );
+        });
   }
 }
