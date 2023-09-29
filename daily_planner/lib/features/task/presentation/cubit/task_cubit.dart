@@ -31,9 +31,9 @@ class TasksCubit extends Cubit<TasksState> {
       // final tasks = await repository.getTasks();
 
       final tasks = [
-        Task(name: 'Task 1', priority: Priority.medium),
+        Task(name: 'Task 1', priority: Priority.normal),
         Task(name: 'Task 2', priority: Priority.high),
-        Task(name: 'Task 3', priority: Priority.low),
+        Task(name: 'Task 3', priority: Priority.normal),
       ];
       emit(LoadedState(tasks: tasks));
     } catch (e) {

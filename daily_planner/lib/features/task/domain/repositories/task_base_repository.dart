@@ -9,9 +9,9 @@ class TaskFakeRepository implements TaskBaseRepository {
   @override
   Future<List<Task>> getTasks() async {
     return [
-      Task(name: 'Task 1', priority: Priority.low),
+      Task(name: 'Task 1', priority: Priority.normal),
       Task(name: 'Task 2', priority: Priority.high),
-      Task(name: 'Task 3', priority: Priority.medium),
+      Task(name: 'Task 3', priority: Priority.normal),
     ];
   }
 }

@@ -12,14 +12,13 @@ class Task {
       name: json['name'],
       priority: Priority.values.firstWhere(
         (priority) => priority.toString() == 'Priority.${json['priority']}',
-        orElse: () => Priority.low,
+        orElse: () => Priority.normal,
       ),
     );
   }
 }
 
 enum Priority {
-  low,
-  medium,
+  normal,
   high,
 }
