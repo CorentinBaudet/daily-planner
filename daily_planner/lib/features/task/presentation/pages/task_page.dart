@@ -4,25 +4,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskList extends StatelessWidget {
-  // final List<Task> tasks;
-
-  // TaskList({required this.tasks});
   const TaskList({super.key});
 
   Widget _buildTaskList(List<Task> tasks) {
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text(tasks[index].name),
-          subtitle: Text(tasks[index].priority.toString()),
-          // trailing: Checkbox(
-          //   value: true,
-          //   onChanged: (bool? value) {},
-          // ),
-        );
-      },
-    );
+    return tasks.isEmpty
+        ? const Text("No tasks yet")
+        : ListView.builder(
+            itemCount: tasks.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(tasks[index].name),
+                subtitle: Text(tasks[index].priority.toString()),
+                // trailing: Checkbox(
+                //   value: true,
+                //   onChanged: (bool? value) {},
+                // ),
+              );
+            },
+          );
+  }
+
+  _showAddTaskDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Add Task'),
+            content: const TextField(
+              decoration: InputDecoration(hintText: 'task name'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // add task
+                  context.read<TasksCubit>().createTask(
+                      Task(name: 'New Task4', priority: Priority.normal));
+
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Add'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // close the dialog
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -43,7 +74,7 @@ class TaskList extends StatelessWidget {
               return Container(child: _buildTaskList(state.tasks));
             } else if (state is ErrorState) {
               return const Center(
-                child: Text('Error'),
+                child: Text('Error loading tasks'),
               );
             } else {
               return const Center(
@@ -74,37 +105,5 @@ class TaskList extends StatelessWidget {
     //     );
     //   },
     // );
-  }
-
-  Future<void> _createTask(Map<String, String> newTask) async {
-    // final task = Task.fromJson(map);
-  }
-
-  _showAddTaskDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Add Task'),
-            content: const TextField(
-              decoration: InputDecoration(hintText: 'Task Name'),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  _createTask({
-                    'name': 'New Task',
-                    'priority': 'normal',
-                  });
-                },
-                child: const Text('Add'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Cancel'),
-              ),
-            ],
-          );
-        });
   }
 }

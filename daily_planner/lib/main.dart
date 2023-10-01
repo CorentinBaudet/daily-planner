@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/task/domain/repositories/task_base_repository.dart';
+import 'package:daily_planner/features/task/domain/repositories/task_local_storage_repository.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/task/presentation/pages/task_page.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
+  await Hive.openBox('my_tasks');
 
   runApp(const MainApp());
 }
@@ -43,7 +45,7 @@ class MainApp extends StatelessWidget {
         create: (context) => TasksCubit(
           repository: context.read<TaskBaseRepository>(),
         ),
-        child: const MaterialApp(home: TaskList()
+        child: const MaterialApp(title: 'Morning', home: TaskList()
             // Scaffold(
             //   body: Center(
             //     child: TaskList(),
