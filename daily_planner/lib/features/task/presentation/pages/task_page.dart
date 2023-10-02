@@ -1,5 +1,6 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/task/presentation/widgets/task_add_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,37 +25,49 @@ class TaskList extends StatelessWidget {
           );
   }
 
-  _showAddTaskDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Add Task'),
-            content: const TextField(
-              decoration: InputDecoration(hintText: 'task name'),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  // add task
-                  context.read<TasksCubit>().createTask(
-                      Task(name: 'New Task4', priority: Priority.normal));
+  // _showAddTaskDialog(BuildContext context) {
+  //   final taskNameController = TextEditingController();
+  //   bool isHighPriority = false;
 
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Add'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // close the dialog
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancel'),
-              ),
-            ],
-          );
-        });
-  }
+  //   showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: const Text('new task'),
+  //           content: Column(
+  //             children: [
+  //               TextField(
+  //                 decoration: const InputDecoration(hintText: 'task name'),
+  //                 controller: taskNameController,
+  //               ),
+  //               Switch(
+  //                   value: isHighPriority,
+  //                   onChanged: (newValue) => isHighPriority = newValue),
+  //             ],
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 // add task
+  //                 context.read<TasksCubit>().createTask(Task(
+  //                     name: taskNameController.text,
+  //                     priority: Priority.normal));
+
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: const Text('Add'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 // close the dialog
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: const Text('Cancel'),
+  //             ),
+  //           ],
+  //         );
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +98,8 @@ class TaskList extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddTaskDialog(context),
+        onPressed: () =>
+            showDialog(context: context, builder: (_) => const TaskAddDialog()),
         child: const Icon(Icons.add),
       ),
     );
