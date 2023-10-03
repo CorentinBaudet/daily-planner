@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 
 class TaskListTile extends StatefulWidget {
   final Task task;
-  final bool isDeleteModeOn;
   // callback for delete
   final VoidCallback onLongPress;
+  final bool isDeleteModeOn;
+  final void Function(Task) onSelected;
 
   const TaskListTile({
     super.key,
     required this.task,
-    required this.isDeleteModeOn,
     required this.onLongPress,
+    required this.isDeleteModeOn,
+    required this.onSelected,
   });
 
   @override
@@ -39,6 +41,7 @@ class _TaskListTileState extends State<TaskListTile> {
               setState(() {
                 isTicked = value!;
               });
+              widget.onSelected(widget.task);
             },
           ),
         ),

@@ -25,6 +25,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
           TextField(
             decoration: const InputDecoration(hintText: 'task name'),
             controller: taskNameController,
+            autofocus: true,
           ),
           const SizedBox(height: 10),
           Switch(

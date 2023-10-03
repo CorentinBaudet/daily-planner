@@ -1,17 +1,17 @@
 class Task {
+  int? id;
   final String name;
   final Priority priority;
-  int? hashcode;
 
   Task({
     required this.name,
     required this.priority,
-    this.hashcode,
+    this.id,
   });
 
   factory Task.fromJson(Map<dynamic, dynamic> json) {
     return Task(
-      hashcode: json.keys.first,
+      id: json.keys.first,
       name: json[json.keys.first]['name'],
       priority: Priority.values.firstWhere(
         (priority) =>

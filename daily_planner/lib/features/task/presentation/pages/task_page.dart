@@ -9,26 +9,37 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: must_be_immutable
 class TaskList extends StatelessWidget {
   final _isDeleteModeOn = ValueNotifier<bool>(false);
+  var selectedTasks = <Task>[];
 
   TaskList({super.key});
 
   Widget _buildTaskList(BuildContext context, List<Task> tasks) {
     return tasks.isEmpty
-        ? const Text("No tasks yet")
+        ? const Text("no tasks yet")
         : ListView.builder(
             itemCount: tasks.length,
             itemBuilder: (BuildContext context, int index) {
               return TaskListTile(
-                  task: tasks[index],
-                  isDeleteModeOn: _isDeleteModeOn.value,
-                  onLongPress: (() => _toggleDeleteMode(context)));
+                task: tasks[index],
+                onLongPress: (() => _toggleDeleteMode(context)),
+                isDeleteModeOn: _isDeleteModeOn.value,
+                onSelected: (task) => _handleSelectedTask(task),
+              );
             },
           );
   }
 
-  void _toggleDeleteMode(BuildContext context) {
+  _toggleDeleteMode(BuildContext context) {
     _isDeleteModeOn.value = !_isDeleteModeOn.value;
     context.read<TasksCubit>().getAllTasks();
+  }
+
+  _handleSelectedTask(Task task) {
+    if (selectedTasks.contains(task)) {
+      selectedTasks.remove(task);
+    } else {
+      selectedTasks.add(task);
+    }
   }
 
   @override
@@ -49,11 +60,11 @@ class TaskList extends StatelessWidget {
               return Container(child: _buildTaskList(context, state.tasks));
             } else if (state is ErrorState) {
               return const Center(
-                child: Text('Error loading tasks'),
+                child: Text('error loading tasks'),
               );
             } else {
               return const Center(
-                child: Text('Unknown State'),
+                child: Text('unknown error'),
               );
             }
           },
@@ -64,7 +75,12 @@ class TaskList extends StatelessWidget {
         builder: (context, value, child) {
           return TaskFloatingActionButton(
               isDeleteModeOn: value,
-              toggleDeleteMode: (() => _toggleDeleteMode(context)));
+              onDelete: (() {
+                for (var task in selectedTasks) {
+                  context.read<TasksCubit>().deleteTask(task);
+                }
+                _toggleDeleteMode(context);
+              }));
         },
       ),
     );

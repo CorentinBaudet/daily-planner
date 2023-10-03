@@ -6,18 +6,7 @@ import 'package:equatable/equatable.dart';
 part 'task_event.dart';
 part 'task_state.dart';
 
-// class TaskBloc extends Bloc<TaskEvent, TaskState> {
-//   TaskBloc() : super(InitialState()) {
-//     on<TaskEvent>((event, emit) {
-//       // TODO: implement event handler
-//     });
-//   }
-// }
-
 class TasksCubit extends Cubit<TasksState> {
-  // TasksCubit() : super(InitialState()) {
-  //   getAllTasks();
-  // }
   TasksCubit({required this.repository}) : super(InitialState()) {
     getAllTasks();
   }
@@ -28,12 +17,6 @@ class TasksCubit extends Cubit<TasksState> {
     try {
       emit(LoadingState());
       final tasks = await repository.getTasks();
-
-      // final tasks = [
-      //   Task(name: 'Task 1', priority: Priority.normal),
-      //   Task(name: 'Task 2', priority: Priority.high),
-      //   Task(name: 'Task 3', priority: Priority.normal),
-      // ];
       emit(LoadedState(tasks: tasks));
     } catch (e) {
       emit(ErrorState());
@@ -44,6 +27,16 @@ class TasksCubit extends Cubit<TasksState> {
     try {
       emit(LoadingState());
       await repository.createTask(task);
+      getAllTasks();
+    } catch (e) {
+      emit(ErrorState());
+    }
+  }
+
+  void deleteTask(Task task) async {
+    try {
+      emit(LoadingState());
+      await repository.deleteTask(task);
       getAllTasks();
     } catch (e) {
       emit(ErrorState());

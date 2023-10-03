@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class TaskFloatingActionButton extends StatefulWidget {
   bool isDeleteModeOn;
-  final VoidCallback toggleDeleteMode;
+  final VoidCallback onDelete;
 
   TaskFloatingActionButton(
-      {super.key,
-      required this.isDeleteModeOn,
-      required this.toggleDeleteMode});
+      {super.key, required this.isDeleteModeOn, required this.onDelete});
 
   @override
   State<TaskFloatingActionButton> createState() =>
@@ -24,7 +22,7 @@ class _TaskFloatingActionButtonState extends State<TaskFloatingActionButton> {
             onPressed: () {
               // delete selected tasks
               // context.read<TasksCubit>().deleteTasks();
-              widget.toggleDeleteMode;
+              widget.onDelete();
             },
             child: const Icon(Icons.delete),
           )
