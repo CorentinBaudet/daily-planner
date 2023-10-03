@@ -1,73 +1,35 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/task/presentation/widgets/task_add_dialog.dart';
+// import 'package:daily_planner/features/task/presentation/widgets/task_add_dialog.dart';
+import 'package:daily_planner/features/task/presentation/widgets/task_floating_action_button.dart';
+import 'package:daily_planner/features/task/presentation/widgets/task_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// ignore: must_be_immutable
 class TaskList extends StatelessWidget {
-  const TaskList({super.key});
+  final _isDeleteModeOn = ValueNotifier<bool>(false);
 
-  Widget _buildTaskList(List<Task> tasks) {
+  TaskList({super.key});
+
+  Widget _buildTaskList(BuildContext context, List<Task> tasks) {
     return tasks.isEmpty
         ? const Text("No tasks yet")
         : ListView.builder(
             itemCount: tasks.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(tasks[index].name),
-                subtitle: Text(tasks[index].priority.toString()),
-                // trailing: Checkbox(
-                //   value: true,
-                //   onChanged: (bool? value) {},
-                // ),
-              );
+              return TaskListTile(
+                  task: tasks[index],
+                  isDeleteModeOn: _isDeleteModeOn.value,
+                  onLongPress: (() => _toggleDeleteMode(context)));
             },
           );
   }
 
-  // _showAddTaskDialog(BuildContext context) {
-  //   final taskNameController = TextEditingController();
-  //   bool isHighPriority = false;
-
-  //   showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: const Text('new task'),
-  //           content: Column(
-  //             children: [
-  //               TextField(
-  //                 decoration: const InputDecoration(hintText: 'task name'),
-  //                 controller: taskNameController,
-  //               ),
-  //               Switch(
-  //                   value: isHighPriority,
-  //                   onChanged: (newValue) => isHighPriority = newValue),
-  //             ],
-  //           ),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () {
-  //                 // add task
-  //                 context.read<TasksCubit>().createTask(Task(
-  //                     name: taskNameController.text,
-  //                     priority: Priority.normal));
-
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('Add'),
-  //             ),
-  //             TextButton(
-  //               onPressed: () {
-  //                 // close the dialog
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('Cancel'),
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
+  void _toggleDeleteMode(BuildContext context) {
+    _isDeleteModeOn.value = !_isDeleteModeOn.value;
+    context.read<TasksCubit>().getAllTasks();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +46,7 @@ class TaskList extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else if (state is LoadedState) {
-              return Container(child: _buildTaskList(state.tasks));
+              return Container(child: _buildTaskList(context, state.tasks));
             } else if (state is ErrorState) {
               return const Center(
                 child: Text('Error loading tasks'),
@@ -97,27 +59,14 @@ class TaskList extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            showDialog(context: context, builder: (_) => const TaskAddDialog()),
-        child: const Icon(Icons.add),
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: _isDeleteModeOn,
+        builder: (context, value, child) {
+          return TaskFloatingActionButton(
+              isDeleteModeOn: value,
+              toggleDeleteMode: (() => _toggleDeleteMode(context)));
+        },
       ),
     );
-
-    // return ListView.builder(
-    //   itemCount: tasks.length,
-    //   itemBuilder: (BuildContext context, int index) {
-    //     return ListTile(
-    //       title: Text(tasks[index].name),
-    //       subtitle: Text(tasks[index].priority.toString()),
-    //       trailing: Checkbox(
-    //         value: true,
-    //         onChanged: (bool? value) {
-    //           // TODO: Implement task completion logic
-    //         },
-    //       ),
-    //     );
-    //   },
-    // );
   }
 }

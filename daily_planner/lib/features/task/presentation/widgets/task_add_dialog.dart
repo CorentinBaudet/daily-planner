@@ -20,11 +20,13 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
     return AlertDialog(
       title: const Text('new task'),
       content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             decoration: const InputDecoration(hintText: 'task name'),
             controller: taskNameController,
           ),
+          const SizedBox(height: 10),
           Switch(
               value: isHighPriority,
               onChanged: (newValue) {
@@ -38,19 +40,20 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
         TextButton(
           onPressed: () {
             // add task
-            context.read<TasksCubit>().createTask(
-                Task(name: taskNameController.text, priority: Priority.normal));
+            context.read<TasksCubit>().createTask(Task(
+                name: taskNameController.text,
+                priority: isHighPriority ? Priority.high : Priority.normal));
 
             Navigator.of(context).pop();
           },
-          child: const Text('Add'),
+          child: const Text('add'),
         ),
         TextButton(
           onPressed: () {
             // close the dialog
             Navigator.of(context).pop();
           },
-          child: const Text('Cancel'),
+          child: const Text('cancel'),
         ),
       ],
     );

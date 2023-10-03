@@ -45,7 +45,7 @@ class MainApp extends StatelessWidget {
         create: (context) => TasksCubit(
           repository: context.read<TaskBaseRepository>(),
         ),
-        child: const MaterialApp(title: 'Morning', home: TaskList()
+        child: MaterialApp(title: 'Morning', home: TaskList()
             // Scaffold(
             //   body: Center(
             //     child: TaskList(),
