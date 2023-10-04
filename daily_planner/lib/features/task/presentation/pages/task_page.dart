@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: must_be_immutable
 class TaskList extends StatelessWidget {
   final _isDeleteModeOn = ValueNotifier<bool>(false);
-  var selectedTasks = List<Task>.empty(growable: true);
+  var selectedTasks = <Task>[];
 
   TaskList({super.key});
 
@@ -23,7 +23,7 @@ class TaskList extends StatelessWidget {
                   task: tasks[index],
                   onLongPress: (() => _toggleDeleteMode(context)),
                   isDeleteModeOn: _isDeleteModeOn.value,
-                  onSelected: (task) => _handleSelectedTask(task),
+                  onSelected: (task) => _handleSelectedTask(context, task),
                 );
               },
             ),
@@ -35,9 +35,22 @@ class TaskList extends StatelessWidget {
     context.read<TasksCubit>().getAllTasks();
   }
 
-  _handleSelectedTask(Task task) {
-    if (selectedTasks.contains(task)) {
+  _handleSelectedTask(BuildContext context, Task task) {
+    print(selectedTasks);
+    // for (var element in selectedTasks) {
+    //   element.id == task.id
+    //       ? () {
+    //           selectedTasks.remove(element);
+    //           selectedTasks.isEmpty ? _toggleDeleteMode(context) : null;
+    //         }
+    //       : selectedTasks.add(task);
+    // }
+
+    if (selectedTasks.isEmpty) {
+      selectedTasks.add(task);
+    } else if (selectedTasks.any((element) => element.id == task.id)) {
       selectedTasks.remove(task);
+      selectedTasks.isEmpty ? _toggleDeleteMode(context) : null;
     } else {
       selectedTasks.add(task);
     }

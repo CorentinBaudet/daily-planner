@@ -26,25 +26,39 @@ class _TaskListTileState extends State<TaskListTile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      // activate delete mode on long press and select the task
       onLongPress: () {
-        // delete task
+        setState(() {
+          isTicked = !isTicked;
+        });
         widget.onLongPress();
+        widget.onSelected(widget.task);
+      },
+      // if delete mode is on, then tap to select a task
+      onTap: () {
+        if (widget.isDeleteModeOn) {
+          setState(() {
+            isTicked = !isTicked;
+          });
+          widget.onSelected(widget.task);
+        }
       },
       child: ListTile(
+        tileColor: isTicked ? Colors.grey[300] : Colors.transparent,
         title: Text(widget.task.name),
         subtitle: Text(widget.task.priority.toString()),
-        trailing: Visibility(
-          visible: widget.isDeleteModeOn,
-          child: Checkbox(
-            value: isTicked,
-            onChanged: (bool? value) {
-              setState(() {
-                isTicked = value!;
-              });
-              widget.onSelected(widget.task);
-            },
-          ),
-        ),
+        // trailing: Visibility(
+        //   visible: widget.isDeleteModeOn,
+        //   child: Checkbox(
+        //     value: isTicked,
+        //     onChanged: (bool? value) {
+        //       setState(() {
+        //         isTicked = value!;
+        //       });
+        //       widget.onSelected(widget.task);
+        //     },
+        //   ),
+        // ),
       ),
     );
   }
