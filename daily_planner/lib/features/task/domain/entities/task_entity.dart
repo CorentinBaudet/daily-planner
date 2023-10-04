@@ -1,31 +1,34 @@
 class Task {
+  int? id;
   final String name;
   final Priority priority;
-  int? id;
+  bool isDone;
 
   Task({
+    this.id,
     required this.name,
     required this.priority,
-    this.id,
+    this.isDone = false,
   });
 
   factory Task.fromJson(Map<dynamic, dynamic> json) {
-    print(json);
     return Task(
+      id: json['id'],
       name: json['name'],
       priority: Priority.values.firstWhere(
         (priority) => priority.toString() == 'Priority.${json['priority']}',
         orElse: () => Priority.normal,
       ),
-      id: json['id'],
+      isDone: json['isDone'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'priority': priority.toString().split('.').last,
-      'id': id,
+      'isDone': isDone,
     };
   }
 }

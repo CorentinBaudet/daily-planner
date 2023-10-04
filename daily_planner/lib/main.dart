@@ -10,6 +10,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
+
+  // create unique instance of Hive box 'my_tasks'
   await Hive.openBox('my_tasks');
 
   runApp(const MainApp());
