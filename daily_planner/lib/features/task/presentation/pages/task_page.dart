@@ -1,5 +1,6 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/task/presentation/widgets/task_delete_confirmation_dialog.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_floating_add_button.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -36,24 +37,11 @@ class TaskList extends StatelessWidget {
   }
 
   _handleSelectedTask(BuildContext context, Task task) {
-    print(selectedTasks);
-    // for (var element in selectedTasks) {
-    //   element.id == task.id
-    //       ? () {
-    //           selectedTasks.remove(element);
-    //           selectedTasks.isEmpty ? _toggleDeleteMode(context) : null;
-    //         }
-    //       : selectedTasks.add(task);
-    // }
-
-    if (selectedTasks.isEmpty) {
-      selectedTasks.add(task);
-    } else if (selectedTasks.any((element) => element.id == task.id)) {
-      selectedTasks.remove(task);
-      selectedTasks.isEmpty ? _toggleDeleteMode(context) : null;
-    } else {
-      selectedTasks.add(task);
-    }
+    selectedTasks.where((element) => element.id == task.id).isEmpty
+        ? selectedTasks.add(task)
+        : selectedTasks.remove(
+            selectedTasks.firstWhere((element) => element.id == task.id));
+    selectedTasks.isEmpty ? _toggleDeleteMode(context) : null;
   }
 
   @override
@@ -81,7 +69,19 @@ class TaskList extends StatelessWidget {
                           visible: _isDeleteModeOn.value,
                           child: IconButton(
                               iconSize: 20,
-                              onPressed: () {
+                              onPressed: () async {
+                                bool result = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return TaskDeleteConfirmationDialog(
+                                        selectedTasks: selectedTasks,
+                                      );
+                                    });
+
+                                if (!result) {
+                                  return;
+                                }
+
                                 for (var task in selectedTasks) {
                                   context.read<TasksCubit>().deleteTask(task);
                                 }
