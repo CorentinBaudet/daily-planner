@@ -78,6 +78,7 @@ class TaskList extends StatelessWidget {
               onDelete: (() {
                 for (var task in selectedTasks) {
                   context.read<TasksCubit>().deleteTask(task);
+                  selectedTasks.remove(task); // problème ici
                 }
                 _toggleDeleteMode(context);
               }));

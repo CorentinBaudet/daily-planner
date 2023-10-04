@@ -12,11 +12,14 @@ class TaskLocalStorageRepository implements TaskBaseRepository {
   Future<List<Task>> getTasks() async {
     // get all tasks from Hive box 'my_tasks'
     final tasks = _myTasks.values;
+    print(tasks.length);
 
     List<Task> taskList = [];
 
     for (var task in tasks) {
-      taskList.add(Task.fromJson(task));
+      task = Task.fromJson(task);
+      // task.id = task.hashCode;
+      taskList.add(task);
     }
     return taskList;
   }
@@ -25,7 +28,8 @@ class TaskLocalStorageRepository implements TaskBaseRepository {
   Future<void> createTask(Task task) async {
     print(task.hashCode);
     // add a task in Hive box 'my_tasks'
-    await _myTasks.put(task.hashCode, task.toJson());
+    task.id = task.hashCode;
+    await _myTasks.put(task.id, task.toJson());
   }
 
   @override
