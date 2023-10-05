@@ -44,7 +44,9 @@ class _TaskListTileState extends State<TaskListTile> {
         }
       },
       child: ListTile(
-        tileColor: isTicked ? Colors.grey[300] : Colors.transparent,
+        tileColor: widget.isDeleteModeOn
+            ? (isTicked ? Colors.grey[300] : Colors.transparent)
+            : Colors.transparent,
         title: Text(widget.task.name),
         subtitle: Text(widget.task.priority.toString()),
         // trailing: Visibility(
