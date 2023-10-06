@@ -3,11 +3,14 @@ import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_delete_mode_widgets.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_floating_add_button.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_list_tile.dart';
+import 'package:daily_planner/utils/double_value_listenable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskList extends StatelessWidget {
   final _isDeleteModeOn = ValueNotifier<bool>(false);
+  final _selectedTasks = List<Task>.empty(growable: true);
+  final _selectedTasksNb = ValueNotifier<int>(0);
 
   TaskList({super.key});
 
@@ -33,6 +36,9 @@ class TaskList extends StatelessWidget {
 
   _toggleDeleteMode(BuildContext context) {
     _isDeleteModeOn.value = !_isDeleteModeOn.value;
+    if (!_isDeleteModeOn.value) {
+      _selectedTasks.clear();
+    }
     context.read<TasksCubit>().getAllTasks();
   }
 
@@ -43,11 +49,14 @@ class TaskList extends StatelessWidget {
         : selectedTasks.remove(
             selectedTasks.firstWhere((element) => element.id == task.id));
     selectedTasks.isEmpty ? _toggleDeleteMode(context) : null;
+
+    // to update the number of selected tasks for the delete mode widgets
+    _selectedTasksNb.value = selectedTasks.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    var selectedTasks = <Task>[];
+    // var selectedTasks = <Task>[];
 
     return Scaffold(
         body: Column(
@@ -65,10 +74,16 @@ class TaskList extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  TaskDeleteModeWidgets(
-                      selectedTasks: selectedTasks,
-                      isDeleteModeOn: _isDeleteModeOn,
-                      toggleDeleteMode: _toggleDeleteMode)
+                  DoubleValueListenableBuilder(
+                    first: _isDeleteModeOn,
+                    second: _selectedTasksNb,
+                    builder: (context, first, second, child) =>
+                        TaskDeleteModeWidgets(
+                            isDeleteModeOn: first,
+                            selectedTasks: _selectedTasks,
+                            selectedTasksNb: second,
+                            toggleDeleteMode: _toggleDeleteMode),
+                  )
                 ],
               ),
             ),
@@ -85,7 +100,7 @@ class TaskList extends StatelessWidget {
                 } else if (state is LoadedState) {
                   return Container(
                       child:
-                          _buildTaskList(context, state.tasks, selectedTasks));
+                          _buildTaskList(context, state.tasks, _selectedTasks));
                 } else if (state is ErrorState) {
                   return const Center(
                     child: Text('error loading tasks'),

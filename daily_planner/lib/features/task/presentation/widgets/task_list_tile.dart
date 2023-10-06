@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 
 class TaskListTile extends StatefulWidget {
   final Task task;
-  // callback for delete
-  final VoidCallback onLongPress;
+  final VoidCallback onLongPress; // callback for delete
   final bool isDeleteModeOn;
   final void Function(Task) onSelected;
 
@@ -46,7 +45,10 @@ class _TaskListTileState extends State<TaskListTile> {
       child: ListTile(
         tileColor: widget.isDeleteModeOn
             ? (isTicked ? Colors.grey[300] : Colors.transparent)
-            : Colors.transparent,
+            : () {
+                isTicked = false;
+                return Colors.transparent;
+              }(),
         title: Text(widget.task.name),
         subtitle: Text(widget.task.priority.toString()),
         // trailing: Visibility(
