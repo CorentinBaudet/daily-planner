@@ -35,14 +35,22 @@ class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
                 );
               });
 
-          if (!result) {
-            return;
+          if (!result) return;
+          if (!context.mounted) {
+            return; // to avoid calling context on widget off the tree (here because of the async gap created by the dialog)
           }
 
           for (var task in selectedTasks) {
             context.read<TasksCubit>().deleteTask(task);
           }
           widget.toggleDeleteMode(context);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              duration: Duration(seconds: 3),
+              content: Text('Deleted'),
+            ),
+          );
         });
   }
 

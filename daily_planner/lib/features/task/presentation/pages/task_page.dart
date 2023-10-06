@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskList extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _isDeleteModeOn = ValueNotifier<bool>(false);
   final _selectedTasks = List<Task>.empty(growable: true);
   final _selectedTasksNb = ValueNotifier<int>(0);
@@ -17,13 +18,14 @@ class TaskList extends StatelessWidget {
   Widget _buildTaskList(
       BuildContext context, List<Task> tasks, List<Task> selectedTasks) {
     return tasks.isEmpty
-        ? const Text("no tasks yet")
+        ? Center(child: const Text("no tasks yet"))
         : Expanded(
             child: ListView.builder(
               itemCount: tasks.length,
               itemBuilder: (BuildContext context, int index) {
                 return TaskListTile(
                   task: tasks[index],
+                  onChecked: () => _handleCheckedTask(context, tasks[index]),
                   onLongPress: (() => _toggleDeleteMode(context)),
                   isDeleteModeOn: _isDeleteModeOn.value,
                   onSelected: (task) =>
@@ -32,6 +34,24 @@ class TaskList extends StatelessWidget {
               },
             ),
           );
+  }
+
+  _handleCheckedTask(BuildContext context, Task task) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: const Text('task completed'),
+          action: SnackBarAction(
+              label: 'undo',
+              onPressed: () {
+                // undo task completion
+                task.isDone = false;
+                // and reflect the change in the UI using the scaffold key to access the context
+                // because the task's widget is not in the widget tree anymore
+                _scaffoldKey.currentContext
+                    ?.read<TasksCubit>()
+                    .updateTask(task);
+              })),
+    );
   }
 
   _toggleDeleteMode(BuildContext context) {
@@ -59,6 +79,7 @@ class TaskList extends StatelessWidget {
     // var selectedTasks = <Task>[];
 
     return Scaffold(
+        key: _scaffoldKey,
         body: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

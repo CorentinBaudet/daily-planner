@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskListTile extends StatefulWidget {
   final Task task;
+  final VoidCallback onChecked; // callback for task check snackbar
   final VoidCallback onLongPress; // callback for delete
   final bool isDeleteModeOn;
   final void Function(Task) onSelected;
@@ -12,6 +13,7 @@ class TaskListTile extends StatefulWidget {
   const TaskListTile({
     super.key,
     required this.task,
+    required this.onChecked,
     required this.onLongPress,
     required this.isDeleteModeOn,
     required this.onSelected,
@@ -27,6 +29,8 @@ class _TaskListTileState extends State<TaskListTile> {
   onChecked(BuildContext context, bool? value) {
     widget.task.isDone = value!;
     context.read<TasksCubit>().updateTask(widget.task);
+
+    widget.onChecked();
   }
 
   @override

@@ -13,10 +13,10 @@ class TasksCubit extends Cubit<TasksState> {
 
   final TaskBaseRepository repository;
 
-  void getAllTasks() async {
+  void getAllTasks() {
     try {
       emit(LoadingState());
-      final tasks = await repository.getTasks();
+      final tasks = repository.getUndoneTasks();
       emit(LoadedState(tasks: tasks));
     } catch (e) {
       emit(ErrorState());
