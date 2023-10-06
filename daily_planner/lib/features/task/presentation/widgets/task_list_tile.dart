@@ -1,5 +1,7 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskListTile extends StatefulWidget {
   final Task task;
@@ -20,7 +22,12 @@ class TaskListTile extends StatefulWidget {
 }
 
 class _TaskListTileState extends State<TaskListTile> {
-  bool isTicked = false;
+  bool isSelected = false;
+
+  onChecked(BuildContext context, bool? value) {
+    widget.task.isDone = value!;
+    context.read<TasksCubit>().updateTask(widget.task);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +35,7 @@ class _TaskListTileState extends State<TaskListTile> {
       // activate delete mode on long press and select the task
       onLongPress: () {
         setState(() {
-          isTicked = !isTicked;
+          isSelected = !isSelected;
         });
         widget.onLongPress();
         widget.onSelected(widget.task);
@@ -37,32 +44,26 @@ class _TaskListTileState extends State<TaskListTile> {
       onTap: () {
         if (widget.isDeleteModeOn) {
           setState(() {
-            isTicked = !isTicked;
+            isSelected = !isSelected;
           });
           widget.onSelected(widget.task);
         }
       },
       child: ListTile(
         tileColor: widget.isDeleteModeOn
-            ? (isTicked ? Colors.grey[300] : Colors.transparent)
+            ? (isSelected ? Colors.grey[300] : Colors.transparent)
             : () {
-                isTicked = false;
+                isSelected = false;
                 return Colors.transparent;
               }(),
         title: Text(widget.task.name),
         subtitle: Text(widget.task.priority.toString()),
-        // trailing: Visibility(
-        //   visible: widget.isDeleteModeOn,
-        //   child: Checkbox(
-        //     value: isTicked,
-        //     onChanged: (bool? value) {
-        //       setState(() {
-        //         isTicked = value!;
-        //       });
-        //       widget.onSelected(widget.task);
-        //     },
-        //   ),
-        // ),
+        leading: Checkbox.adaptive(
+            value: widget.task.isDone,
+            onChanged: (bool? value) {
+              onChecked(context, value);
+            }),
+        horizontalTitleGap: 4,
       ),
     );
   }

@@ -33,6 +33,16 @@ class TasksCubit extends Cubit<TasksState> {
     }
   }
 
+  void updateTask(Task task) async {
+    try {
+      emit(LoadingState());
+      await repository.updateTask(task);
+      getAllTasks();
+    } catch (e) {
+      emit(ErrorState());
+    }
+  }
+
   void deleteTask(Task task) async {
     try {
       emit(LoadingState());
