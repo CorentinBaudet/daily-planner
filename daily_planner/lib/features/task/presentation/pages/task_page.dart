@@ -17,6 +17,9 @@ class TaskList extends StatelessWidget {
 
   Widget _buildTaskList(
       BuildContext context, List<Task> tasks, List<Task> selectedTasks) {
+    tasks.sort((a, b) => a.compareCreationDate(a, b));
+    tasks.sort((a, b) => a.comparePriority(a, b));
+
     return tasks.isEmpty
         ? Center(child: const Text("no tasks yet"))
         : Expanded(

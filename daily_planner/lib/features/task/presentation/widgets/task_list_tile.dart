@@ -64,6 +64,7 @@ class _TaskListTileState extends State<TaskListTile> {
         subtitle: Text(widget.task.priority.toString()),
         leading: Checkbox.adaptive(
             value: widget.task.isDone,
+            shape: const CircleBorder(),
             onChanged: (bool? value) {
               onChecked(context, value);
             }),
