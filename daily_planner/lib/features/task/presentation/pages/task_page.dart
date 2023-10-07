@@ -79,8 +79,6 @@ class TaskList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // var selectedTasks = <Task>[];
-
     return Scaffold(
         key: _scaffoldKey,
         body: Column(
@@ -91,13 +89,6 @@ class TaskList extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'all tasks',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   DoubleValueListenableBuilder(
                     first: _isDeleteModeOn,
                     second: _selectedTasksNb,
