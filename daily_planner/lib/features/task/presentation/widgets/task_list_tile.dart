@@ -61,7 +61,6 @@ class _TaskListTileState extends State<TaskListTile> {
                 return Colors.transparent;
               }(),
         title: Text(widget.task.name),
-        subtitle: Text(widget.task.priority.toString()),
         leading: Checkbox.adaptive(
             value: widget.task.isDone,
             shape: const CircleBorder(),
@@ -69,6 +68,15 @@ class _TaskListTileState extends State<TaskListTile> {
               onChecked(context, value);
             }),
         horizontalTitleGap: 4,
+        trailing: widget.task.priority == Priority.high
+            ? const Text(
+                '!',
+                style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              )
+            : null,
       ),
     );
   }

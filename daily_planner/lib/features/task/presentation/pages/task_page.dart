@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/task/domain/usecases/task_usecases.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_delete_mode_widgets.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_floating_add_button.dart';
@@ -17,8 +18,7 @@ class TaskList extends StatelessWidget {
 
   Widget _buildTaskList(
       BuildContext context, List<Task> tasks, List<Task> selectedTasks) {
-    tasks.sort((a, b) => a.compareCreationDate(a, b));
-    tasks.sort((a, b) => a.comparePriority(a, b));
+    tasks = TaskUseCases().sortTasks(tasks);
 
     return tasks.isEmpty
         ? Center(child: const Text("no tasks yet"))
