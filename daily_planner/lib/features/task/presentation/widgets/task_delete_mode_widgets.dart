@@ -41,14 +41,14 @@ class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
           }
 
           for (var task in selectedTasks) {
-            context.read<TasksCubit>().deleteTask(task);
+            context.read<TasksCubit>().deleteTask(task.id as int);
           }
           widget.toggleDeleteMode(context);
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               duration: Duration(seconds: 3),
-              content: Text('Deleted'),
+              content: Text('deleted'),
             ),
           );
         });

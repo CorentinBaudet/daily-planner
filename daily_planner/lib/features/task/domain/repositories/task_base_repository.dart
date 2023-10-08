@@ -5,5 +5,5 @@ abstract class TaskBaseRepository {
   List<Task> getUndoneTasks();
   Future<void> createTask(Task task);
   Future<void> updateTask(Task task);
-  Future<void> deleteTask(Task task);
+  Future<void> deleteTask(int id);
 }

@@ -49,8 +49,8 @@ class TaskLocalStorageRepository implements TaskBaseRepository {
   }
 
   @override
-  Future<void> deleteTask(Task task) async {
+  Future<void> deleteTask(int id) async {
     // delete a task from Hive box 'my_tasks'
-    await _myTasks.delete(task.id);
+    await _myTasks.delete(id);
   }
 }
