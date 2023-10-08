@@ -1,10 +1,10 @@
-import 'package:daily_planner/constants/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:flutter_switch/flutter_switch.dart';
+import 'package:daily_planner/features/task/domain/usecases/task_usecases.dart';
 
 class TaskAddDialog extends StatefulWidget {
   const TaskAddDialog({super.key});
@@ -90,8 +90,8 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
             context.read<TasksCubit>().createTask(Task(
                 name: taskNameController.text,
                 priority: isHighPriority ? Priority.high : Priority.normal,
-                createdAt: ConstantsIntl.dateTimeFormat.parse(
-                    ConstantsIntl.dateTimeFormat.format(DateTime.now()))));
+                createdAt:
+                    TaskUseCases().troncateCreationTime(DateTime.now())));
 
             Navigator.of(context).pop();
           },

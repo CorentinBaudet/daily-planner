@@ -16,6 +16,7 @@ dependencies:
   hive_flutter: ^1.1.0
   intl: ^0.18.1
   localstorage: ^4.0.1+4
+  time_planner: ^0.1.2+1
 
 dev_dependencies:
   build_runner: ^2.4.6

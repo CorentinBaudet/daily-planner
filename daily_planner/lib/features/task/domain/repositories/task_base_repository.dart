@@ -7,30 +7,3 @@ abstract class TaskBaseRepository {
   Future<void> updateTask(Task task);
   Future<void> deleteTask(Task task);
 }
-
-class TaskFakeRepository implements TaskBaseRepository {
-  @override
-  List<Task> getTasks() {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<Task> getUndoneTasks() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> createTask(Task task) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> updateTask(Task task) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> deleteTask(Task task) {
-    throw UnimplementedError();
-  }
-}

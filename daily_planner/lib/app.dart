@@ -1,5 +1,9 @@
+import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_base_repository.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
+import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_page.dart';
 import 'package:daily_planner/features/task/presentation/pages/task_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -19,8 +23,14 @@ class App extends StatelessWidget {
           ),
         ),
         body: TabBarView(children: [
-          const Center(child: Text('Plan tomorrow')),
-          TaskList(),
+          RepositoryProvider<TimeSlotBaseRepository>(
+            create: (context) => TimeSlotFakeRepository(),
+            child: BlocProvider(
+                create: (context) => PlannerCubit(
+                    repository: context.read<TimeSlotBaseRepository>()),
+                child: TimeSlotPage()),
+          ),
+          TaskPage(),
         ]),
       ),
     );

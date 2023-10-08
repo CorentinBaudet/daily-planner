@@ -8,13 +8,13 @@ import 'package:daily_planner/utils/double_value_listenable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TaskList extends StatelessWidget {
+class TaskPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _isDeleteModeOn = ValueNotifier<bool>(false);
   final _selectedTasks = List<Task>.empty(growable: true);
   final _selectedTasksNb = ValueNotifier<int>(0);
 
-  TaskList({super.key});
+  TaskPage({super.key});
 
   Widget _buildTaskList(
       BuildContext context, List<Task> tasks, List<Task> selectedTasks) {

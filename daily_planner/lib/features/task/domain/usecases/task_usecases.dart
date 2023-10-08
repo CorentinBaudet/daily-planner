@@ -1,6 +1,12 @@
+import 'package:daily_planner/constants/intl.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 
 class TaskUseCases {
+  DateTime troncateCreationTime(DateTime createdAt) {
+    return ConstantsIntl.dateTimeFormat
+        .parse(ConstantsIntl.dateTimeFormat.format(createdAt));
+  }
+
   // method to sort tasks by both creation date and priority
   List<Task> sortTasks(List<Task> tasks) {
     // separate tasks in two lists by priority
