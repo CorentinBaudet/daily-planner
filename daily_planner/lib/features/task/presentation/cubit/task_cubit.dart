@@ -3,6 +3,7 @@ import 'package:daily_planner/features/task/domain/repositories/task_base_reposi
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
+part 'task_event.dart';
 part 'task_state.dart';
 
 class TasksCubit extends Cubit<TasksState> {

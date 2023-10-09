@@ -12,7 +12,7 @@ class TimeSlotBottomDrawer extends StatelessWidget {
 
     return tasks.isEmpty
         ? Center(child: const Text("no tasks yet"))
-        : Expanded(
+        : Flexible(
             child: ListView.builder(
               itemCount: tasks.length,
               itemBuilder: (BuildContext context, int index) {
@@ -33,14 +33,15 @@ class TimeSlotBottomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(32.0),
-          topRight: Radius.circular(32.0),
+          bottomLeft: Radius.circular(32.0),
         ),
         color: Colors.blue.shade200,
       ),
+      height: MediaQuery.of(context).size.height, // height of the body
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16),
       child: Column(
         // mainAxisSize: MainAxisSize.min,
         // crossAxisAlignment: CrossAxisAlignment.end,

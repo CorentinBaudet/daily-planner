@@ -5,7 +5,7 @@ class TimeSlot {
   final int id;
   final TimeOfDay startTime;
   final int duration; // in minutes
-  final TimeSlotContent content;
+  final Task content;
 
   TimeSlot({
     required this.id,
@@ -15,7 +15,7 @@ class TimeSlot {
   });
 
   factory TimeSlot.fromJson(Map<String, dynamic> json) {
-    TimeSlotContent content;
+    Task content;
     try {
       content = Task.fromJson(json['content']);
     } catch (e) {

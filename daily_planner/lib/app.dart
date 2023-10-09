@@ -14,13 +14,7 @@ class App extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 10, // TODO improve this
-          bottom: const TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.calendar_today_rounded)),
-              Tab(icon: Icon(Icons.format_list_bulleted_add)),
-            ],
-          ),
+          backgroundColor: Theme.of(context).primaryColor,
         ),
         body: TabBarView(children: [
           RepositoryProvider<TimeSlotBaseRepository>(
@@ -32,6 +26,22 @@ class App extends StatelessWidget {
           ),
           TaskPage(),
         ]),
+        bottomNavigationBar: BottomAppBar(
+          child: TabBar(
+            isScrollable: false,
+            physics: const NeverScrollableScrollPhysics(),
+            tabs: [
+              Tab(
+                  icon: Icon(
+                Icons.calendar_today_rounded,
+                color: Theme.of(context).primaryColor,
+              )),
+              Tab(
+                  icon: Icon(Icons.format_list_bulleted_add,
+                      color: Theme.of(context).primaryColor)),
+            ],
+          ),
+        ),
       ),
     );
   }

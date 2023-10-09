@@ -1,13 +1,18 @@
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+// import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
-class Task extends TimeSlotContent {
+class Task {
+  // extends TimeSlotContent
+  int? id;
+  final String name;
   final Priority priority;
   bool isDone;
   DateTime createdAt;
 
   Task({
-    super.id,
-    required super.name,
+    // super.id,
+    // required super.name,
+    this.id,
+    required this.name,
     required this.priority,
     this.isDone = false,
     required this.createdAt,
@@ -26,7 +31,7 @@ class Task extends TimeSlotContent {
     );
   }
 
-  @override
+  // @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
