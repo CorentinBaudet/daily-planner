@@ -5,21 +5,28 @@ class TimeSlot {
   final int id;
   final TimeOfDay startTime;
   final int duration; // in minutes
-  final Task task;
+  final TimeSlotContent content;
 
   TimeSlot({
     required this.id,
     required this.startTime,
     required this.duration,
-    required this.task,
+    required this.content,
   });
 
   factory TimeSlot.fromJson(Map<String, dynamic> json) {
+    TimeSlotContent content;
+    try {
+      content = Task.fromJson(json['content']);
+    } catch (e) {
+      // content = Block.fromJson(json['block']);
+      content = Task.fromJson(json['content']); // TODO: change to Block
+    }
     return TimeSlot(
       id: json['id'],
       startTime: json['startTime'],
       duration: json['duration'],
-      task: Task.fromJson(json['task']),
+      content: content,
     );
   }
 
@@ -28,7 +35,19 @@ class TimeSlot {
       'id': id,
       'startTime': startTime,
       'duration': duration,
-      'task': task.toJson(),
+      'content': content.toJson(),
     };
   }
+}
+
+abstract class TimeSlotContent {
+  int? id;
+  final String name;
+
+  TimeSlotContent({
+    this.id,
+    required this.name,
+  });
+
+  Map<String, dynamic> toJson();
 }

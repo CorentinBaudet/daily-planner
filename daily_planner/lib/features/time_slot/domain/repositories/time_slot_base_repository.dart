@@ -18,7 +18,7 @@ class TimeSlotFakeRepository implements TimeSlotBaseRepository {
         id: 1,
         startTime: const TimeOfDay(hour: 7, minute: 0),
         duration: 60,
-        task: Task(
+        content: Task(
             id: 1,
             name: 'deep work',
             priority: Priority.normal,
@@ -28,7 +28,7 @@ class TimeSlotFakeRepository implements TimeSlotBaseRepository {
         id: 2,
         startTime: const TimeOfDay(hour: 10, minute: 30),
         duration: 60,
-        task: Task(
+        content: Task(
             id: 2,
             name: 'GPE',
             priority: Priority.normal,
@@ -37,8 +37,8 @@ class TimeSlotFakeRepository implements TimeSlotBaseRepository {
     TimeSlot(
         id: 3,
         startTime: const TimeOfDay(hour: 12, minute: 45),
-        duration: 60,
-        task: Task(
+        duration: 45,
+        content: Task(
             id: 3,
             name: 'almuerzo',
             priority: Priority.normal,
