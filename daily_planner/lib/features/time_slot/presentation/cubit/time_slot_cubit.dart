@@ -6,8 +6,8 @@ import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_b
 
 part 'time_slot_state.dart';
 
-class PlannerCubit extends Cubit<PlannerState> {
-  PlannerCubit({required this.repository}) : super(InitialState()) {
+class TimeSlotCubit extends Cubit<TimeSlotState> {
+  TimeSlotCubit({required this.repository}) : super(InitialState()) {
     getAllTimeSlots();
   }
 
@@ -18,6 +18,16 @@ class PlannerCubit extends Cubit<PlannerState> {
       emit(LoadingState());
       final timeSlots = repository.getTimeSlots();
       emit(LoadedState(timeSlots: timeSlots));
+    } catch (e) {
+      emit(ErrorState(message: e.toString()));
+    }
+  }
+
+  void createTimeSlot(TimeSlot timeSlot) async {
+    try {
+      emit(LoadingState());
+      await repository.create(timeSlot);
+      getAllTimeSlots();
     } catch (e) {
       emit(ErrorState(message: e.toString()));
     }

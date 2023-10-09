@@ -1,20 +1,20 @@
 part of 'time_slot_cubit.dart';
 
-abstract class PlannerState extends Equatable {
-  const PlannerState();
+abstract class TimeSlotState extends Equatable {
+  const TimeSlotState();
 }
 
-class InitialState extends PlannerState {
+class InitialState extends TimeSlotState {
   @override
   List<Object> get props => [];
 }
 
-class LoadingState extends PlannerState {
+class LoadingState extends TimeSlotState {
   @override
   List<Object> get props => [];
 }
 
-class LoadedState extends PlannerState {
+class LoadedState extends TimeSlotState {
   final List<TimeSlot> timeSlots;
 
   const LoadedState({required this.timeSlots});
@@ -23,7 +23,7 @@ class LoadedState extends PlannerState {
   List<Object> get props => [timeSlots];
 }
 
-class ErrorState extends PlannerState {
+class ErrorState extends TimeSlotState {
   final String message;
 
   const ErrorState({required this.message});

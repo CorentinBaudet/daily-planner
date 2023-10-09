@@ -26,7 +26,7 @@ class App extends StatelessWidget {
           RepositoryProvider<TimeSlotBaseRepository>(
             create: (context) => TimeSlotFakeRepository(),
             child: BlocProvider(
-                create: (context) => PlannerCubit(
+                create: (context) => TimeSlotCubit(
                     repository: context.read<TimeSlotBaseRepository>()),
                 child: TimeSlotPage()),
           ),

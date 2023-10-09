@@ -28,7 +28,7 @@ class TimeSlotDataSource extends CalendarDataSource {
             .add(Duration(minutes: timeSlot.duration)),
         isAllDay: false,
         subject: timeSlot.content.name,
-        color: Colors.grey.shade200,
+        color: Colors.grey.shade400,
       ));
     }
 
