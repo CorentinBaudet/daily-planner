@@ -8,9 +8,10 @@ import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cu
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlotPage extends StatelessWidget {
-  TimeSlotPage({super.key});
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _isTaskListVisible = ValueNotifier<bool>(false);
+
+  TimeSlotPage({super.key});
 
   Widget _buildEmptyPlanner() {
     return Flexible(
@@ -37,30 +38,12 @@ class TimeSlotPage extends StatelessWidget {
           allowNavigation: false,
         ),
       ),
-      // TimePlanner(
-      //   currentTimeAnimation: true,
-      //   startHour: 1,
-      //   endHour: 23,
-      //   style: TimePlannerStyle(
-      //       cellWidth: 320,
-      //       borderRadius: const BorderRadius.all(Radius.circular(8))),
-      //   headers: const [
-      //     TimePlannerTitle(
-      //       title: "monday",
-      //       date: "9/10/2023",
-      //     ),
-      //   ],
-      //   // List of task will be show on the time planner
-      //   tasks: [
-      //     TimePlannerTask(
-      //       color: Colors.yellow,
-      //       dateTime: TimePlannerDateTime(day: 0, hour: 9, minutes: 0),
-      //       minutesDuration: 60,
-      //       child: const Text("task 1"),
-      //     ),
-      //   ],
-      // ),
     );
+  }
+
+  // switch back _isTaskListVisible to false when the drawer is closed
+  void drawerClosingCallBack() {
+    _isTaskListVisible.value = false;
   }
 
   @override
@@ -69,9 +52,6 @@ class TimeSlotPage extends StatelessWidget {
       children: [
         Scaffold(
           key: _scaffoldKey,
-          // endDrawer: const Drawer(
-          //   backgroundColor: Colors.red,
-          // ),
           body: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -102,22 +82,33 @@ class TimeSlotPage extends StatelessWidget {
               })
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.edit_calendar_rounded),
-            onPressed: () {
-              // Scaffold.of(context).openEndDrawer();
-              // _scaffoldKey.currentState!.openEndDrawer();
-              // context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
-              //       id: 4,
-              //       startTime: const TimeOfDay(hour: 14, minute: 0),
-              //       duration: 60,
-              //       content: Task(
-              //           name: 'deep work',
-              //           priority: Priority.normal,
-              //           createdAt:
-              //               TaskUseCases().troncateCreationTime(DateTime.now())),
-              //     ));
-            },
+          floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                  child: const Icon(Icons.add),
+                  onPressed: () {
+                    _isTaskListVisible.value = !_isTaskListVisible.value;
+                  }),
+              const SizedBox(height: 16),
+              FloatingActionButton(
+                child: const Icon(Icons.edit_calendar_rounded),
+                onPressed: () {
+                  // Scaffold.of(context).openEndDrawer();
+                  // _scaffoldKey.currentState!.openEndDrawer();
+                  // context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
+                  //       id: 4,
+                  //       startTime: const TimeOfDay(hour: 14, minute: 0),
+                  //       duration: 60,
+                  //       content: Task(
+                  //           name: 'deep work',
+                  //           priority: Priority.normal,
+                  //           createdAt:
+                  //               TaskUseCases().troncateCreationTime(DateTime.now())),
+                  //     ));
+                },
+              ),
+            ],
           ),
           // bottomNavigationBar: BottomAppBar(
           //   elevation: 0,
@@ -143,21 +134,15 @@ class TimeSlotPage extends StatelessWidget {
           //   ),
           // ),
         ),
-        Positioned(right: 0, child: TimeSlotBottomDrawer()
-
-            // Container(
-            //   decoration: BoxDecoration(
-            //     borderRadius: const BorderRadius.only(
-            //       topLeft: Radius.circular(32.0),
-            //       bottomLeft: Radius.circular(32.0),
-            //     ),
-            //     color: Colors.blue.shade200,
-            //   ),
-            //   width: 70,
-            //   height: MediaQuery.of(context).size.height, // height of the body
-            //   child: const Center(child: Text('Tasks')),
-            // ),
-            ),
+        Positioned(
+            right: 0,
+            child: ValueListenableBuilder(
+              valueListenable: _isTaskListVisible,
+              builder: (context, value, child) {
+                return TimeSlotDrawer(
+                    isTaskListVisible: value, callBack: drawerClosingCallBack);
+              },
+            )),
       ],
     );
   }

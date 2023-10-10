@@ -18,21 +18,21 @@ class Task {
     required this.createdAt,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) {
+  factory Task.fromJson(Map<dynamic, dynamic> json) {
     return Task(
-      id: json['id'],
+      id: json['id'] as int?,
       name: json['name'],
       priority: Priority.values.firstWhere(
         (priority) => priority.toString() == 'Priority.${json['priority']}',
         orElse: () => Priority.normal,
       ),
-      isDone: json['isDone'],
+      isDone: json['isDone'] as bool,
       createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
   // @override
-  Map<String, dynamic> toJson() {
+  Map<dynamic, dynamic> toJson() {
     return {
       'id': id,
       'name': name,

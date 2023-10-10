@@ -14,7 +14,7 @@ class TimeSlot {
     required this.content,
   });
 
-  factory TimeSlot.fromJson(Map<String, dynamic> json) {
+  factory TimeSlot.fromJson(Map<dynamic, dynamic> json) {
     Task content;
     try {
       content = Task.fromJson(json['content']);
@@ -30,7 +30,7 @@ class TimeSlot {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<dynamic, dynamic> toJson() {
     return {
       'id': id,
       'startTime': startTime,

@@ -27,10 +27,6 @@ class TaskLocalStorageRepository implements TaskBaseRepository {
 
     List<Task> taskList = [];
 
-    // print(tasks.first);
-    // var task = tasks.first;
-    // Task task1 = Task.fromJson(task);
-
     for (var task in tasks) {
       Task.fromJson(task).isDone == false
           ? taskList.add(Task.fromJson(task))

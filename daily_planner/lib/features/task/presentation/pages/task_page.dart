@@ -21,7 +21,7 @@ class TaskPage extends StatelessWidget {
     tasks = TaskUseCases().sortTasks(tasks);
 
     return tasks.isEmpty
-        ? Center(child: const Text("no tasks yet"))
+        ? const Center(child: Text("no tasks yet"))
         : Expanded(
             child: ListView.builder(
               itemCount: tasks.length,
