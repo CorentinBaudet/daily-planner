@@ -1,6 +1,7 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_tomorrow_page.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_bottom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -110,7 +111,12 @@ class TimeSlotTodayPage extends StatelessWidget {
               FloatingActionButton(
                   child: const Icon(Icons.add),
                   onPressed: () {
-                    _isTaskListVisible.value = !_isTaskListVisible.value;
+                    // _isTaskListVisible.value = !_isTaskListVisible.value;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TimeSlotTomorrowPage(),
+                        ));
                   }),
               const SizedBox(height: 16),
               FloatingActionButton(
