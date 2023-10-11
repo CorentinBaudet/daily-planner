@@ -1,6 +1,6 @@
 import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_base_repository.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
-import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_page.dart';
+import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_today_page.dart';
 import 'package:daily_planner/features/task/presentation/pages/task_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +15,7 @@ class App extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
+          title: const Text('today'),
         ),
         body: TabBarView(children: [
           RepositoryProvider<TimeSlotBaseRepository>(
@@ -22,7 +23,7 @@ class App extends StatelessWidget {
             child: BlocProvider(
                 create: (context) => TimeSlotCubit(
                     repository: context.read<TimeSlotBaseRepository>()),
-                child: TimeSlotPage()),
+                child: TimeSlotTodayPage()),
           ),
           TaskPage(),
         ]),

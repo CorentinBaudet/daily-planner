@@ -1,14 +1,20 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/domain/usecases/task_usecases.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart'
+    as task_cubit;
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart'
+    as time_slot_cubit;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class TimeSlotDrawer extends StatefulWidget {
   bool isTaskListVisible = false;
+  final VoidCallback onClosing;
 
-  TimeSlotDrawer({super.key, required this.isTaskListVisible});
+  TimeSlotDrawer(
+      {super.key, required this.isTaskListVisible, required this.onClosing});
 
   @override
   State<TimeSlotDrawer> createState() => _TimeSlotDrawerState();
@@ -22,20 +28,13 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
         ? const Center(child: Text("no tasks yet"))
         : Flexible(
             fit: FlexFit.tight,
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
+            child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
               itemCount: tasks.length,
               itemBuilder: (BuildContext context, int index) {
-                return Text(tasks[index].name);
-                // TaskListTile(
-                //   task: tasks[index],
-                //   onChecked: () => _handleCheckedTask(context, tasks[index]),
-                //   onLongPress: (() => _toggleDeleteMode(context)),
-                //   isDeleteModeOn: _isDeleteModeOn.value,
-                //   onSelected: (task) =>
-                //       _handleSelectedTask(context, task, selectedTasks),
-                // );
+                return DrawerTile(task: tasks[index]);
               },
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
             ),
           );
   }
@@ -53,7 +52,7 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
             topLeft: Radius.circular(32.0),
             bottomLeft: Radius.circular(32.0),
           ),
-          color: Colors.blue.shade200,
+          color: Colors.blue.shade100,
         ),
         height: MediaQuery.of(context)
             .size
@@ -70,23 +69,24 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
                   setState(() {
                     widget.isTaskListVisible = false;
                   });
+                  widget.onClosing();
                 },
               )
             ]),
             const SizedBox(height: 16),
-            BlocBuilder<TasksCubit, TasksState>(
+            BlocBuilder<task_cubit.TasksCubit, task_cubit.TasksState>(
               builder: (context, state) {
-                if (state is InitialState) {
+                if (state is task_cubit.InitialState) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (state is LoadingState) {
+                } else if (state is task_cubit.LoadingState) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (state is LoadedState) {
+                } else if (state is task_cubit.LoadedState) {
                   return Container(child: _buildTaskList(context, state.tasks));
-                } else if (state is ErrorState) {
+                } else if (state is task_cubit.ErrorState) {
                   return const Center(
                     child: Text('error loading tasks'),
                   );
@@ -97,46 +97,96 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
                 }
               },
             ),
-
-            // SizedBox(
-            //     height: (56 * 6).toDouble(),
-            //     child: Container(
-            //         decoration: const BoxDecoration(
-            //           borderRadius: BorderRadius.only(
-            //             topLeft: Radius.circular(16.0),
-            //             topRight: Radius.circular(16.0),
-            //           ),
-            //           // color: Color(0xff344955),
-            //         ),
-            //         child: Stack(
-            //           alignment: const Alignment(0, 0),
-            //           // overflow: Overflow.visible,
-            //           children: <Widget>[
-            //             Positioned(
-            //               top: -36,
-            //               child: Container(
-            //                 decoration: BoxDecoration(
-            //                     borderRadius:
-            //                         const BorderRadius.all(Radius.circular(50)),
-            //                     border: Border.all(
-            //                         color: Color(0xff232f34), width: 10)),
-            //               ),
-            //             ),
-            //             Positioned(
-            //               child: ListView(
-            //                 physics: const NeverScrollableScrollPhysics(),
-            //                 children: const <Widget>[Text("test")],
-            //               ),
-            //             )
-            //           ],
-            //         ))),
-            // Container(
-            //   height: 56,
-            //   color: const Color(0xff4a6572),
-            // )
           ],
         ),
       ),
     );
   }
 }
+
+class DrawerTile extends StatelessWidget {
+  final Task task;
+
+  const DrawerTile({super.key, required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('task ${task.name} tapped')));
+
+        context.read<time_slot_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
+            startTime: const TimeOfDay(hour: 14, minute: 0),
+            duration: 60,
+            content: task,
+            createdAt: TaskUseCases().troncateCreationTime(DateTime.now())));
+
+        // remove the task from the list
+        // TODO
+      },
+      child: Container(
+        height: 56,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 0.5),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+        ),
+        child: ListTile(
+          title: Text(task.name, style: const TextStyle(fontSize: 14)),
+          trailing: task.priority == Priority.high
+              ? const Padding(
+                  padding: EdgeInsets.all(0.0),
+                  child: Text(
+                    '!',
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                )
+              : null,
+        ),
+      ),
+    );
+
+    // LongPressDraggable<Task>(
+    //   data: task,
+    //   dragAnchorStrategy: pointerDragAnchorStrategy,
+    //   feedback: DraggingTile(dragKey: GlobalKey(), drawerTile: this),
+    //   child: Container(
+    //     height: 56,
+    //     decoration: BoxDecoration(
+    //       border: Border.all(color: Colors.black, width: 0.5),
+    //       borderRadius: const BorderRadius.all(Radius.circular(8)),
+    //     ),
+    //     child: ListTile(
+    //       title: Text(task.name, style: const TextStyle(fontSize: 14)),
+    //       trailing: task.priority == Priority.high
+    //           ? const Padding(
+    //               padding: EdgeInsets.all(0.0),
+    //               child: Text(
+    //                 '!',
+    //                 style: TextStyle(
+    //                     color: Colors.red,
+    //                     fontSize: 16,
+    //                     fontWeight: FontWeight.bold),
+    //               ),
+    //             )
+    //           : null,
+    //     ),
+    //   ),
+    // );
+  }
+}
+
+// class DraggingTile extends StatelessWidget {
+//   final GlobalKey dragKey;
+//   final DrawerTile drawerTile;
+//   const DraggingTile(
+//       {super.key, required this.dragKey, required this.drawerTile});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Placeholder();
+//   }
+// }

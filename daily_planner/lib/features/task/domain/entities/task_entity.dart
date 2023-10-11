@@ -6,7 +6,7 @@ class Task {
   final String name;
   final Priority priority;
   bool isDone;
-  DateTime createdAt;
+  final DateTime createdAt;
 
   Task({
     // super.id,

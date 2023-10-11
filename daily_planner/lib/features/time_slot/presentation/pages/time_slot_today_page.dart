@@ -1,3 +1,4 @@
+import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_bottom_drawer.dart';
@@ -7,11 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class TimeSlotPage extends StatelessWidget {
+class TimeSlotTodayPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _isTaskListVisible = ValueNotifier<bool>(false);
 
-  TimeSlotPage({super.key});
+  TimeSlotTodayPage({super.key});
 
   Widget _buildEmptyPlanner() {
     return Flexible(
@@ -24,21 +25,42 @@ class TimeSlotPage extends StatelessWidget {
 
   Widget _buildPlanner(List<TimeSlot> timeSlots) {
     return Flexible(
-      fit: FlexFit.loose,
-      child: SfCalendar(
-        dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
-        headerHeight: 0,
-        backgroundColor: Colors.transparent,
-        allowDragAndDrop: true,
-        viewNavigationMode:
-            ViewNavigationMode.none, // prevent from swiping to other days
-        // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
-        // initialSelectedDate: DateTime.now(), // TODO to improve
-        dragAndDropSettings: const DragAndDropSettings(
-          allowNavigation: false,
-        ),
-      ),
-    );
+        fit: FlexFit.loose,
+        child: SfCalendar(
+          dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
+          headerHeight: 0,
+          backgroundColor: Colors.transparent,
+          allowDragAndDrop: true,
+          viewNavigationMode:
+              ViewNavigationMode.none, // prevent from swiping to other days
+          // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
+          // initialSelectedDate: DateTime.now(), // TODO to improve
+          dragAndDropSettings: const DragAndDropSettings(
+            allowNavigation: false,
+          ),
+        )
+
+        // DragTarget<Task>(
+        //   builder: (context, candidateData, rejectedData) {
+        //     return SfCalendar(
+        //       dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
+        //       headerHeight: 0,
+        //       backgroundColor: Colors.transparent,
+        //       allowDragAndDrop: true,
+        //       viewNavigationMode:
+        //           ViewNavigationMode.none, // prevent from swiping to other days
+        //       // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
+        //       // initialSelectedDate: DateTime.now(), // TODO to improve
+        //       dragAndDropSettings: const DragAndDropSettings(
+        //         allowNavigation: false,
+        //       ),
+        //     );
+        //   },
+        //   onAccept: (data) {
+        //     _taskDroppedOnCalendar(data);
+        //   },
+        // ),
+        );
   }
 
   // switch back _isTaskListVisible to false when the drawer is closed
@@ -140,10 +162,12 @@ class TimeSlotPage extends StatelessWidget {
               valueListenable: _isTaskListVisible,
               builder: (context, value, child) {
                 return TimeSlotDrawer(
-                    isTaskListVisible: value, callBack: drawerClosingCallBack);
+                    isTaskListVisible: value, onClosing: drawerClosingCallBack);
               },
             )),
       ],
     );
   }
+
+  // void _taskDroppedOnCalendar(Task task) {}
 }

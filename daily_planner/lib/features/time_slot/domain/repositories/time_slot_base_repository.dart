@@ -23,7 +23,8 @@ class TimeSlotFakeRepository implements TimeSlotBaseRepository {
             name: 'deep work',
             priority: Priority.normal,
             isDone: false,
-            createdAt: TaskUseCases().troncateCreationTime(DateTime.now()))),
+            createdAt: TaskUseCases().troncateCreationTime(DateTime.now())),
+        createdAt: TaskUseCases().troncateCreationTime(DateTime.now())),
     TimeSlot(
         id: 2,
         startTime: const TimeOfDay(hour: 10, minute: 30),
@@ -33,7 +34,8 @@ class TimeSlotFakeRepository implements TimeSlotBaseRepository {
             name: 'GPE',
             priority: Priority.normal,
             isDone: false,
-            createdAt: TaskUseCases().troncateCreationTime(DateTime.now()))),
+            createdAt: TaskUseCases().troncateCreationTime(DateTime.now())),
+        createdAt: TaskUseCases().troncateCreationTime(DateTime.now())),
     TimeSlot(
         id: 3,
         startTime: const TimeOfDay(hour: 12, minute: 45),
@@ -43,7 +45,8 @@ class TimeSlotFakeRepository implements TimeSlotBaseRepository {
             name: 'almuerzo',
             priority: Priority.normal,
             isDone: false,
-            createdAt: TaskUseCases().troncateCreationTime(DateTime.now()))),
+            createdAt: TaskUseCases().troncateCreationTime(DateTime.now())),
+        createdAt: TaskUseCases().troncateCreationTime(DateTime.now())),
   ];
 
   @override
