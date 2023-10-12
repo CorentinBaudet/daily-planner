@@ -1,8 +1,6 @@
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_tomorrow_page.dart';
-import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_bottom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,8 +8,7 @@ import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cu
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlotTodayPage extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _isTaskListVisible = ValueNotifier<bool>(false);
+  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   TimeSlotTodayPage({super.key});
 
@@ -64,17 +61,12 @@ class TimeSlotTodayPage extends StatelessWidget {
         );
   }
 
-  // switch back _isTaskListVisible to false when the drawer is closed
-  void drawerClosingCallBack() {
-    _isTaskListVisible.value = false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Scaffold(
-          key: _scaffoldKey,
+          // key: _scaffoldKey,
           body: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -109,13 +101,13 @@ class TimeSlotTodayPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               FloatingActionButton(
+                  heroTag: 'plan_tomorrow',
                   child: const Icon(Icons.add),
                   onPressed: () {
-                    // _isTaskListVisible.value = !_isTaskListVisible.value;
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const TimeSlotTomorrowPage(),
+                          builder: (context) => TimeSlotTomorrowPage(),
                         ));
                   }),
               const SizedBox(height: 16),
@@ -162,15 +154,6 @@ class TimeSlotTodayPage extends StatelessWidget {
           //   ),
           // ),
         ),
-        Positioned(
-            right: 0,
-            child: ValueListenableBuilder(
-              valueListenable: _isTaskListVisible,
-              builder: (context, value, child) {
-                return TimeSlotDrawer(
-                    isTaskListVisible: value, onClosing: drawerClosingCallBack);
-              },
-            )),
       ],
     );
   }

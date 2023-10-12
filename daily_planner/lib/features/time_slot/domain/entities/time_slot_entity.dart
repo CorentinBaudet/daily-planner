@@ -1,9 +1,8 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:flutter/material.dart';
 
 class TimeSlot {
   int? id;
-  final TimeOfDay startTime;
+  final DateTime startTime;
   final int duration; // in minutes
   final Task content;
   DateTime createdAt;
@@ -26,7 +25,7 @@ class TimeSlot {
     }
     return TimeSlot(
       id: json['id'],
-      startTime: json['startTime'],
+      startTime: DateTime.parse(json['startTime']),
       duration: json['duration'],
       content: content,
       createdAt: DateTime.parse(json['createdAt']),
@@ -36,7 +35,7 @@ class TimeSlot {
   Map<dynamic, dynamic> toJson() {
     return {
       'id': id,
-      'startTime': startTime,
+      'startTime': startTime.toString(),
       'duration': duration,
       'content': content.toJson(),
       'createdAt': createdAt.toString(),

@@ -2,6 +2,8 @@ import 'package:daily_planner/app.dart';
 import 'package:daily_planner/features/task/domain/repositories/task_base_repository.dart';
 import 'package:daily_planner/features/task/domain/repositories/task_local_storage_repository.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_base_repository.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -41,16 +43,45 @@ class MainApp extends StatelessWidget {
   //repository: RepositoryProvider.of<TaskFakeRepository>(context)
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<TaskBaseRepository>(
-      create: (context) => TaskLocalStorageRepository(),
-      child: BlocProvider(
-        create: (context) => TasksCubit(
-          repository: context.read<TaskBaseRepository>(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<TaskBaseRepository>(
+          create: (context) => TaskLocalStorageRepository(),
         ),
+        RepositoryProvider<TimeSlotBaseRepository>(
+          create: (context) => TimeSlotFakeRepository(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => TasksCubit(
+              repository: context.read<TaskBaseRepository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => TimeSlotCubit(
+              repository: context.read<TimeSlotBaseRepository>(),
+            ),
+          ),
+        ],
         child: const MaterialApp(title: 'Morning', home: App()),
       ),
     );
-    // ),
-    // );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return RepositoryProvider<TaskBaseRepository>(
+  //     create: (context) => TaskLocalStorageRepository(),
+  //     child: BlocProvider(
+  //       create: (context) => TasksCubit(
+  //         repository: context.read<TaskBaseRepository>(),
+  //       ),
+  //       child: const MaterialApp(title: 'Morning', home: App()),
+  //     ),
+  //   );
+  //   // ),
+  //   // );
+  // }
 }

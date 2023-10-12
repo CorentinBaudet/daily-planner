@@ -41,63 +41,67 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: widget.isTaskListVisible,
-      child: Container(
-        constraints: const BoxConstraints(
-          maxWidth: 175,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(32.0),
-            bottomLeft: Radius.circular(32.0),
+    return Material(
+      color: Colors.transparent,
+      child: Visibility(
+        visible: widget.isTaskListVisible,
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: 175,
           ),
-          color: Colors.blue.shade100,
-        ),
-        height: MediaQuery.of(context)
-            .size
-            .height, // height of the body TODO: improve
-        padding: const EdgeInsets.only(top: 24, left: 24, right: 24),
-        child: Column(
-          children: <Widget>[
-            Row(children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded),
-                padding: null,
-                onPressed: () {
-                  // close the container
-                  setState(() {
-                    widget.isTaskListVisible = false;
-                  });
-                  widget.onClosing();
-                },
-              )
-            ]),
-            const SizedBox(height: 16),
-            BlocBuilder<task_cubit.TasksCubit, task_cubit.TasksState>(
-              builder: (context, state) {
-                if (state is task_cubit.InitialState) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is task_cubit.LoadingState) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is task_cubit.LoadedState) {
-                  return Container(child: _buildTaskList(context, state.tasks));
-                } else if (state is task_cubit.ErrorState) {
-                  return const Center(
-                    child: Text('error loading tasks'),
-                  );
-                } else {
-                  return const Center(
-                    child: Text('unknown error'),
-                  );
-                }
-              },
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(32.0),
+              bottomLeft: Radius.circular(32.0),
             ),
-          ],
+            color: Colors.blue.shade100,
+          ),
+          height: MediaQuery.of(context)
+              .size
+              .height, // height of the body TODO: improve
+          padding: const EdgeInsets.only(top: 24, left: 24, right: 24),
+          child: Column(
+            children: <Widget>[
+              Row(children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios_rounded),
+                  padding: null,
+                  onPressed: () {
+                    // close the container
+                    setState(() {
+                      widget.isTaskListVisible = false;
+                    });
+                    widget.onClosing();
+                  },
+                )
+              ]),
+              const SizedBox(height: 16),
+              BlocBuilder<task_cubit.TasksCubit, task_cubit.TasksState>(
+                builder: (context, state) {
+                  if (state is task_cubit.InitialState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is task_cubit.LoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is task_cubit.LoadedState) {
+                    return Container(
+                        child: _buildTaskList(context, state.tasks));
+                  } else if (state is task_cubit.ErrorState) {
+                    return const Center(
+                      child: Text('error loading tasks'),
+                    );
+                  } else {
+                    return const Center(
+                      child: Text('unknown error'),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -117,7 +121,12 @@ class DrawerTile extends StatelessWidget {
             .showSnackBar(SnackBar(content: Text('task ${task.name} tapped')));
 
         context.read<time_slot_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
-            startTime: const TimeOfDay(hour: 14, minute: 0),
+            startTime: TaskUseCases().troncateCreationTime(DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                    14)
+                .add(const Duration(days: 1))),
             duration: 60,
             content: task,
             createdAt: TaskUseCases().troncateCreationTime(DateTime.now())));
