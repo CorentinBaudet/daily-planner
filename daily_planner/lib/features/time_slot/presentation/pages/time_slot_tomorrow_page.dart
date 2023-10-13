@@ -1,4 +1,5 @@
-import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_bottom_drawer.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
+import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -23,10 +24,11 @@ class TimeSlotTomorrowPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPlanner(List<TimeSlot> timeSlots) {
+  Widget _buildPlanner(BuildContext context, List<TimeSlot> timeSlots) {
     return Flexible(
         fit: FlexFit.loose,
         child: SfCalendar(
+          // TODO make a widget for this
           dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
           headerHeight: 0,
           backgroundColor: Colors.transparent,
@@ -38,6 +40,19 @@ class TimeSlotTomorrowPage extends StatelessWidget {
           dragAndDropSettings: const DragAndDropSettings(
             allowNavigation: false,
           ),
+          appointmentTextStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+          onTap: (calendarTapDetails) {
+            print(calendarTapDetails.date);
+            print(calendarTapDetails.appointments);
+
+            print(calendarTapDetails.appointments?[0]);
+
+            // remove the timeslot from the calendar
+            // context.read<TimeSlotCubit>().deleteTimeSlot(calendarTapDetails.appointments[0].subject);
+          },
         ));
   }
 
@@ -72,7 +87,7 @@ class TimeSlotTomorrowPage extends StatelessWidget {
                   ),
                 ]);
               } else if (state is ts_cubit.LoadedState) {
-                return _buildPlanner(state.timeSlots);
+                return _buildPlanner(context, state.timeSlots);
               } else if (state is ts_cubit.ErrorState) {
                 return const Center(
                   child: Text('error loading tasks'),

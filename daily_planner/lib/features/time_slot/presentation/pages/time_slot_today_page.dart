@@ -32,10 +32,18 @@ class TimeSlotTodayPage extends StatelessWidget {
           viewNavigationMode:
               ViewNavigationMode.none, // prevent from swiping to other days
           // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
-          // initialSelectedDate: DateTime.now(), // TODO to improve
+
           dragAndDropSettings: const DragAndDropSettings(
             allowNavigation: false,
           ),
+          appointmentTextStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+          onTap: (calendarTapDetails) {
+            print(calendarTapDetails.date);
+            print(calendarTapDetails.appointments);
+          },
         )
 
         // DragTarget<Task>(
@@ -97,39 +105,16 @@ class TimeSlotTodayPage extends StatelessWidget {
               })
             ],
           ),
-          floatingActionButton: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FloatingActionButton(
-                  heroTag: 'plan_tomorrow',
-                  child: const Icon(Icons.add),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TimeSlotTomorrowPage(),
-                        ));
-                  }),
-              const SizedBox(height: 16),
-              FloatingActionButton(
-                child: const Icon(Icons.edit_calendar_rounded),
-                onPressed: () {
-                  // Scaffold.of(context).openEndDrawer();
-                  // _scaffoldKey.currentState!.openEndDrawer();
-                  // context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
-                  //       id: 4,
-                  //       startTime: const TimeOfDay(hour: 14, minute: 0),
-                  //       duration: 60,
-                  //       content: Task(
-                  //           name: 'deep work',
-                  //           priority: Priority.normal,
-                  //           createdAt:
-                  //               TaskUseCases().troncateCreationTime(DateTime.now())),
-                  //     ));
-                },
-              ),
-            ],
-          ),
+          floatingActionButton: FloatingActionButton(
+              heroTag: 'plan_tomorrow',
+              child: const Icon(Icons.edit_calendar_rounded),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TimeSlotTomorrowPage(),
+                    ));
+              }),
           // bottomNavigationBar: BottomAppBar(
           //   elevation: 0,
           //   color: Theme.of(context).colorScheme.primary,

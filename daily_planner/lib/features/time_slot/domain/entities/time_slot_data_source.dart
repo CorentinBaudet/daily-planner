@@ -1,3 +1,4 @@
+import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -13,22 +14,25 @@ class TimeSlotDataSource extends CalendarDataSource {
 
     for (var timeSlot in timeSlots) {
       appointments.add(Appointment(
+        id: timeSlot.id,
         startTime: DateTime(
-            DateTime.now().year,
-            DateTime.now().month,
-            DateTime.now().day,
+            timeSlot.startTime.year,
+            timeSlot.startTime.month,
+            timeSlot.startTime.day,
             timeSlot.startTime.hour,
             timeSlot.startTime.minute),
         endTime: DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day,
+                timeSlot.startTime.year,
+                timeSlot.startTime.month,
+                timeSlot.startTime.day,
                 timeSlot.startTime.hour,
                 timeSlot.startTime.minute)
             .add(Duration(minutes: timeSlot.duration)),
         isAllDay: false,
         subject: timeSlot.content.name,
-        color: Colors.grey.shade400,
+        color: timeSlot.content.runtimeType == Task
+            ? Colors.lightBlue.shade100
+            : Colors.grey.shade400,
       ));
     }
 

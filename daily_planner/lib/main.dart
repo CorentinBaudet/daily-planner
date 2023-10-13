@@ -3,6 +3,7 @@ import 'package:daily_planner/features/task/domain/repositories/task_base_reposi
 import 'package:daily_planner/features/task/domain/repositories/task_local_storage_repository.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_base_repository.dart';
+import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_local_storage_repository.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +16,7 @@ void main() async {
 
   // create unique instance of Hive box 'my_tasks'
   await Hive.openBox('my_tasks');
+  await Hive.openBox('my_time_slots');
 
   runApp(const MainApp());
 }
@@ -49,7 +51,7 @@ class MainApp extends StatelessWidget {
           create: (context) => TaskLocalStorageRepository(),
         ),
         RepositoryProvider<TimeSlotBaseRepository>(
-          create: (context) => TimeSlotFakeRepository(),
+          create: (context) => TimeSlotLocalStorageRepository(),
         ),
       ],
       child: MultiBlocProvider(

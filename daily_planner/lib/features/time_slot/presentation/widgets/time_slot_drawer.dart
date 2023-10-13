@@ -117,9 +117,6 @@ class DrawerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('task ${task.name} tapped')));
-
         context.read<time_slot_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
             startTime: TaskUseCases().troncateCreationTime(DateTime(
                     DateTime.now().year,
