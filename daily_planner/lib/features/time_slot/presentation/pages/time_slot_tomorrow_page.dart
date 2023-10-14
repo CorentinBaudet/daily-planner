@@ -51,7 +51,16 @@ class TimeSlotTomorrowPage extends StatelessWidget {
             print(calendarTapDetails.appointments?[0]);
 
             // remove the timeslot from the calendar
-            // context.read<TimeSlotCubit>().deleteTimeSlot(calendarTapDetails.appointments[0].subject);
+            if (calendarTapDetails.appointments?.isNotEmpty ?? false) {
+              return;
+            }
+
+            Appointment appointmentToDelete = calendarTapDetails.appointments!
+                .firstWhere((element) => element.id);
+
+            context
+                .read<TimeSlotCubit>()
+                .deleteTimeSlot(appointmentToDelete.id as int);
           },
         ));
   }
