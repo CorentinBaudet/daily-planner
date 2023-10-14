@@ -45,22 +45,12 @@ class TimeSlotTomorrowPage extends StatelessWidget {
             fontSize: 12,
           ),
           onTap: (calendarTapDetails) {
-            print(calendarTapDetails.date);
-            print(calendarTapDetails.appointments);
-
-            print(calendarTapDetails.appointments?[0]);
-
-            // remove the timeslot from the calendar
-            if (calendarTapDetails.appointments?.isNotEmpty ?? false) {
+            if (calendarTapDetails.appointments == null) {
               return;
             }
 
-            Appointment appointmentToDelete = calendarTapDetails.appointments!
-                .firstWhere((element) => element.id);
-
-            context
-                .read<TimeSlotCubit>()
-                .deleteTimeSlot(appointmentToDelete.id as int);
+            context.read<TimeSlotCubit>().deleteTimeSlot(
+                calendarTapDetails.appointments!.first.id as int);
           },
         ));
   }

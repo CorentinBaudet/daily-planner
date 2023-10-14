@@ -54,7 +54,7 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
               topLeft: Radius.circular(32.0),
               bottomLeft: Radius.circular(32.0),
             ),
-            color: Colors.blue.shade100,
+            color: Colors.grey.shade100,
           ),
           height: MediaQuery.of(context)
               .size
