@@ -1,10 +1,16 @@
-import 'package:daily_planner/constants/intl.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 
 class TaskUseCases {
-  DateTime troncateCreationTime(DateTime createdAt) {
-    return ConstantsIntl.dateTimeFormat
-        .parse(ConstantsIntl.dateTimeFormat.format(createdAt));
+  // method to retrieve tasks that are not done
+  List<Task> getUndoneTasks(List<Task> tasks) {
+    return tasks.where((task) => !task.isDone).toList(growable: false);
+  }
+
+  // method to retrieve tasks that are not planned
+  List<Task> getUnplannedTasks(List<Task> tasks) {
+    return tasks
+        .where((task) => !task.isPlanned && !task.isDone)
+        .toList(growable: false);
   }
 
   // method to sort tasks by both creation date and priority

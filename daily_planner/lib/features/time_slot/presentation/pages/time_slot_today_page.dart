@@ -8,9 +8,7 @@ import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cu
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlotTodayPage extends StatelessWidget {
-  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  TimeSlotTodayPage({super.key});
+  const TimeSlotTodayPage({super.key});
 
   Widget _buildEmptyPlanner() {
     return Flexible(
@@ -32,7 +30,6 @@ class TimeSlotTodayPage extends StatelessWidget {
           viewNavigationMode:
               ViewNavigationMode.none, // prevent from swiping to other days
           // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
-
           dragAndDropSettings: const DragAndDropSettings(
             allowNavigation: false,
           ),
@@ -44,29 +41,7 @@ class TimeSlotTodayPage extends StatelessWidget {
             print(calendarTapDetails.date);
             print(calendarTapDetails.appointments);
           },
-        )
-
-        // DragTarget<Task>(
-        //   builder: (context, candidateData, rejectedData) {
-        //     return SfCalendar(
-        //       dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
-        //       headerHeight: 0,
-        //       backgroundColor: Colors.transparent,
-        //       allowDragAndDrop: true,
-        //       viewNavigationMode:
-        //           ViewNavigationMode.none, // prevent from swiping to other days
-        //       // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
-        //       // initialSelectedDate: DateTime.now(), // TODO to improve
-        //       dragAndDropSettings: const DragAndDropSettings(
-        //         allowNavigation: false,
-        //       ),
-        //     );
-        //   },
-        //   onAccept: (data) {
-        //     _taskDroppedOnCalendar(data);
-        //   },
-        // ),
-        );
+        ));
   }
 
   @override
@@ -74,7 +49,6 @@ class TimeSlotTodayPage extends StatelessWidget {
     return Stack(
       children: [
         Scaffold(
-          // key: _scaffoldKey,
           body: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -115,33 +89,8 @@ class TimeSlotTodayPage extends StatelessWidget {
                       builder: (context) => TimeSlotTomorrowPage(),
                     ));
               }),
-          // bottomNavigationBar: BottomAppBar(
-          //   elevation: 0,
-          //   color: Theme.of(context).colorScheme.primary,
-          //   child: Container(
-          //     padding: EdgeInsets.symmetric(horizontal: 10.0),
-          //     height: 56.0,
-          //     child: Row(children: <Widget>[
-          //       IconButton(
-          //         // onPressed: showMenu(context),
-          //         onPressed: () {
-          //           showModalBottomSheet(
-          //               context: context,
-          //               backgroundColor: Colors.transparent,
-          //               builder: (BuildContext context) {
-          //                 return TimeSlotBottomDrawer();
-          //               });
-          //         },
-          //         icon: Icon(Icons.menu),
-          //         color: Colors.white,
-          //       ),
-          //     ]),
-          //   ),
-          // ),
         ),
       ],
     );
   }
-
-  // void _taskDroppedOnCalendar(Task task) {}
 }

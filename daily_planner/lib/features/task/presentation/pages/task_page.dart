@@ -1,8 +1,8 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/domain/usecases/task_usecases.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/task/presentation/widgets/task_add_dialog.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_delete_mode_widgets.dart';
-import 'package:daily_planner/features/task/presentation/widgets/task_floating_add_button.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_list_tile.dart';
 import 'package:daily_planner/utils/double_value_listenable_builder.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +18,7 @@ class TaskPage extends StatelessWidget {
 
   Widget _buildTaskList(
       BuildContext context, List<Task> tasks, List<Task> selectedTasks) {
+    tasks = TaskUseCases().getUndoneTasks(tasks);
     tasks = TaskUseCases().sortTasks(tasks);
 
     return tasks.isEmpty
@@ -62,7 +63,7 @@ class TaskPage extends StatelessWidget {
     if (!_isDeleteModeOn.value) {
       _selectedTasks.clear();
     }
-    context.read<TasksCubit>().getAllTasks();
+    context.read<TasksCubit>().getTasks();
   }
 
   _handleSelectedTask(
@@ -129,6 +130,16 @@ class TaskPage extends StatelessWidget {
             ),
           ],
         ),
-        floatingActionButton: const TaskFloatingAddButton());
+        floatingActionButton: FloatingActionButton(
+          // open dialog to add a new task
+          onPressed: () {
+            showDialog(
+              context: context,
+              useRootNavigator: false,
+              builder: (context) => const TaskAddDialog(),
+            );
+          },
+          child: const Icon(Icons.add),
+        ));
   }
 }

@@ -8,12 +8,12 @@ part 'time_slot_state.dart';
 
 class TimeSlotCubit extends Cubit<TimeSlotState> {
   TimeSlotCubit({required this.repository}) : super(InitialState()) {
-    getAllTimeSlots();
+    getTimeSlots();
   }
 
   final TimeSlotBaseRepository repository;
 
-  void getAllTimeSlots() {
+  void getTimeSlots() {
     try {
       emit(LoadingState());
       final timeSlots = repository.getTimeSlots();
@@ -27,7 +27,7 @@ class TimeSlotCubit extends Cubit<TimeSlotState> {
     try {
       emit(LoadingState());
       await repository.create(timeSlot);
-      getAllTimeSlots();
+      getTimeSlots();
     } catch (e) {
       emit(ErrorState(message: e.toString()));
     }
@@ -37,7 +37,7 @@ class TimeSlotCubit extends Cubit<TimeSlotState> {
     try {
       emit(LoadingState());
       await repository.delete(id);
-      getAllTimeSlots();
+      getTimeSlots();
     } catch (e) {
       emit(ErrorState(message: e.toString()));
     }

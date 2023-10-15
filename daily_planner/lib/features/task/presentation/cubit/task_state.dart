@@ -24,12 +24,10 @@ class LoadedState extends TasksState {
 }
 
 class ErrorState extends TasksState {
-  // final String message;
+  final String message;
 
-  // const ErrorState({required this.message});
+  const ErrorState({required this.message});
 
-  // @override
-  // List<Object> get props => [message];
   @override
   List<Object> get props => [];
 }

@@ -1,10 +1,10 @@
+import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/task/domain/usecases/task_usecases.dart';
 
 class TaskAddDialog extends StatefulWidget {
   const TaskAddDialog({super.key});
@@ -21,6 +21,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
 
+    // TODO extract this widget to a separate file ?
     Widget prioritySwitch = FlutterSwitch(
       width: 110.0,
       height: 35.0,
@@ -90,8 +91,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
             context.read<TasksCubit>().createTask(Task(
                 name: taskNameController.text,
                 priority: isHighPriority ? Priority.high : Priority.normal,
-                createdAt:
-                    TaskUseCases().troncateCreationTime(DateTime.now())));
+                createdAt: Utils().troncateCreationTime(DateTime.now())));
 
             Navigator.of(context).pop();
           },

@@ -21,18 +21,11 @@ class TaskLocalStorageRepository implements TaskBaseRepository {
   }
 
   @override
-  List<Task> getUndoneTasks() {
-    // get all tasks from Hive box 'my_tasks'
-    final tasks = _myTasks.values;
+  Task getTask(int id) {
+    // get a task by id from Hive box 'my_tasks'
+    final task = getTasks().firstWhere((task) => task.id == id);
 
-    List<Task> taskList = [];
-
-    for (var task in tasks) {
-      Task.fromJson(task).isDone == false
-          ? taskList.add(Task.fromJson(task))
-          : null;
-    }
-    return taskList;
+    return task;
   }
 
   @override

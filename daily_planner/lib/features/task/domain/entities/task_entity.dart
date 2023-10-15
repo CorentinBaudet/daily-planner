@@ -5,8 +5,9 @@ class Task {
   int? id;
   final String name;
   final Priority priority;
-  bool isDone;
   final DateTime createdAt;
+  bool isDone;
+  bool isPlanned;
 
   Task({
     // super.id,
@@ -14,8 +15,9 @@ class Task {
     this.id,
     required this.name,
     required this.priority,
-    this.isDone = false,
     required this.createdAt,
+    this.isDone = false,
+    this.isPlanned = false,
   });
 
   factory Task.fromJson(Map<dynamic, dynamic> json) {
@@ -26,8 +28,9 @@ class Task {
         (priority) => priority.toString() == 'Priority.${json['priority']}',
         orElse: () => Priority.normal,
       ),
-      isDone: json['isDone'] as bool,
       createdAt: DateTime.parse(json['createdAt']),
+      isDone: json['isDone'] as bool,
+      isPlanned: json['isPlanned'] as bool,
     );
   }
 
@@ -37,8 +40,9 @@ class Task {
       'id': id,
       'name': name,
       'priority': priority.toString().split('.').last,
-      'isDone': isDone,
       'createdAt': createdAt.toString(),
+      'isDone': isDone,
+      'isPlanned': isPlanned,
     };
   }
 }

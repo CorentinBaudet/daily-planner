@@ -1,3 +1,7 @@
+import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/task/domain/repositories/task_local_storage_repository.dart';
+import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_local_storage_repository.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_drawer.dart';
 import 'package:flutter/material.dart';
@@ -49,8 +53,17 @@ class TimeSlotTomorrowPage extends StatelessWidget {
               return;
             }
 
-            context.read<TimeSlotCubit>().deleteTimeSlot(
-                calendarTapDetails.appointments!.first.id as int);
+            Appointment appointment = calendarTapDetails.appointments!.first;
+            TimeSlot timeSlot = TimeSlotLocalStorageRepository()
+                .getTimeSlot(appointment.id as int);
+
+            // if the content is a task, update isPlanned to false
+            Task task = TaskLocalStorageRepository().getTask(timeSlot.content.id
+                as int); // TODO condition to check is the content is a task
+            task.isPlanned = false;
+            context.read<TasksCubit>().updateTask(task);
+
+            context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);
           },
         ));
   }
@@ -105,29 +118,6 @@ class TimeSlotTomorrowPage extends StatelessWidget {
             onPressed: () {
               _isTaskListVisible.value = !_isTaskListVisible.value;
             }),
-        // bottomNavigationBar: BottomAppBar(
-        //   elevation: 0,
-        //   color: Theme.of(context).colorScheme.primary,
-        //   child: Container(
-        //     padding: EdgeInsets.symmetric(horizontal: 10.0),
-        //     height: 56.0,
-        //     child: Row(children: <Widget>[
-        //       IconButton(
-        //         // onPressed: showMenu(context),
-        //         onPressed: () {
-        //           showModalBottomSheet(
-        //               context: context,
-        //               backgroundColor: Colors.transparent,
-        //               builder: (BuildContext context) {
-        //                 return TimeSlotBottomDrawer();
-        //               });
-        //         },
-        //         icon: Icon(Icons.menu),
-        //         color: Colors.white,
-        //       ),
-        //     ]),
-        //   ),
-        // ),
       ),
       Positioned(
           right: 0,

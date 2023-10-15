@@ -20,6 +20,13 @@ class TimeSlotLocalStorageRepository extends TimeSlotBaseRepository {
   }
 
   @override
+  TimeSlot getTimeSlot(int id) {
+    final timeSlot = getTimeSlots().firstWhere((timeSlot) => timeSlot.id == id);
+
+    return timeSlot;
+  }
+
+  @override
   Future<void> create(TimeSlot timeSlot) async {
     timeSlot.id = timeSlot.hashCode;
     await _myTimeSlots.put(timeSlot.id, timeSlot.toJson());

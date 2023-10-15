@@ -7,18 +7,18 @@ part 'task_state.dart';
 
 class TasksCubit extends Cubit<TasksState> {
   TasksCubit({required this.repository}) : super(InitialState()) {
-    getAllTasks();
+    getTasks();
   }
 
   final TaskBaseRepository repository;
 
-  void getAllTasks() {
+  void getTasks() {
     try {
       emit(LoadingState());
-      final tasks = repository.getUndoneTasks();
+      final tasks = repository.getTasks();
       emit(LoadedState(tasks: tasks));
     } catch (e) {
-      emit(ErrorState());
+      emit(ErrorState(message: e.toString()));
     }
   }
 
@@ -26,9 +26,9 @@ class TasksCubit extends Cubit<TasksState> {
     try {
       emit(LoadingState());
       await repository.createTask(task);
-      getAllTasks();
+      getTasks();
     } catch (e) {
-      emit(ErrorState());
+      emit(ErrorState(message: e.toString()));
     }
   }
 
@@ -36,9 +36,9 @@ class TasksCubit extends Cubit<TasksState> {
     try {
       emit(LoadingState());
       await repository.updateTask(task);
-      getAllTasks();
+      getTasks();
     } catch (e) {
-      emit(ErrorState());
+      emit(ErrorState(message: e.toString()));
     }
   }
 
@@ -46,9 +46,9 @@ class TasksCubit extends Cubit<TasksState> {
     try {
       emit(LoadingState());
       await repository.deleteTask(id);
-      getAllTasks();
+      getTasks();
     } catch (e) {
-      emit(ErrorState());
+      emit(ErrorState(message: e.toString()));
     }
   }
 }
