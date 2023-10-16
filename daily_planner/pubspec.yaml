@@ -16,6 +16,7 @@ dependencies:
   hive_flutter: ^1.1.0
   intl: ^0.18.1
   localstorage: ^4.0.1+4
+  numberpicker: ^2.1.2
   syncfusion_flutter_calendar: ^23.1.39
   time_planner: ^0.1.2+1
 

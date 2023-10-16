@@ -22,7 +22,6 @@ class TimeSlotLocalStorageRepository extends TimeSlotBaseRepository {
   @override
   TimeSlot getTimeSlot(int id) {
     final timeSlot = getTimeSlots().firstWhere((timeSlot) => timeSlot.id == id);
-
     return timeSlot;
   }
 
@@ -40,8 +39,7 @@ class TimeSlotLocalStorageRepository extends TimeSlotBaseRepository {
 
   @override
   Future<void> update(TimeSlot timeSlot) {
-    // TODO: implement update
-    throw UnimplementedError();
+    return _myTimeSlots.put(timeSlot.id, timeSlot.toJson());
   }
 
   @override

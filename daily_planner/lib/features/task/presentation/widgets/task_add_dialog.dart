@@ -17,12 +17,8 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
   final taskNameController = TextEditingController();
   bool isHighPriority = false;
 
-  @override
-  Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-
-    // TODO extract this widget to a separate file ?
-    Widget prioritySwitch = FlutterSwitch(
+  _prioritySwitch() {
+    return FlutterSwitch(
       width: 110.0,
       height: 35.0,
       valueFontSize: 15.0,
@@ -38,6 +34,34 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
         });
       },
     );
+  }
+
+  _addButton(BuildContext context, GlobalKey<FormState> formKey) {
+    return TextButton(
+      style: ButtonStyle(
+          foregroundColor: MaterialStateColor.resolveWith(
+              (Set<MaterialState> states) => Colors.white),
+          backgroundColor:
+              MaterialStateProperty.all(Theme.of(context).colorScheme.primary)),
+      onPressed: () {
+        // use the TextFormField to validate the task name
+        if (!formKey.currentState!.validate()) {
+          return;
+        }
+        context.read<TasksCubit>().createTask(Task(
+            name: taskNameController.text,
+            priority: isHighPriority ? Priority.high : Priority.normal,
+            createdAt: Utils().troncateDateTime(DateTime.now())));
+
+        Navigator.of(context).pop();
+      },
+      child: const Text('add'),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
       title: const Text('new task'),
@@ -64,7 +88,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
               ),
             ),
             const SizedBox(height: 30),
-            prioritySwitch,
+            _prioritySwitch(),
           ],
         ),
       ),
@@ -76,27 +100,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
           },
           child: const Text('cancel'),
         ),
-        TextButton(
-          style: ButtonStyle(
-              foregroundColor: MaterialStateColor.resolveWith(
-                  (Set<MaterialState> states) => Colors.white),
-              backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.primary)),
-          onPressed: () {
-            // use the TextFormField to validate the task name
-            if (!formKey.currentState!.validate()) {
-              return;
-            }
-
-            context.read<TasksCubit>().createTask(Task(
-                name: taskNameController.text,
-                priority: isHighPriority ? Priority.high : Priority.normal,
-                createdAt: Utils().troncateCreationTime(DateTime.now())));
-
-            Navigator.of(context).pop();
-          },
-          child: const Text('add'),
-        ),
+        _addButton(context, formKey),
       ],
     );
   }

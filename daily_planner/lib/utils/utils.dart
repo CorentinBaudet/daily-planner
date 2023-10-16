@@ -1,8 +1,12 @@
 import 'package:daily_planner/constants/intl.dart';
 
 class Utils {
-  DateTime troncateCreationTime(DateTime createdAt) {
+  DateTime troncateDateTime(DateTime dateTime) {
     return ConstantsIntl.dateTimeFormat
-        .parse(ConstantsIntl.dateTimeFormat.format(createdAt));
+        .parse(ConstantsIntl.dateTimeFormat.format(dateTime));
+  }
+
+  String formatTime(DateTime time) {
+    return ConstantsIntl.timeFormat.format(time);
   }
 }

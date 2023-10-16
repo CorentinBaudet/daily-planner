@@ -10,10 +10,6 @@ class App extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          title: const Text('today'),
-        ),
         body: TabBarView(children: [
           TimeSlotTodayPage(),
           TaskPage(),

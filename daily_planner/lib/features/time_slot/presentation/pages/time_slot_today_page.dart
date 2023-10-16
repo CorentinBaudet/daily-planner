@@ -20,28 +20,28 @@ class TimeSlotTodayPage extends StatelessWidget {
   }
 
   Widget _buildPlanner(List<TimeSlot> timeSlots) {
-    return Flexible(
-        fit: FlexFit.loose,
-        child: SfCalendar(
-          dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
-          headerHeight: 0,
-          backgroundColor: Colors.transparent,
-          allowDragAndDrop: true,
-          viewNavigationMode:
-              ViewNavigationMode.none, // prevent from swiping to other days
-          // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
-          dragAndDropSettings: const DragAndDropSettings(
-            allowNavigation: false,
-          ),
-          appointmentTextStyle: const TextStyle(
-            color: Colors.black,
-            fontSize: 12,
-          ),
-          onTap: (calendarTapDetails) {
-            print(calendarTapDetails.date);
-            print(calendarTapDetails.appointments);
-          },
-        ));
+    return Expanded(
+      child: SfCalendar(
+        dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
+        headerHeight: 0,
+        backgroundColor: Colors.transparent,
+        allowDragAndDrop: true,
+        viewNavigationMode:
+            ViewNavigationMode.none, // prevent from swiping to other days
+        // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
+        dragAndDropSettings: const DragAndDropSettings(
+          allowNavigation: false,
+        ),
+        appointmentTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 12,
+        ),
+        onTap: (calendarTapDetails) {
+          print(calendarTapDetails.date);
+          print(calendarTapDetails.appointments);
+        },
+      ),
+    );
   }
 
   @override
@@ -49,6 +49,9 @@ class TimeSlotTodayPage extends StatelessWidget {
     return Stack(
       children: [
         Scaffold(
+          appBar: AppBar(
+              backgroundColor: Theme.of(context).primaryColor,
+              title: const Text('today')),
           body: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -59,12 +62,9 @@ class TimeSlotTodayPage extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is LoadingState) {
-                  return Stack(children: [
-                    _buildEmptyPlanner(),
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ]);
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 } else if (state is LoadedState) {
                   return _buildPlanner(state.timeSlots);
                 } else if (state is ErrorState) {

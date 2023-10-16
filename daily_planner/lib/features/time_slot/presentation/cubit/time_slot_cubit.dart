@@ -33,6 +33,16 @@ class TimeSlotCubit extends Cubit<TimeSlotState> {
     }
   }
 
+  void updateTimeSlot(TimeSlot timeSlot) async {
+    try {
+      emit(LoadingState());
+      await repository.update(timeSlot);
+      getTimeSlots();
+    } catch (e) {
+      emit(ErrorState(message: e.toString()));
+    }
+  }
+
   void deleteTimeSlot(int id) async {
     try {
       emit(LoadingState());

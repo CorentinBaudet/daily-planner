@@ -82,6 +82,10 @@ class TaskPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          title: const Text('tasks'),
+        ),
         body: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -135,7 +139,6 @@ class TaskPage extends StatelessWidget {
           onPressed: () {
             showDialog(
               context: context,
-              useRootNavigator: false,
               builder: (context) => const TaskAddDialog(),
             );
           },

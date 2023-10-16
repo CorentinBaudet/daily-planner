@@ -21,15 +21,12 @@ class TimeSlotDrawerListTile extends StatelessWidget {
         context.read<TasksCubit>().updateTask(task);
 
         context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
-            startTime: Utils().troncateCreationTime(DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month,
-                    DateTime.now().day,
-                    14)
+            startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
+                    DateTime.now().month, DateTime.now().day, 14)
                 .add(const Duration(days: 1))),
             duration: 60,
             content: task,
-            createdAt: Utils().troncateCreationTime(DateTime.now())));
+            createdAt: Utils().troncateDateTime(DateTime.now())));
       },
       child: Container(
         height: 56,

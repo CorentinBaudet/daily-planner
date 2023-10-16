@@ -2,8 +2,8 @@ import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 
 class TimeSlot {
   int? id;
-  final DateTime startTime;
-  final int duration; // in minutes
+  DateTime startTime;
+  int duration; // in minutes
   final Task content;
   DateTime createdAt;
 
