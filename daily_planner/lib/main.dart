@@ -17,6 +17,7 @@ void main() async {
   // create unique instance of Hive box 'my_tasks'
   await Hive.openBox('my_tasks');
   await Hive.openBox('my_time_slots');
+  await Hive.openBox('my_blocks');
 
   runApp(const MainApp());
 }
@@ -24,25 +25,6 @@ void main() async {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return RepositoryProvider<TaskBaseRepository>(
-  //     create: (context) => TaskFakeRepository(),
-  //     child: BlocProvider(
-  //       create: (context) => TasksCubit(
-  //           repository: RepositoryProvider.of<TaskFakeRepository>(context)),
-  //       child: const MaterialApp(
-  //         home: Scaffold(
-  //           body: Center(
-  //             child: TaskList(),
-  //             // Text('Hello World!'),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-  //repository: RepositoryProvider.of<TaskFakeRepository>(context)
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -71,19 +53,4 @@ class MainApp extends StatelessWidget {
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return RepositoryProvider<TaskBaseRepository>(
-  //     create: (context) => TaskLocalStorageRepository(),
-  //     child: BlocProvider(
-  //       create: (context) => TasksCubit(
-  //         repository: context.read<TaskBaseRepository>(),
-  //       ),
-  //       child: const MaterialApp(title: 'Morning', home: App()),
-  //     ),
-  //   );
-  //   // ),
-  //   // );
-  // }
 }

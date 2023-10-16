@@ -25,7 +25,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
                     DateTime.now().month, DateTime.now().day, 14)
                 .add(const Duration(days: 1))),
             duration: 60,
-            content: task,
+            event: task,
             createdAt: Utils().troncateDateTime(DateTime.now())));
       },
       child: Container(

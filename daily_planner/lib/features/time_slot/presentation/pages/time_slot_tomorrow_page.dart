@@ -76,7 +76,7 @@ class TimeSlotTomorrowPage extends StatelessWidget {
             return;
           } else if (result == false) {
             // if the content is a task, update isPlanned to false
-            Task task = TaskLocalStorageRepository().getTask(timeSlot.content.id
+            Task task = TaskLocalStorageRepository().getTask(timeSlot.event.id
                 as int); // TODO condition to check is the content is a task
             task.isPlanned = false;
             context.read<TasksCubit>().updateTask(task);
@@ -128,7 +128,7 @@ class TimeSlotTomorrowPage extends StatelessWidget {
                   );
                 } else if (state is ts_cubit.ErrorState) {
                   return const Center(
-                    child: Text('error loading tasks'),
+                    child: Text('error loading planning'),
                   );
                 } else {
                   return const Center(

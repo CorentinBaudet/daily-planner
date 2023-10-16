@@ -29,8 +29,8 @@ class TimeSlotDataSource extends CalendarDataSource {
                 timeSlot.startTime.minute)
             .add(Duration(minutes: timeSlot.duration)),
         isAllDay: false,
-        subject: timeSlot.content.name,
-        color: timeSlot.content.runtimeType == Task
+        subject: timeSlot.event.name,
+        color: timeSlot.event.runtimeType == Task
             ? Colors.lightBlue.shade100
             : Colors.grey.shade400,
       ));

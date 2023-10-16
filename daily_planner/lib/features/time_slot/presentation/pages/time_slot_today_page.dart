@@ -36,10 +36,6 @@ class TimeSlotTodayPage extends StatelessWidget {
           color: Colors.black,
           fontSize: 12,
         ),
-        onTap: (calendarTapDetails) {
-          print(calendarTapDetails.date);
-          print(calendarTapDetails.appointments);
-        },
       ),
     );
   }
@@ -69,7 +65,7 @@ class TimeSlotTodayPage extends StatelessWidget {
                   return _buildPlanner(state.timeSlots);
                 } else if (state is ErrorState) {
                   return const Center(
-                    child: Text('error loading tasks'),
+                    child: Text('error loading planning'),
                   );
                 } else {
                   return const Center(

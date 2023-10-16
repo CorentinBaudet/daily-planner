@@ -1,33 +1,34 @@
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event.dart';
 
 class TimeSlot {
   int? id;
   DateTime startTime;
   int duration; // in minutes
-  final Task content;
+  final TimeSlotEvent event;
   DateTime createdAt;
 
   TimeSlot({
     this.id,
     required this.startTime,
     required this.duration,
-    required this.content,
+    required this.event,
     required this.createdAt,
   });
 
   factory TimeSlot.fromJson(Map<dynamic, dynamic> json) {
-    Task content;
+    TimeSlotEvent event;
     try {
-      content = Task.fromJson(json['content']);
+      event = Task.fromJson(json['event']);
     } catch (e) {
-      // content = Block.fromJson(json['block']);
-      content = Task.fromJson(json['content']); // TODO: change to Block
+      event = Block.fromJson(json['event']);
     }
     return TimeSlot(
       id: json['id'],
       startTime: DateTime.parse(json['startTime']),
       duration: json['duration'],
-      content: content,
+      event: event,
       createdAt: DateTime.parse(json['createdAt']),
     );
   }
@@ -37,20 +38,8 @@ class TimeSlot {
       'id': id,
       'startTime': startTime.toString(),
       'duration': duration,
-      'content': content.toJson(),
+      'event': event.toJson(),
       'createdAt': createdAt.toString(),
     };
   }
-}
-
-abstract class TimeSlotContent {
-  int? id;
-  final String name;
-
-  TimeSlotContent({
-    this.id,
-    required this.name,
-  });
-
-  Map<String, dynamic> toJson();
 }

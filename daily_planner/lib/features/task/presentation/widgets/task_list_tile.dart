@@ -33,6 +33,37 @@ class _TaskListTileState extends State<TaskListTile> {
     widget.onChecked();
   }
 
+  Row _tileTrailing() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        widget.task.priority == Priority.high
+            ? const Padding(
+                padding: EdgeInsets.only(right: 3.0),
+                child: Text(
+                  '!',
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              )
+            : const Text(""),
+        // const SizedBox(width: 8),
+        widget.task.isPlanned
+            ? const Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: Icon(
+                  Icons.calendar_today_rounded,
+                  color: Colors.blue,
+                  size: 14,
+                ),
+              )
+            : const Text(""),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -68,15 +99,7 @@ class _TaskListTileState extends State<TaskListTile> {
               onChecked(context, value);
             }),
         horizontalTitleGap: 4,
-        trailing: widget.task.priority == Priority.high
-            ? const Text(
-                '!',
-                style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              )
-            : null,
+        trailing: _tileTrailing(),
       ),
     );
   }
