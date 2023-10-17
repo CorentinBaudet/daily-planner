@@ -48,7 +48,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
         if (!formKey.currentState!.validate()) {
           return;
         }
-        context.read<TasksCubit>().createTask(Task(
+        context.read<TaskCubit>().createTask(Task(
             name: taskNameController.text,
             priority: isHighPriority ? Priority.high : Priority.normal,
             createdAt: Utils().troncateDateTime(DateTime.now())));

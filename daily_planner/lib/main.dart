@@ -14,10 +14,9 @@ void main() async {
 
   await Hive.initFlutter();
 
-  // create unique instance of Hive box 'my_tasks'
   await Hive.openBox('my_tasks');
   await Hive.openBox('my_time_slots');
-  await Hive.openBox('my_blocks');
+  // await Hive.openBox('my_blocks');
 
   runApp(const MainApp());
 }
@@ -35,11 +34,14 @@ class MainApp extends StatelessWidget {
         RepositoryProvider<TimeSlotBaseRepository>(
           create: (context) => TimeSlotLocalStorageRepository(),
         ),
+        // RepositoryProvider<BlockBaseRepository>(
+        //   create: (context) => BlockLocalStorageRepository(),
+        // ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => TasksCubit(
+            create: (context) => TaskCubit(
               repository: context.read<TaskBaseRepository>(),
             ),
           ),
@@ -48,6 +50,11 @@ class MainApp extends StatelessWidget {
               repository: context.read<TimeSlotBaseRepository>(),
             ),
           ),
+          // BlocProvider(
+          //   create: (context) => BlockCubit(
+          //     repository: context.read<BlockBaseRepository>(),
+          //   ),
+          // )
         ],
         child: const MaterialApp(title: 'Morning', home: App()),
       ),

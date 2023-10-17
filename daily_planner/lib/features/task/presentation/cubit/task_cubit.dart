@@ -5,8 +5,8 @@ import 'package:equatable/equatable.dart';
 
 part 'task_state.dart';
 
-class TasksCubit extends Cubit<TasksState> {
-  TasksCubit({required this.repository}) : super(InitialState()) {
+class TaskCubit extends Cubit<TaskState> {
+  TaskCubit({required this.repository}) : super(InitialState()) {
     getTasks();
   }
 

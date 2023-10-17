@@ -29,7 +29,7 @@ class TimeSlotDrawerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TasksCubit, TasksState>(
+    return BlocBuilder<TaskCubit, TaskState>(
       builder: (context, state) {
         if (state is InitialState) {
           return const Center(

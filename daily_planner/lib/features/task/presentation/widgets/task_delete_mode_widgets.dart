@@ -41,7 +41,7 @@ class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
           }
 
           for (var task in selectedTasks) {
-            context.read<TasksCubit>().deleteTask(task.id as int);
+            context.read<TaskCubit>().deleteTask(task.id as int);
           }
           widget.toggleDeleteMode(context);
 

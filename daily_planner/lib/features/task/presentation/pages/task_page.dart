@@ -51,9 +51,7 @@ class TaskPage extends StatelessWidget {
                 task.isDone = false;
                 // and reflect the change in the UI using the scaffold key to access the context
                 // because the task's widget is not in the widget tree anymore
-                _scaffoldKey.currentContext
-                    ?.read<TasksCubit>()
-                    .updateTask(task);
+                _scaffoldKey.currentContext?.read<TaskCubit>().updateTask(task);
               })),
     );
   }
@@ -63,7 +61,7 @@ class TaskPage extends StatelessWidget {
     if (!_isDeleteModeOn.value) {
       _selectedTasks.clear();
     }
-    context.read<TasksCubit>().getTasks();
+    context.read<TaskCubit>().getTasks();
   }
 
   _handleSelectedTask(
@@ -107,7 +105,7 @@ class TaskPage extends StatelessWidget {
                 ],
               ),
             ),
-            BlocBuilder<TasksCubit, TasksState>(
+            BlocBuilder<TaskCubit, TaskState>(
               builder: (context, state) {
                 if (state is InitialState) {
                   return const Center(

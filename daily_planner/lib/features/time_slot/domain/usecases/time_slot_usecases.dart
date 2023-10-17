@@ -1,3 +1,5 @@
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/utils/utils.dart';
 
 class TimeSlotUseCases {
@@ -13,5 +15,12 @@ class TimeSlotUseCases {
       timeSlots.add(Utils().formatTime(i));
     }
     return timeSlots;
+  }
+
+  // method to retrieve timeslots that contains a block
+  List<TimeSlot> getBlockTimeSlots(List<TimeSlot> timeSlots) {
+    return timeSlots
+        .where((timeSlot) => timeSlot.event.runtimeType == Block)
+        .toList();
   }
 }

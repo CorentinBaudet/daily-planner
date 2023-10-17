@@ -18,7 +18,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
       onTap: () {
         // set the task isPlanned to true
         task.isPlanned = true;
-        context.read<TasksCubit>().updateTask(task);
+        context.read<TaskCubit>().updateTask(task);
 
         context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
             startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,

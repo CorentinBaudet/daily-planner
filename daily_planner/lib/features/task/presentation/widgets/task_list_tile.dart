@@ -28,7 +28,7 @@ class _TaskListTileState extends State<TaskListTile> {
 
   onChecked(BuildContext context, bool? value) {
     widget.task.isDone = value!;
-    context.read<TasksCubit>().updateTask(widget.task);
+    context.read<TaskCubit>().updateTask(widget.task);
 
     widget.onChecked();
   }

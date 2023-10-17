@@ -64,7 +64,7 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
             Task task = TaskLocalStorageRepository().getTask(timeSlot.event.id
                 as int); // TODO condition to check is the content is a task
             task.isPlanned = false;
-            context.read<TasksCubit>().updateTask(task);
+            context.read<TaskCubit>().updateTask(task);
 
             // and delete the time slot
             context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);
