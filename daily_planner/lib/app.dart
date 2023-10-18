@@ -11,11 +11,8 @@ class App extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        body: TabBarView(children: [
-          const TimeSlotTodayPage(),
-          TaskPage(),
-          const BlockPage()
-        ]),
+        body: TabBarView(
+            children: [const TimeSlotTodayPage(), TaskPage(), BlockPage()]),
         bottomNavigationBar: BottomAppBar(
           child: TabBar(
             isScrollable: false,

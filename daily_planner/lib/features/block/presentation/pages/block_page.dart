@@ -1,13 +1,19 @@
 import 'package:daily_planner/features/block/presentation/widgets/block_add_dialog.dart';
+import 'package:daily_planner/features/block/presentation/widgets/block_delete_mode_widgets.dart';
+import 'package:daily_planner/features/block/presentation/widgets/block_list_tile.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
-import 'package:daily_planner/utils/utils.dart';
+import 'package:daily_planner/utils/double_value_listenable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlockPage extends StatelessWidget {
-  const BlockPage({super.key});
+  final _isDeleteModeOn = ValueNotifier<bool>(false);
+  final _selectedBlocks = List<TimeSlot>.empty(growable: true);
+  final _selectedBlocksNb = ValueNotifier<int>(0);
+
+  BlockPage({super.key});
 
   _buildBlockList(BuildContext context, List<TimeSlot> timeSlots) {
     timeSlots = TimeSlotUseCases().getBlockTimeSlots(timeSlots);
@@ -19,27 +25,34 @@ class BlockPage extends StatelessWidget {
         : ListView.builder(
             itemCount: timeSlots.length,
             itemBuilder: (context, index) {
-              final timeSlot = timeSlots[index];
-              return ListTile(
-                title: Text(timeSlot.event.name),
-                trailing: Column(
-                  children: [
-                    Text(Utils().formatTime(timeSlot.startTime)),
-                    const Text('|'),
-                    Text(Utils().formatTime(timeSlot.startTime
-                        .add(Duration(minutes: timeSlot.duration)))),
-                  ],
-                ),
-                contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
-                shape: ShapeBorder.lerp(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    1),
-              );
+              return BlockListTile(
+                  timeSlot: timeSlots[index],
+                  onLongPress: (() => _toggleDeleteMode(context)),
+                  isDeleteModeOn: _isDeleteModeOn.value,
+                  onSelected: (timeSlot) =>
+                      _handleSelectedBlock(context, timeSlot, _selectedBlocks));
             },
           );
+  }
+
+  _toggleDeleteMode(BuildContext context) {
+    _isDeleteModeOn.value = !_isDeleteModeOn.value;
+    if (!_isDeleteModeOn.value) {
+      _selectedBlocks.clear();
+    }
+    context.read<TimeSlotCubit>().getTimeSlots();
+  }
+
+  _handleSelectedBlock(
+      BuildContext context, TimeSlot timeSlot, List<TimeSlot> selectedTasks) {
+    selectedTasks.where((element) => element.id == timeSlot.id).isEmpty
+        ? selectedTasks.add(timeSlot)
+        : selectedTasks.remove(
+            selectedTasks.firstWhere((element) => element.id == timeSlot.id));
+    selectedTasks.isEmpty ? _toggleDeleteMode(context) : null;
+
+    // to update the number of selected tasks for the delete mode widgets
+    _selectedBlocksNb.value = selectedTasks.length;
   }
 
   @override
@@ -49,6 +62,20 @@ class BlockPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
           title: const Text('blocks'),
+          actions: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              DoubleValueListenableBuilder(
+                first: _isDeleteModeOn,
+                second: _selectedBlocksNb,
+                builder: (context, first, second, child) =>
+                    BlockDeleteModeWidgets(
+                        isDeleteModeOn: first,
+                        selectedTimeSlots: _selectedBlocks,
+                        selectedTimeSlotsNb: second,
+                        toggleDeleteMode: _toggleDeleteMode),
+              )
+            ])
+          ],
         ),
         body: BlocBuilder<TimeSlotCubit, TimeSlotState>(
           builder: (context, state) {

@@ -1,10 +1,11 @@
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:flutter/material.dart';
 
-class TaskDeleteConfirmationDialog extends StatelessWidget {
-  final List<Task> selectedTasks;
+class BlockDeleteConfirmationDialog extends StatelessWidget {
+  final List<TimeSlot> selectedBlocks;
 
-  const TaskDeleteConfirmationDialog({super.key, required this.selectedTasks});
+  const BlockDeleteConfirmationDialog(
+      {super.key, required this.selectedBlocks});
 
   @override
   Widget build(BuildContext context) {
@@ -18,21 +19,20 @@ class TaskDeleteConfirmationDialog extends StatelessWidget {
       onPressed: () => Navigator.of(context).pop(true),
     );
 
-    // set up the AlertDialog
-    return selectedTasks.length == 1
+    return selectedBlocks.length == 1
         ? AlertDialog(
-            title: const Text("delete task"),
+            title: const Text("delete block"),
             content: Text(
-                'would you like to permanently delete "${selectedTasks.first.name}"?'),
+                'would you like to permanently delete "${selectedBlocks.first.event.name}"?'),
             actions: [
               noButton,
               yesButton,
             ],
           )
         : AlertDialog(
-            title: const Text("delete tasks"),
+            title: const Text("delete blocks"),
             content: Text(
-                'would you like to permanently delete ${selectedTasks.length} tasks?'),
+                'would you like to permanently delete ${selectedBlocks.length} blocks?'),
             actions: [
               noButton,
               yesButton,

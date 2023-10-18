@@ -56,11 +56,10 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
             }
             context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
                 startTime: Utils().troncateDateTime(DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
-                        14)
-                    .add(const Duration(days: 1))),
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                    15)),
                 duration: 60,
                 event: Block(name: blockNameController.text, isWork: true),
                 createdAt: Utils().troncateDateTime(DateTime.now())));

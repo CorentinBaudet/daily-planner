@@ -24,18 +24,21 @@ class TaskPage extends StatelessWidget {
     return tasks.isEmpty
         ? const Center(child: Text("no tasks yet"))
         : Expanded(
-            child: ListView.builder(
-              itemCount: tasks.length,
-              itemBuilder: (BuildContext context, int index) {
-                return TaskListTile(
-                  task: tasks[index],
-                  onChecked: () => _handleCheckedTask(context, tasks[index]),
-                  onLongPress: (() => _toggleDeleteMode(context)),
-                  isDeleteModeOn: _isDeleteModeOn.value,
-                  onSelected: (task) =>
-                      _handleSelectedTask(context, task, selectedTasks),
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16.0, right: 16.0),
+              child: ListView.builder(
+                itemCount: tasks.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return TaskListTile(
+                    task: tasks[index],
+                    onChecked: () => _handleCheckedTask(context, tasks[index]),
+                    onLongPress: (() => _toggleDeleteMode(context)),
+                    isDeleteModeOn: _isDeleteModeOn.value,
+                    onSelected: (task) =>
+                        _handleSelectedTask(context, task, selectedTasks),
+                  );
+                },
+              ),
             ),
           );
   }
@@ -83,28 +86,24 @@ class TaskPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
           title: const Text('tasks'),
+          actions: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              DoubleValueListenableBuilder(
+                first: _isDeleteModeOn,
+                second: _selectedTasksNb,
+                builder: (context, first, second, child) =>
+                    TaskDeleteModeWidgets(
+                        isDeleteModeOn: first,
+                        selectedTasks: _selectedTasks,
+                        selectedTasksNb: second,
+                        toggleDeleteMode: _toggleDeleteMode),
+              )
+            ])
+          ],
         ),
         body: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DoubleValueListenableBuilder(
-                    first: _isDeleteModeOn,
-                    second: _selectedTasksNb,
-                    builder: (context, first, second, child) =>
-                        TaskDeleteModeWidgets(
-                            isDeleteModeOn: first,
-                            selectedTasks: _selectedTasks,
-                            selectedTasksNb: second,
-                            toggleDeleteMode: _toggleDeleteMode),
-                  )
-                ],
-              ),
-            ),
             BlocBuilder<TaskCubit, TaskState>(
               builder: (context, state) {
                 if (state is InitialState) {

@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class TaskListTile extends StatefulWidget {
   final Task task;
   final VoidCallback onChecked; // callback for task check snackbar
-  final VoidCallback onLongPress; // callback for delete
+  final VoidCallback onLongPress; // callback for delete mode
   final bool isDeleteModeOn;
   final void Function(Task) onSelected;
 

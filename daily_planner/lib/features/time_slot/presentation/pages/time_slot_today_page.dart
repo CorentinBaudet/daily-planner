@@ -10,15 +10,6 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class TimeSlotTodayPage extends StatelessWidget {
   const TimeSlotTodayPage({super.key});
 
-  Widget _buildEmptyPlanner() {
-    return Flexible(
-      fit: FlexFit.loose,
-      child: SfCalendar(
-        headerHeight: 0,
-      ),
-    );
-  }
-
   Widget _buildPlanner(List<TimeSlot> timeSlots) {
     return Expanded(
       child: SfCalendar(

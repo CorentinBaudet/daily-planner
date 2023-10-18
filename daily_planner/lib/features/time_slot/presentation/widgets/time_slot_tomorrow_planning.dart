@@ -25,13 +25,14 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
     return Expanded(
       child: SfCalendar(
         // TODO make a widget for this
-        dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
+        dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots,
+            isTomorrow: true),
         headerHeight: 0,
         backgroundColor: Colors.transparent,
         allowDragAndDrop: true,
         viewNavigationMode:
             ViewNavigationMode.none, // prevent from swiping to other days
-        // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
+        // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35), // reduce the width of the time ruler
         initialDisplayDate: DateTime.now().add(const Duration(days: 1)),
         dragAndDropSettings: const DragAndDropSettings(
           allowNavigation: false,

@@ -1,28 +1,28 @@
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/task/presentation/widgets/task_delete_confirmation_dialog.dart';
+import 'package:daily_planner/features/block/presentation/widgets/block_delete_confirmation_dialog.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TaskDeleteModeWidgets extends StatefulWidget {
+class BlockDeleteModeWidgets extends StatefulWidget {
   final bool isDeleteModeOn;
-  final List<Task> selectedTasks;
-  final int selectedTasksNb;
+  final List<TimeSlot> selectedTimeSlots;
+  final int selectedTimeSlotsNb;
   final void Function(BuildContext context) toggleDeleteMode;
 
-  const TaskDeleteModeWidgets(
+  const BlockDeleteModeWidgets(
       {super.key,
       required this.isDeleteModeOn,
-      required this.selectedTasks,
-      required this.selectedTasksNb,
+      required this.selectedTimeSlots,
+      required this.selectedTimeSlotsNb,
       required this.toggleDeleteMode});
 
   @override
-  State<TaskDeleteModeWidgets> createState() => _TaskDeleteModeWidgetsState();
+  State<BlockDeleteModeWidgets> createState() => _BlockDeleteModeWidgetsState();
 }
 
-class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
-  _deleteButton(BuildContext context, List<Task> selectedTasks) {
+class _BlockDeleteModeWidgetsState extends State<BlockDeleteModeWidgets> {
+  _deleteButton(BuildContext context, List<TimeSlot> selectedTimeSlots) {
     return IconButton(
         icon: const Icon(Icons.delete_rounded),
         iconSize: 20,
@@ -30,8 +30,8 @@ class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
           bool result = await showDialog(
               context: context,
               builder: (BuildContext context) {
-                return TaskDeleteConfirmationDialog(
-                  selectedTasks: selectedTasks,
+                return BlockDeleteConfirmationDialog(
+                  selectedBlocks: selectedTimeSlots,
                 );
               });
 
@@ -40,8 +40,8 @@ class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
             return; // to avoid calling context on widget off the tree (here because of the async gap created by the dialog)
           }
 
-          for (var task in selectedTasks) {
-            context.read<TaskCubit>().deleteTask(task.id as int);
+          for (var timeSlot in selectedTimeSlots) {
+            context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);
           }
           widget.toggleDeleteMode(context);
 
@@ -68,10 +68,10 @@ class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
             },
           ),
           const SizedBox(width: 8),
-          Text(widget.selectedTasksNb.toString(),
+          Text(widget.selectedTimeSlotsNb.toString(),
               style: const TextStyle(fontSize: 16)),
           const SizedBox(width: 8),
-          _deleteButton(context, widget.selectedTasks),
+          _deleteButton(context, widget.selectedTimeSlots),
         ],
       ),
     );
