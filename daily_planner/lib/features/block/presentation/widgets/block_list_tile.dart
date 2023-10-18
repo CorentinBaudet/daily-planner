@@ -40,27 +40,70 @@ class _BlockListTileState extends State<BlockListTile> {
           widget.onSelected(widget.timeSlot);
         }
       },
-      child: ListTile(
-        tileColor: widget.isDeleteModeOn
-            ? (isSelected ? Colors.grey[300] : Colors.transparent)
-            : () {
-                isSelected = false;
-                return Colors.transparent;
-              }(),
-        title: Text(widget.timeSlot.event.name),
-        trailing: Column(
-          children: [
-            Text(Utils().formatTime(widget.timeSlot.startTime)),
-            const Text('|'),
-            Text(Utils().formatTime(widget.timeSlot.startTime
-                .add(Duration(minutes: widget.timeSlot.duration)))),
-          ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+          decoration: BoxDecoration(
+              color: Colors.blueGrey.shade50,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.grey,
+                  offset: Offset(0.0, 1.0),
+                  blurRadius: 4.0,
+                )
+              ]),
+          child: ListTile(
+            tileColor: widget.isDeleteModeOn
+                ? (isSelected ? Colors.grey[300] : Colors.transparent)
+                : () {
+                    isSelected = false;
+                    return Colors.transparent;
+                  }(),
+            title: Text(widget.timeSlot.event.name),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(Utils().formatTime(widget.timeSlot.startTime)),
+                    const Text('|'),
+                    Text(Utils().formatTime(widget.timeSlot.startTime
+                        .add(Duration(minutes: widget.timeSlot.duration)))),
+                  ],
+                ),
+                const SizedBox(
+                  width: 36,
+                ),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  icon: const Icon(
+                    Icons.edit_rounded,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    // open the edit dialog
+                    // showDialog(
+                    //     context: context,
+                    //     builder: (context) {
+                    //       return BlockEditDialog(
+                    //         timeSlot: widget.timeSlot,
+                    //       );
+                    //     });
+                  },
+                ),
+              ],
+            ),
+            contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+            shape: ShapeBorder.lerp(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                1),
+          ),
         ),
-        contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
-        shape: ShapeBorder.lerp(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            1),
       ),
     );
   }
