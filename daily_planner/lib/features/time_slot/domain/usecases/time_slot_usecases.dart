@@ -23,4 +23,29 @@ class TimeSlotUseCases {
         .where((timeSlot) => timeSlot.event.runtimeType == Block)
         .toList();
   }
+
+  // method to sort time slots by start time and duration
+  List<TimeSlot> sortTimeSlots(List<TimeSlot> timeSlots) {
+    timeSlots.sort((a, b) {
+      final aStart = a.startTime;
+      final bStart = b.startTime;
+      final aEnd = aStart.add(Duration(minutes: a.duration));
+      final bEnd = bStart.add(Duration(minutes: b.duration));
+
+      if (aStart.isBefore(bStart)) {
+        return -1;
+      } else if (aStart.isAfter(bStart)) {
+        return 1;
+      } else {
+        if (aEnd.isBefore(bEnd)) {
+          return -1;
+        } else if (aEnd.isAfter(bEnd)) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    });
+    return timeSlots;
+  }
 }

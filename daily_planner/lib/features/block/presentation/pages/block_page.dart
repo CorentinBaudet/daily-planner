@@ -17,6 +17,7 @@ class BlockPage extends StatelessWidget {
 
   _buildBlockList(BuildContext context, List<TimeSlot> timeSlots) {
     timeSlots = TimeSlotUseCases().getBlockTimeSlots(timeSlots);
+    timeSlots = TimeSlotUseCases().sortTimeSlots(timeSlots);
 
     return timeSlots.isEmpty
         ? const Center(

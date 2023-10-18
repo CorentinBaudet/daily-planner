@@ -56,7 +56,8 @@ class MainApp extends StatelessWidget {
           //   ),
           // )
         ],
-        child: const MaterialApp(title: 'Morning', home: App()),
+        child: const MaterialApp(
+            title: 'Morning', home: App(), debugShowCheckedModeBanner: false),
       ),
     );
   }
