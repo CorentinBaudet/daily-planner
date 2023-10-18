@@ -1,12 +1,23 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/utils/utils.dart';
+import 'package:daily_planner/constants/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:numberpicker/numberpicker.dart';
 
+// ignore: must_be_immutable
 class BlockAddDialog extends StatefulWidget {
-  const BlockAddDialog({super.key});
+  TimeSlot newBlockTimeSlot = TimeSlot(
+      startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
+          DateTime.now().month, DateTime.now().day, DateTime.now().hour + 1)),
+      duration: 60,
+      event: Block(name: "", isWork: true),
+      createdAt: Utils().troncateDateTime(DateTime.now()));
+
+  BlockAddDialog({super.key});
 
   @override
   State<BlockAddDialog> createState() => _BlockAddDialogState();
@@ -15,26 +26,112 @@ class BlockAddDialog extends StatefulWidget {
 class _BlockAddDialogState extends State<BlockAddDialog> {
   final blockNameController = TextEditingController();
 
+  Row _editStartTime(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text("start time: ",
+            style: TextStyle(color: Theme.of(context).primaryColor)),
+        const SizedBox(
+          width: 64,
+        ),
+        DropdownButton(
+          items: TimeSlotUseCases().getStartTimeSlots().map((item) {
+            return DropdownMenuItem(
+              value: item,
+              child: Text(
+                textAlign: TextAlign.center,
+                item,
+              ),
+            );
+          }).toList(),
+          value: Utils().formatTime(widget.newBlockTimeSlot.startTime),
+          icon: const Icon(null),
+          menuMaxHeight: 250,
+          onChanged: (value) {
+            setState(() => widget.newBlockTimeSlot.startTime = DateTime(
+                widget.newBlockTimeSlot.startTime.year,
+                widget.newBlockTimeSlot.startTime.month,
+                widget.newBlockTimeSlot.startTime.day,
+                ConstantsIntl.timeFormat.parse(value.toString()).hour,
+                ConstantsIntl.timeFormat.parse(value.toString()).minute));
+          },
+        ),
+      ],
+    );
+  }
+
+  Row _editDuration(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+            onPressed: () {
+              setState(() {
+                widget.newBlockTimeSlot.duration -= 15;
+              });
+            },
+            icon: const Icon(Icons.remove_rounded)),
+        NumberPicker(
+          axis: Axis.horizontal,
+          itemCount: 3,
+          itemWidth: MediaQuery.of(context).size.width * 0.15,
+          value: widget.newBlockTimeSlot.duration,
+          minValue: 15,
+          maxValue: 180,
+          step: 15,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.black, width: 0.5),
+          ),
+          onChanged: (value) =>
+              setState(() => widget.newBlockTimeSlot.duration = value),
+        ),
+        IconButton(
+            onPressed: () {
+              setState(() {
+                widget.newBlockTimeSlot.duration += 15;
+              });
+            },
+            icon: const Icon(Icons.add_rounded)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
+
     return AlertDialog(
       title: const Text('new block'),
       insetPadding: const EdgeInsets.all(0),
-      content: Form(
-        key: formKey,
-        child: TextFormField(
-          controller: blockNameController,
-          decoration: const InputDecoration(
-            hintText: 'block name',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Form(
+            key: formKey,
+            child: TextFormField(
+              controller: blockNameController,
+              decoration: const InputDecoration(
+                hintText: 'block name',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'please enter a name';
+                }
+                return null;
+              },
+            ),
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'please enter a name';
-            }
-            return null;
-          },
-        ),
+          const SizedBox(
+            height: 16,
+          ),
+          _editStartTime(context),
+          const SizedBox(
+            height: 16,
+          ),
+          _editDuration(context),
+        ],
       ),
       actions: [
         TextButton(
@@ -56,16 +153,16 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
             }
             context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
                 startTime: Utils().troncateDateTime(DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month,
-                    DateTime.now().day,
-                    15)),
-                duration: 60,
+                  widget.newBlockTimeSlot.startTime.year,
+                  widget.newBlockTimeSlot.startTime.month,
+                  widget.newBlockTimeSlot.startTime.day,
+                  widget.newBlockTimeSlot.startTime.hour,
+                  widget.newBlockTimeSlot.startTime.minute,
+                )),
+                duration: widget.newBlockTimeSlot.duration,
                 event: Block(name: blockNameController.text, isWork: true),
                 createdAt: Utils().troncateDateTime(DateTime.now())));
 
-            // context.read<BlockCubit>().createBlock(
-            //     Block(name: blockNameController.text, isWork: true));
             // close the dialog
             Navigator.of(context).pop();
           },

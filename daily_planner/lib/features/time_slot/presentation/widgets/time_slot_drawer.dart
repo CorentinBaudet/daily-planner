@@ -32,13 +32,15 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
         height: MediaQuery.of(context)
             .size
             .height, // height of the body TODO: improve
-        padding: const EdgeInsets.only(top: 24, left: 24, right: 24),
+        padding: const EdgeInsets.only(top: 24, left: 16, right: 16),
         child: Column(
           children: <Widget>[
-            Row(children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded),
-                padding: null,
+                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
+                constraints:
+                    const BoxConstraints(), // remove the padding around the icon
+                padding: EdgeInsets.zero, // remove the padding around the icon
                 onPressed: () {
                   // close the container
                   setState(() {
@@ -46,9 +48,10 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
                   });
                   widget.onClosing();
                 },
-              )
+              ),
+              // Spacer(),
+              const Text('my tasks', style: TextStyle(fontSize: 16)),
             ]),
-            const SizedBox(height: 16),
             const TimeSlotDrawerList(),
           ],
         ),
@@ -56,17 +59,3 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
     );
   }
 }
-
-
-
-// class DraggingTile extends StatelessWidget {
-//   final GlobalKey dragKey;
-//   final DrawerTile drawerTile;
-//   const DraggingTile(
-//       {super.key, required this.dragKey, required this.drawerTile});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }

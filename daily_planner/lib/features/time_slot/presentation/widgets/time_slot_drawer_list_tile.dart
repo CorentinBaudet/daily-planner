@@ -28,26 +28,36 @@ class TimeSlotDrawerListTile extends StatelessWidget {
             event: task,
             createdAt: Utils().troncateDateTime(DateTime.now())));
       },
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 0.5),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
-        ),
-        child: ListTile(
-          title: Text(task.name, style: const TextStyle(fontSize: 14)),
-          trailing: task.priority == Priority.high
-              ? const Padding(
-                  padding: EdgeInsets.all(0.0),
-                  child: Text(
-                    '!',
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          height: 56,
+          margin: const EdgeInsets.only(bottom: 9.0),
+          decoration: BoxDecoration(
+              color: Colors.lightBlue.shade100,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.grey,
+                  offset: Offset(0.0, 1.0),
+                  blurRadius: 4.0,
                 )
-              : null,
+              ]),
+          child: ListTile(
+            title: Text(task.name, style: const TextStyle(fontSize: 14)),
+            trailing: task.priority == Priority.high
+                ? const Padding(
+                    padding: EdgeInsets.all(0.0),
+                    child: Text(
+                      '!',
+                      style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : null,
+          ),
         ),
       ),
     );

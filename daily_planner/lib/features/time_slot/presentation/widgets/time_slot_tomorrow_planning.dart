@@ -1,3 +1,4 @@
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/domain/repositories/task_local_storage_repository.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
@@ -45,9 +46,13 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
           if (calendarTapDetails.appointments == null) {
             return;
           }
+
           Appointment appointment = calendarTapDetails.appointments!.first;
           TimeSlot timeSlot = TimeSlotLocalStorageRepository()
               .getTimeSlot(appointment.id as int);
+          if (timeSlot.event is Block) {
+            return; // if the content of the time slot is a block, do nothing
+          }
 
           final result = await showDialog(
             context: context,
@@ -62,8 +67,8 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
             return;
           } else if (result == false) {
             // if the content is a task, update isPlanned to false
-            Task task = TaskLocalStorageRepository().getTask(timeSlot.event.id
-                as int); // TODO condition to check is the content is a task
+            Task task =
+                TaskLocalStorageRepository().getTask(timeSlot.event.id as int);
             task.isPlanned = false;
             context.read<TaskCubit>().updateTask(task);
 

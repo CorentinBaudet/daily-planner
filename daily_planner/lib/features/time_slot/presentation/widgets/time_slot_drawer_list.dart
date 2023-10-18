@@ -13,7 +13,12 @@ class TimeSlotDrawerList extends StatelessWidget {
     tasks = TaskUseCases().sortTasks(tasks);
 
     return tasks.isEmpty
-        ? const Center(child: Text("no tasks yet"))
+        ? const Padding(
+            padding: EdgeInsets.only(top: 24.0),
+            child: Center(
+                child: Text("no tasks left",
+                    style: TextStyle(fontStyle: FontStyle.italic))),
+          )
         : Flexible(
             fit: FlexFit.tight,
             child: ListView.separated(
@@ -36,8 +41,11 @@ class TimeSlotDrawerList extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else if (state is LoadingState) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return const Padding(
+            padding: EdgeInsets.only(top: 24),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         } else if (state is LoadedState) {
           return Container(child: _buildTaskList(context, state.tasks));
