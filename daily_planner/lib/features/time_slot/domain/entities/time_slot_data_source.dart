@@ -57,7 +57,7 @@ class TimeSlotDataSource extends CalendarDataSource {
                         timeSlot.startTime.minute)
                     .add(Duration(minutes: timeSlot.duration)),
                 subject: timeSlot.event.name,
-                color: Colors.grey.shade300,
+                color: Colors.indigo.shade50,
               ));
       }
     }

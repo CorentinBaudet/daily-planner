@@ -46,16 +46,20 @@ class _BlockListTileState extends State<BlockListTile> {
         child: Container(
           margin: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 8.0),
           decoration: BoxDecoration(
-              color: widget.isDeleteModeOn
-                  ? (isSelected
+              color: () {
+                if (widget.isDeleteModeOn) {
+                  return isSelected
                       ? Colors.grey.shade400
                       : (widget.timeSlot.event as Block).isWork
                           ? Colors.grey.shade200
-                          : Colors.indigo.shade100)
-                  : () {
-                      isSelected = false;
-                      return Colors.grey.shade200;
-                    }(),
+                          : Colors.indigo.shade50;
+                } else {
+                  isSelected = false;
+                  return (widget.timeSlot.event as Block).isWork
+                      ? Colors.grey.shade200
+                      : Colors.indigo.shade50;
+                }
+              }(),
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: const [
                 BoxShadow(
