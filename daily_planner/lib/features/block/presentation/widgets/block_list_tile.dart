@@ -1,3 +1,4 @@
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -43,24 +44,27 @@ class _BlockListTileState extends State<BlockListTile> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
         child: Container(
-          margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+          margin: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 8.0),
           decoration: BoxDecoration(
-              color: Colors.blueGrey.shade50,
+              color: widget.isDeleteModeOn
+                  ? (isSelected
+                      ? Colors.grey.shade400
+                      : (widget.timeSlot.event as Block).isWork
+                          ? Colors.grey.shade200
+                          : Colors.indigo.shade100)
+                  : () {
+                      isSelected = false;
+                      return Colors.grey.shade200;
+                    }(),
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.grey,
                   offset: Offset(0.0, 1.0),
-                  blurRadius: 4.0,
+                  blurRadius: 3.0,
                 )
               ]),
           child: ListTile(
-            tileColor: widget.isDeleteModeOn
-                ? (isSelected ? Colors.grey[300] : Colors.transparent)
-                : () {
-                    isSelected = false;
-                    return Colors.transparent;
-                  }(),
             title: Text(widget.timeSlot.event.name),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -73,27 +77,6 @@ class _BlockListTileState extends State<BlockListTile> {
                     Text(Utils().formatTime(widget.timeSlot.startTime
                         .add(Duration(minutes: widget.timeSlot.duration)))),
                   ],
-                ),
-                const SizedBox(
-                  width: 36,
-                ),
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  icon: const Icon(
-                    Icons.edit_rounded,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    // open the edit dialog
-                    // showDialog(
-                    //     context: context,
-                    //     builder: (context) {
-                    //       return BlockEditDialog(
-                    //         timeSlot: widget.timeSlot,
-                    //       );
-                    //     });
-                  },
                 ),
               ],
             ),

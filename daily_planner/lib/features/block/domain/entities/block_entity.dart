@@ -1,9 +1,9 @@
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event.dart';
 
 class Block extends TimeSlotEvent {
-  final bool isWork;
+  bool isWork;
 
-  Block({super.id, required super.name, required this.isWork});
+  Block({super.id, required super.name, this.isWork = false});
 
   factory Block.fromJson(Map<dynamic, dynamic> json) {
     return Block(

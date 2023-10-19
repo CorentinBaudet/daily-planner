@@ -6,6 +6,7 @@ import 'package:daily_planner/utils/utils.dart';
 import 'package:daily_planner/constants/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 // ignore: must_be_immutable
@@ -14,7 +15,7 @@ class BlockAddDialog extends StatefulWidget {
       startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
           DateTime.now().month, DateTime.now().day, DateTime.now().hour + 1)),
       duration: 60,
-      event: Block(name: "", isWork: true),
+      event: Block(name: ""),
       createdAt: Utils().troncateDateTime(DateTime.now()));
 
   BlockAddDialog({super.key});
@@ -28,19 +29,18 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
 
   Row _editStartTime(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text("start time: ",
             style: TextStyle(color: Theme.of(context).primaryColor)),
         const SizedBox(
-          width: 64,
+          width: 8,
         ),
         DropdownButton(
           items: TimeSlotUseCases().getStartTimeSlots().map((item) {
             return DropdownMenuItem(
               value: item,
               child: Text(
-                textAlign: TextAlign.center,
                 item,
               ),
             );
@@ -61,12 +61,34 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
     );
   }
 
+  Widget _prioritySwitch() {
+    return FlutterSwitch(
+      width: 75.0,
+      height: 30.0,
+      valueFontSize: 15.0,
+      toggleSize: 25.0,
+      value: (widget.newBlockTimeSlot.event as Block).isWork,
+      padding: 6.0,
+      showOnOff: true,
+      inactiveText: '',
+      activeText: 'work',
+      onToggle: (val) {
+        setState(() {
+          (widget.newBlockTimeSlot.event as Block).isWork = val;
+        });
+      },
+    );
+  }
+
   Row _editDuration(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
             onPressed: () {
+              if (widget.newBlockTimeSlot.duration <= 15) {
+                return;
+              }
               setState(() {
                 widget.newBlockTimeSlot.duration -= 15;
               });
@@ -89,6 +111,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
         ),
         IconButton(
             onPressed: () {
+              if (widget.newBlockTimeSlot.duration >= 180) {
+                return;
+              }
               setState(() {
                 widget.newBlockTimeSlot.duration += 15;
               });
@@ -115,6 +140,8 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
               decoration: const InputDecoration(
                 hintText: 'block name',
               ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autofocus: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'please enter a name';
@@ -124,11 +151,17 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
             ),
           ),
           const SizedBox(
-            height: 16,
+            height: 24,
           ),
-          _editStartTime(context),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _editStartTime(context),
+              _prioritySwitch(),
+            ],
+          ),
           const SizedBox(
-            height: 16,
+            height: 24,
           ),
           _editDuration(context),
         ],
@@ -160,7 +193,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
                   widget.newBlockTimeSlot.startTime.minute,
                 )),
                 duration: widget.newBlockTimeSlot.duration,
-                event: Block(name: blockNameController.text, isWork: true),
+                event: Block(
+                    name: blockNameController.text,
+                    isWork: (widget.newBlockTimeSlot.event as Block).isWork),
                 createdAt: Utils().troncateDateTime(DateTime.now())));
 
             // close the dialog

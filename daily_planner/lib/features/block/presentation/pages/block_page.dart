@@ -24,6 +24,7 @@ class BlockPage extends StatelessWidget {
             child: Text('no blocks yet'),
           )
         : ListView.builder(
+            padding: const EdgeInsets.only(top: 8),
             itemCount: timeSlots.length,
             itemBuilder: (context, index) {
               return BlockListTile(
