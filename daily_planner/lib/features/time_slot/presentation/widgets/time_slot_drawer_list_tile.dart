@@ -1,5 +1,6 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -45,28 +46,63 @@ class TimeSlotDrawerListTile extends StatelessWidget {
 
   TimeSlot? _searchForWorkTimeSlot(BuildContext context) {
     // search for all work time slots
+    List<TimeSlot> timeSlots = [];
     List<TimeSlot> workBlocks = [];
+    List<DateTime> emptyTimeSlots = [];
 
     if (context.read<ts_cubit.TimeSlotCubit>().state is ts_cubit.LoadedState) {
-      var timeSlots =
+      timeSlots =
           (context.read<ts_cubit.TimeSlotCubit>().state as ts_cubit.LoadedState)
               .timeSlots;
-      for (var timeSlot in timeSlots) {
-        if (timeSlot.event is Block) {
-          if ((timeSlot.event as Block).isWork == true) {
-            workBlocks.add(timeSlot);
-          }
+
+      for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
+        if ((block.event as Block).isWork == true) {
+          workBlocks.add(block);
         }
       }
+      // workBlocks = TimeSlotUseCases()
+      //         .getBlockTimeSlots(timeSlots)
+      //         .every((element) => (element.event as Block).isWork == true)
+      //     as List<TimeSlot>;
+
+      // final tomorrowPlanning = TimeSlotDataSource.getPlannerDataSource(timeSlots,
+      //       isTomorrow: true);
     }
 
-    // TODO: return the first empty work time slot
-    // OR return the first available time slot
-    if (workBlocks.isEmpty) {
-      return null;
-    } else {
+    if (workBlocks.isNotEmpty) {
+      // return the first work time slot
       return workBlocks[0];
     }
+
+    // search for the first empty time slot by looking at start times of today
+    List<DateTime> startTimes = TimeSlotUseCases().getStartTimeSlots();
+    for (var startTime in startTimes) {
+      if (timeSlots.any((element) => element.startTime == startTime)) {
+        // do nothing
+        print('pas libre : $startTime');
+      } else {
+        // TODO: à refaire : le check dépasse de 15min le premier time slot rencontré
+        // et n'arrive pas à détecter les time slots qui vont arriver
+
+        // if (timeSlots.any((element) =>
+        //     element.startTime.add(const Duration(minutes: 15)) == startTime ||
+        //     element.startTime.add(const Duration(minutes: 30)) == startTime ||
+        //     element.startTime.add(const Duration(minutes: 45)) == startTime)) {
+        //   // do nothing
+        //   print('pas assez long : $startTime');
+        // } else {
+        //   // add the empty time slot to the list
+        //   emptyTimeSlots.add(startTime);
+        //   break;
+        // }
+      }
+    }
+    // return the first available time slot of 60 min
+    return TimeSlot(
+        startTime: emptyTimeSlots[0],
+        duration: 60,
+        event: task,
+        createdAt: Utils().troncateDateTime(DateTime.now()));
   }
 
   @override

@@ -39,9 +39,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
         DropdownButton(
           items: TimeSlotUseCases().getStartTimeSlots().map((item) {
             return DropdownMenuItem(
-              value: item,
+              value: Utils().formatTime(item),
               child: Text(
-                item,
+                Utils().formatTime(item),
               ),
             );
           }).toList(),

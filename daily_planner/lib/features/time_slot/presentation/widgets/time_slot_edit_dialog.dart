@@ -28,10 +28,10 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
         DropdownButton(
           items: TimeSlotUseCases().getStartTimeSlots().map((item) {
             return DropdownMenuItem(
-              value: item,
+              value: Utils().formatTime(item),
               child: Text(
                 textAlign: TextAlign.center,
-                item,
+                Utils().formatTime(item),
               ),
             );
           }).toList(),
