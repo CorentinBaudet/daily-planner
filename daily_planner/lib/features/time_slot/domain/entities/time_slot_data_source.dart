@@ -11,6 +11,7 @@ class TimeSlotDataSource extends CalendarDataSource {
 
   static CalendarDataSource getPlannerDataSource(List<TimeSlot> timeSlots,
       {bool isTomorrow = false}) {
+    // TODO : bug ajouter une tâche sur un work block la fait apparaître comme durant 30 minutes
     // TODO : faire continuer la tâche sur le lendemain si elle dépasse minuit
     List<Appointment> appointments =
         <Appointment>[]; // the SfCalendar requires a list of Appointment objects
@@ -27,12 +28,11 @@ class TimeSlotDataSource extends CalendarDataSource {
               timeSlot.startTime.hour,
               timeSlot.startTime.minute),
           endTime: DateTime(
-                  timeSlot.startTime.year,
-                  timeSlot.startTime.month,
-                  timeSlot.startTime.day,
-                  timeSlot.startTime.hour,
-                  timeSlot.startTime.minute)
-              .add(Duration(minutes: timeSlot.duration)),
+              timeSlot.endTime.year,
+              timeSlot.endTime.month,
+              timeSlot.endTime.day,
+              timeSlot.endTime.hour,
+              timeSlot.endTime.minute),
           subject: timeSlot.event.name,
           color: Colors.lightBlue.shade100,
         ));
@@ -49,14 +49,11 @@ class TimeSlotDataSource extends CalendarDataSource {
                     timeSlot.startTime.hour,
                     timeSlot.startTime.minute),
                 endTime: DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        isTomorrow
-                            ? DateTime.now().day + 1
-                            : DateTime.now().day,
-                        timeSlot.startTime.hour,
-                        timeSlot.startTime.minute)
-                    .add(Duration(minutes: timeSlot.duration)),
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
+                    timeSlot.endTime.hour,
+                    timeSlot.endTime.minute),
                 subject: timeSlot.event.name,
                 color: Colors.indigo.shade50,
               ));

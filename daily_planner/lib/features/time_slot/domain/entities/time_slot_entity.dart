@@ -5,14 +5,16 @@ import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event
 class TimeSlot {
   int? id;
   DateTime startTime;
-  int duration; // in minutes
+  DateTime endTime;
+  // int duration; // in minutes
   final TimeSlotEvent event;
   DateTime createdAt;
 
   TimeSlot({
     this.id,
     required this.startTime,
-    required this.duration,
+    required this.endTime,
+    // required this.duration,
     required this.event,
     required this.createdAt,
   });
@@ -27,7 +29,8 @@ class TimeSlot {
     return TimeSlot(
       id: json['id'],
       startTime: DateTime.parse(json['startTime']),
-      duration: json['duration'],
+      endTime: DateTime.parse(json['endTime']),
+      // duration: json['duration'],
       event: event,
       createdAt: DateTime.parse(json['createdAt']),
     );
@@ -37,7 +40,8 @@ class TimeSlot {
     return {
       'id': id,
       'startTime': startTime.toString(),
-      'duration': duration,
+      'endTime': endTime.toString(),
+      // 'duration': duration,
       'event': event.toJson(),
       'createdAt': createdAt.toString(),
     };

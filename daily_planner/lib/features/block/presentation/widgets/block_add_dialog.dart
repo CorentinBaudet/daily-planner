@@ -7,14 +7,15 @@ import 'package:daily_planner/constants/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:numberpicker/numberpicker.dart';
+// import 'package:numberpicker/numberpicker.dart';
 
 // ignore: must_be_immutable
 class BlockAddDialog extends StatefulWidget {
   TimeSlot newBlockTimeSlot = TimeSlot(
       startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
           DateTime.now().month, DateTime.now().day, DateTime.now().hour + 1)),
-      duration: 60,
+      endTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
+          DateTime.now().month, DateTime.now().day, DateTime.now().hour + 2)),
       event: Block(name: ""),
       createdAt: Utils().troncateDateTime(DateTime.now()));
 
@@ -27,12 +28,12 @@ class BlockAddDialog extends StatefulWidget {
 class _BlockAddDialogState extends State<BlockAddDialog> {
   final blockNameController = TextEditingController();
 
+  // TODO : centrer les items dans les dropdowns OU ajuster la longueur des dropdowns aux items
   Row _editStartTime(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text("start time: ",
-            style: TextStyle(color: Theme.of(context).primaryColor)),
+        Text("from", style: TextStyle(color: Theme.of(context).primaryColor)),
         const SizedBox(
           width: 8,
         ),
@@ -61,6 +62,40 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
     );
   }
 
+  // TODO : mettre les dropdowns sur la même ligne ?
+  Row _editEndTime(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text("to", style: TextStyle(color: Theme.of(context).primaryColor)),
+        const SizedBox(
+          width: 8,
+        ),
+        DropdownButton(
+          items: TimeSlotUseCases().getStartTimeSlots().map((item) {
+            return DropdownMenuItem(
+              value: Utils().formatTime(item),
+              child: Text(
+                Utils().formatTime(item),
+              ),
+            );
+          }).toList(),
+          value: Utils().formatTime(widget.newBlockTimeSlot.endTime),
+          icon: const Icon(null),
+          menuMaxHeight: 250,
+          onChanged: (value) {
+            setState(() => widget.newBlockTimeSlot.endTime = DateTime(
+                widget.newBlockTimeSlot.endTime.year,
+                widget.newBlockTimeSlot.endTime.month,
+                widget.newBlockTimeSlot.endTime.day,
+                ConstantsIntl.timeFormat.parse(value.toString()).hour,
+                ConstantsIntl.timeFormat.parse(value.toString()).minute));
+          },
+        ),
+      ],
+    );
+  }
+
   Widget _prioritySwitch() {
     return FlutterSwitch(
       width: 75.0,
@@ -80,48 +115,48 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
     );
   }
 
-  Row _editDuration(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-            onPressed: () {
-              if (widget.newBlockTimeSlot.duration <= 15) {
-                return;
-              }
-              setState(() {
-                widget.newBlockTimeSlot.duration -= 15;
-              });
-            },
-            icon: const Icon(Icons.remove_rounded)),
-        NumberPicker(
-          axis: Axis.horizontal,
-          itemCount: 3,
-          itemWidth: MediaQuery.of(context).size.width * 0.15,
-          value: widget.newBlockTimeSlot.duration,
-          minValue: 15,
-          maxValue: 600,
-          step: 15,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black, width: 0.5),
-          ),
-          onChanged: (value) =>
-              setState(() => widget.newBlockTimeSlot.duration = value),
-        ),
-        IconButton(
-            onPressed: () {
-              if (widget.newBlockTimeSlot.duration >= 600) {
-                return;
-              }
-              setState(() {
-                widget.newBlockTimeSlot.duration += 15;
-              });
-            },
-            icon: const Icon(Icons.add_rounded)),
-      ],
-    );
-  }
+  // Row _editDuration(BuildContext context) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       IconButton(
+  //           onPressed: () {
+  //             if (widget.newBlockTimeSlot.duration <= 15) {
+  //               return;
+  //             }
+  //             setState(() {
+  //               widget.newBlockTimeSlot.duration -= 15;
+  //             });
+  //           },
+  //           icon: const Icon(Icons.remove_rounded)),
+  //       NumberPicker(
+  //         axis: Axis.horizontal,
+  //         itemCount: 3,
+  //         itemWidth: MediaQuery.of(context).size.width * 0.15,
+  //         value: widget.newBlockTimeSlot.duration,
+  //         minValue: 15,
+  //         maxValue: 600,
+  //         step: 15,
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(16),
+  //           border: Border.all(color: Colors.black, width: 0.5),
+  //         ),
+  //         onChanged: (value) =>
+  //             setState(() => widget.newBlockTimeSlot.duration = value),
+  //       ),
+  //       IconButton(
+  //           onPressed: () {
+  //             if (widget.newBlockTimeSlot.duration >= 600) {
+  //               return;
+  //             }
+  //             setState(() {
+  //               widget.newBlockTimeSlot.duration += 15;
+  //             });
+  //           },
+  //           icon: const Icon(Icons.add_rounded)),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -133,37 +168,38 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Form(
-            key: formKey,
-            child: TextFormField(
-              controller: blockNameController,
-              decoration: const InputDecoration(
-                hintText: 'block name',
-              ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              autofocus: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'please enter a name';
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _editStartTime(context),
+              Form(
+                key: formKey,
+                child: Expanded(
+                  child: TextFormField(
+                    controller: blockNameController,
+                    decoration: const InputDecoration(
+                      hintText: 'block name',
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    autofocus: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please enter a name';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 16,
+              ),
               _prioritySwitch(),
             ],
           ),
           const SizedBox(
             height: 24,
           ),
-          _editDuration(context),
+          _editStartTime(context),
+          _editEndTime(context),
         ],
       ),
       actions: [
@@ -185,14 +221,10 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
               return;
             }
             context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
-                startTime: Utils().troncateDateTime(DateTime(
-                  widget.newBlockTimeSlot.startTime.year,
-                  widget.newBlockTimeSlot.startTime.month,
-                  widget.newBlockTimeSlot.startTime.day,
-                  widget.newBlockTimeSlot.startTime.hour,
-                  widget.newBlockTimeSlot.startTime.minute,
-                )),
-                duration: widget.newBlockTimeSlot.duration,
+                startTime:
+                    Utils().troncateDateTime(widget.newBlockTimeSlot.startTime),
+                endTime:
+                    Utils().troncateDateTime(widget.newBlockTimeSlot.endTime),
                 event: Block(
                     name: blockNameController.text,
                     isWork: (widget.newBlockTimeSlot.event as Block).isWork),

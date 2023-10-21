@@ -78,8 +78,7 @@ class _BlockListTileState extends State<BlockListTile> {
                   children: [
                     Text(Utils().formatTime(widget.timeSlot.startTime)),
                     const Text('|'),
-                    Text(Utils().formatTime(widget.timeSlot.startTime
-                        .add(Duration(minutes: widget.timeSlot.duration)))),
+                    Text(Utils().formatTime(widget.timeSlot.endTime)),
                   ],
                 ),
               ],

@@ -23,23 +23,19 @@ class TaskPage extends StatelessWidget {
 
     return tasks.isEmpty
         ? const Center(child: Text("no tasks yet"))
-        : Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16.0, right: 16.0),
-              child: ListView.builder(
-                itemCount: tasks.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return TaskListTile(
-                    task: tasks[index],
-                    onChecked: () => _handleCheckedTask(context, tasks[index]),
-                    onLongPress: (() => _toggleDeleteMode(context)),
-                    isDeleteModeOn: _isDeleteModeOn.value,
-                    onSelected: (task) =>
-                        _handleSelectedTask(context, task, selectedTasks),
-                  );
-                },
-              ),
-            ),
+        : ListView.builder(
+            padding: const EdgeInsets.only(top: 16.0, right: 16.0),
+            itemCount: tasks.length,
+            itemBuilder: (BuildContext context, int index) {
+              return TaskListTile(
+                task: tasks[index],
+                onChecked: () => _handleCheckedTask(context, tasks[index]),
+                onLongPress: (() => _toggleDeleteMode(context)),
+                isDeleteModeOn: _isDeleteModeOn.value,
+                onSelected: (task) =>
+                    _handleSelectedTask(context, task, selectedTasks),
+              );
+            },
           );
   }
 
@@ -101,35 +97,29 @@ class TaskPage extends StatelessWidget {
             ])
           ],
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BlocBuilder<TaskCubit, TaskState>(
-              builder: (context, state) {
-                if (state is InitialState) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is LoadingState) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is LoadedState) {
-                  return Container(
-                      child:
-                          _buildTaskList(context, state.tasks, _selectedTasks));
-                } else if (state is ErrorState) {
-                  return const Center(
-                    child: Text('error loading tasks'),
-                  );
-                } else {
-                  return const Center(
-                    child: Text('unknown error'),
-                  );
-                }
-              },
-            ),
-          ],
+        body: BlocBuilder<TaskCubit, TaskState>(
+          builder: (context, state) {
+            if (state is InitialState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is LoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is LoadedState) {
+              return Container(
+                  child: _buildTaskList(context, state.tasks, _selectedTasks));
+            } else if (state is ErrorState) {
+              return const Center(
+                child: Text('error loading tasks'),
+              );
+            } else {
+              return const Center(
+                child: Text('unknown error'),
+              );
+            }
+          },
         ),
         floatingActionButton: FloatingActionButton(
           // open dialog to add a new task

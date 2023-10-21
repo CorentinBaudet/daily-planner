@@ -16,9 +16,9 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   const TimeSlotDrawerListTile({super.key, required this.task});
 
   _addTimeSlot(BuildContext context) {
-    TimeSlot? workTimeSlot = _searchForWorkTimeSlot(context);
+    TimeSlot? timeSlot = _searchForTimeSlot(context);
 
-    if (workTimeSlot == null) {
+    if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot
       showDialog(
           context: context,
@@ -45,29 +45,38 @@ class TimeSlotDrawerListTile extends StatelessWidget {
               DateTime.now().year,
               DateTime.now().month,
               DateTime.now().day + 1,
-              workTimeSlot.startTime.hour,
-              workTimeSlot.startTime.minute)),
-          duration: workTimeSlot.duration,
+              timeSlot.startTime.hour,
+              timeSlot.startTime.minute)),
+          endTime: timeSlot.endTime,
           event: task,
           createdAt: Utils().troncateDateTime(DateTime.now())));
     }
   }
 
-  TimeSlot? _searchForWorkTimeSlot(BuildContext context) {
-    // search for all work time slots
+  TimeSlot? _searchForTimeSlot(BuildContext context) {
     List<TimeSlot> timeSlots = [];
-    List<TimeSlot> workBlocks = [];
-    List<DateTime> emptyTimeSlots = [];
 
     if (context.read<ts_cubit.TimeSlotCubit>().state is ts_cubit.LoadedState) {
       timeSlots =
           (context.read<ts_cubit.TimeSlotCubit>().state as ts_cubit.LoadedState)
               .timeSlots;
+    }
 
-      for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
-        if ((block.event as Block).isWork == true) {
-          workBlocks.add(block);
-        }
+    TimeSlot? resultTimeSlot = _searchForWorkBlock(timeSlots);
+    if (resultTimeSlot != null) {
+      // if there is an empty work block, return it
+      return resultTimeSlot;
+    }
+
+    return _searchForEmptyTimeSlot(timeSlots);
+  }
+
+  TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
+    List<TimeSlot> workBlocks = [];
+
+    for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
+      if ((block.event as Block).isWork == true) {
+        workBlocks.add(block);
       }
     }
 
@@ -75,6 +84,12 @@ class TimeSlotDrawerListTile extends StatelessWidget {
       // return the first work time slot
       return workBlocks[0];
     }
+    return null;
+  }
+
+  TimeSlot? _searchForEmptyTimeSlot(List<TimeSlot> timeSlots) {
+    // TODO : fix parce que ça ne marche pas (almuerzo entre 12h30 et 13h30 par ex)
+    List<DateTime> emptyTimeSlots = [];
 
     // search for the first empty time slot by looking at start times of today
     List<DateTime> startTimes = TimeSlotUseCases().getStartTimeSlots();
@@ -89,9 +104,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
         }
 
         if (element.startTime.isBefore(currentStartTime) &&
-            element.startTime
-                .add(Duration(minutes: element.duration))
-                .isAfter(currentStartTime)) {
+            element.endTime.isAfter(currentStartTime)) {
           // or if the time slot ends begins before and ends after the current start time
           return true;
         } else {
@@ -109,7 +122,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
               .add(currentStartTime.subtract(const Duration(minutes: 45)));
           return TimeSlot(
               startTime: emptyTimeSlots[0],
-              duration: 60,
+              endTime: emptyTimeSlots[0].add(const Duration(minutes: 60)),
               event: task,
               createdAt: Utils().troncateDateTime(DateTime.now()));
         }
@@ -142,9 +155,9 @@ class TimeSlotDrawerListTile extends StatelessWidget {
               ]),
           child: ListTile(
             title: Text(task.name,
-                style: const TextStyle(
-                    fontSize:
-                        14)), // TODO : text à raccourcir si trop long, avec ... à la fin
+                style: const TextStyle(fontSize: 14),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis),
             trailing: task.priority == Priority.high
                 ? const Padding(
                     padding: EdgeInsets.all(0.0),
