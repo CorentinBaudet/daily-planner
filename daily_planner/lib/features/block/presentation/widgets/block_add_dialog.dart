@@ -100,7 +100,7 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
           itemWidth: MediaQuery.of(context).size.width * 0.15,
           value: widget.newBlockTimeSlot.duration,
           minValue: 15,
-          maxValue: 180,
+          maxValue: 600,
           step: 15,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
@@ -111,7 +111,7 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
         ),
         IconButton(
             onPressed: () {
-              if (widget.newBlockTimeSlot.duration >= 180) {
+              if (widget.newBlockTimeSlot.duration >= 600) {
                 return;
               }
               setState(() {

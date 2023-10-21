@@ -18,19 +18,28 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   _addTimeSlot(BuildContext context) {
     TimeSlot? workTimeSlot = _searchForWorkTimeSlot(context);
 
-    // set the task isPlanned to true
-    task.isPlanned = true;
-    context.read<TaskCubit>().updateTask(task);
-
     if (workTimeSlot == null) {
-      context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
-          startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
-                  DateTime.now().month, DateTime.now().day, 14)
-              .add(const Duration(days: 1))),
-          duration: 60,
-          event: task,
-          createdAt: Utils().troncateDateTime(DateTime.now())));
+      // display a dialog indicating that there is no available time slot
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('No available time slot'),
+              content:
+                  const Text('There is no available time slot for this task.'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('OK'))
+              ],
+            );
+          });
     } else {
+      // set the task isPlanned to true
+      task.isPlanned = true;
+      context.read<TaskCubit>().updateTask(task);
       context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
           startTime: Utils().troncateDateTime(DateTime(
               DateTime.now().year,
@@ -60,13 +69,6 @@ class TimeSlotDrawerListTile extends StatelessWidget {
           workBlocks.add(block);
         }
       }
-      // workBlocks = TimeSlotUseCases()
-      //         .getBlockTimeSlots(timeSlots)
-      //         .every((element) => (element.event as Block).isWork == true)
-      //     as List<TimeSlot>;
-
-      // final tomorrowPlanning = TimeSlotDataSource.getPlannerDataSource(timeSlots,
-      //       isTomorrow: true);
     }
 
     if (workBlocks.isNotEmpty) {
@@ -76,33 +78,45 @@ class TimeSlotDrawerListTile extends StatelessWidget {
 
     // search for the first empty time slot by looking at start times of today
     List<DateTime> startTimes = TimeSlotUseCases().getStartTimeSlots();
-    for (var startTime in startTimes) {
-      if (timeSlots.any((element) => element.startTime == startTime)) {
-        // do nothing
-        print('pas libre : $startTime');
-      } else {
-        // TODO: à refaire : le check dépasse de 15min le premier time slot rencontré
-        // et n'arrive pas à détecter les time slots qui vont arriver
+    int sixtyMinFlag = 0;
+    for (var currentStartTime in startTimes) {
+      if (timeSlots.any((element) {
+        if (element.startTime.hour == currentStartTime.hour) {
+          if (element.startTime.minute == currentStartTime.minute) {
+            // if the time slot starts at the current start time
+            return true;
+          }
+        }
 
-        // if (timeSlots.any((element) =>
-        //     element.startTime.add(const Duration(minutes: 15)) == startTime ||
-        //     element.startTime.add(const Duration(minutes: 30)) == startTime ||
-        //     element.startTime.add(const Duration(minutes: 45)) == startTime)) {
-        //   // do nothing
-        //   print('pas assez long : $startTime');
-        // } else {
-        //   // add the empty time slot to the list
-        //   emptyTimeSlots.add(startTime);
-        //   break;
-        // }
+        if (element.startTime.isBefore(currentStartTime) &&
+            element.startTime
+                .add(Duration(minutes: element.duration))
+                .isAfter(currentStartTime)) {
+          // or if the time slot ends begins before and ends after the current start time
+          return true;
+        } else {
+          return false;
+        }
+      })) {
+        // do nothing
+        sixtyMinFlag = 0;
+      } else {
+        sixtyMinFlag++;
+        // we count to 4 to see if there is a 60 min empty time slot
+        if (sixtyMinFlag == 4) {
+          // add the empty time slot to the list
+          emptyTimeSlots
+              .add(currentStartTime.subtract(const Duration(minutes: 45)));
+          return TimeSlot(
+              startTime: emptyTimeSlots[0],
+              duration: 60,
+              event: task,
+              createdAt: Utils().troncateDateTime(DateTime.now()));
+        }
       }
     }
-    // return the first available time slot of 60 min
-    return TimeSlot(
-        startTime: emptyTimeSlots[0],
-        duration: 60,
-        event: task,
-        createdAt: Utils().troncateDateTime(DateTime.now()));
+    // if no empty time slot was found
+    return null;
   }
 
   @override
@@ -127,7 +141,10 @@ class TimeSlotDrawerListTile extends StatelessWidget {
                 )
               ]),
           child: ListTile(
-            title: Text(task.name, style: const TextStyle(fontSize: 14)),
+            title: Text(task.name,
+                style: const TextStyle(
+                    fontSize:
+                        14)), // TODO : text à raccourcir si trop long, avec ... à la fin
             trailing: task.priority == Priority.high
                 ? const Padding(
                     padding: EdgeInsets.all(0.0),

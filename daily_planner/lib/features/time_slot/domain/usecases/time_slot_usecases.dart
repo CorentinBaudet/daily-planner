@@ -25,6 +25,7 @@ class TimeSlotUseCases {
 
   // method to sort time slots by start time and duration
   List<TimeSlot> sortTimeSlots(List<TimeSlot> timeSlots) {
+    // TODO : fix car ça ne marche pas
     timeSlots.sort((a, b) {
       final aStart = a.startTime;
       final bStart = b.startTime;

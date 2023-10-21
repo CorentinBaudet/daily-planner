@@ -11,6 +11,7 @@ class TimeSlotDataSource extends CalendarDataSource {
 
   static CalendarDataSource getPlannerDataSource(List<TimeSlot> timeSlots,
       {bool isTomorrow = false}) {
+    // TODO : faire continuer la tâche sur le lendemain si elle dépasse minuit
     List<Appointment> appointments =
         <Appointment>[]; // the SfCalendar requires a list of Appointment objects
 
