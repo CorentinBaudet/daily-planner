@@ -11,7 +11,6 @@ class TimeSlotDataSource extends CalendarDataSource {
 
   static CalendarDataSource getPlannerDataSource(List<TimeSlot> timeSlots,
       {bool isTomorrow = false}) {
-    // TODO : bug ajouter une tâche sur un work block la fait apparaître comme durant 30 minutes
     // TODO : faire continuer la tâche sur le lendemain si elle dépasse minuit
     List<Appointment> appointments =
         <Appointment>[]; // the SfCalendar requires a list of Appointment objects

@@ -7,7 +7,6 @@ import 'package:daily_planner/constants/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-// import 'package:numberpicker/numberpicker.dart';
 
 // ignore: must_be_immutable
 class BlockAddDialog extends StatefulWidget {
@@ -19,7 +18,9 @@ class BlockAddDialog extends StatefulWidget {
       event: Block(name: ""),
       createdAt: Utils().troncateDateTime(DateTime.now()));
 
-  BlockAddDialog({super.key});
+  TimeSlot? toEditBlock;
+
+  BlockAddDialog({super.key, this.toEditBlock});
 
   @override
   State<BlockAddDialog> createState() => _BlockAddDialogState();
@@ -46,7 +47,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
               ),
             );
           }).toList(),
-          value: Utils().formatTime(widget.newBlockTimeSlot.startTime),
+          value: widget.toEditBlock != null
+              ? Utils().formatTime(widget.toEditBlock!.startTime)
+              : Utils().formatTime(widget.newBlockTimeSlot.startTime),
           icon: const Icon(null),
           menuMaxHeight: 250,
           onChanged: (value) {
@@ -80,7 +83,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
               ),
             );
           }).toList(),
-          value: Utils().formatTime(widget.newBlockTimeSlot.endTime),
+          value: widget.toEditBlock != null
+              ? Utils().formatTime(widget.toEditBlock!.endTime)
+              : Utils().formatTime(widget.newBlockTimeSlot.endTime),
           icon: const Icon(null),
           menuMaxHeight: 250,
           onChanged: (value) {
@@ -102,7 +107,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
       height: 30.0,
       valueFontSize: 15.0,
       toggleSize: 25.0,
-      value: (widget.newBlockTimeSlot.event as Block).isWork,
+      value: widget.toEditBlock != null
+          ? (widget.toEditBlock!.event as Block).isWork
+          : (widget.newBlockTimeSlot.event as Block).isWork,
       padding: 6.0,
       showOnOff: true,
       inactiveText: '',
@@ -163,7 +170,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
     final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
-      title: const Text('new block'),
+      title: widget.toEditBlock != null
+          ? const Text('edit block')
+          : const Text('new block'),
       insetPadding: const EdgeInsets.all(0),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -174,12 +183,15 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
                 key: formKey,
                 child: Expanded(
                   child: TextFormField(
-                    controller: blockNameController,
+                    // controller: blockNameController,
                     decoration: const InputDecoration(
                       hintText: 'block name',
                     ),
+                    initialValue: widget.toEditBlock != null
+                        ? (widget.toEditBlock!.event as Block).name
+                        : "",
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    autofocus: true,
+                    autofocus: widget.toEditBlock == null,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter a name';
@@ -220,6 +232,7 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
             if (!formKey.currentState!.validate()) {
               return;
             }
+            // TODO : edit the block if toEditBlock is not null
             context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
                 startTime:
                     Utils().troncateDateTime(widget.newBlockTimeSlot.startTime),
@@ -233,7 +246,9 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
             // close the dialog
             Navigator.of(context).pop();
           },
-          child: const Text('add'),
+          child: widget.toEditBlock != null
+              ? const Text('edit')
+              : const Text('add'),
         ),
       ],
     );

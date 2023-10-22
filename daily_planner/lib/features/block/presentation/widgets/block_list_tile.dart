@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/block/presentation/widgets/block_add_dialog.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -51,12 +52,12 @@ class _BlockListTileState extends State<BlockListTile> {
                   return isSelected
                       ? Colors.grey.shade400
                       : (widget.timeSlot.event as Block).isWork
-                          ? Colors.grey.shade200
+                          ? Colors.lightBlue.shade50
                           : Colors.indigo.shade50;
                 } else {
                   isSelected = false;
                   return (widget.timeSlot.event as Block).isWork
-                      ? Colors.grey.shade200
+                      ? Colors.lightBlue.shade50
                       : Colors.indigo.shade50;
                 }
               }(),
@@ -81,6 +82,15 @@ class _BlockListTileState extends State<BlockListTile> {
                     Text(Utils().formatTime(widget.timeSlot.endTime)),
                   ],
                 ),
+                const SizedBox(width: 24.0),
+                IconButton(
+                    icon: const Icon(Icons.edit_rounded),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) =>
+                              BlockAddDialog(toEditBlock: widget.timeSlot));
+                    }),
               ],
             ),
             contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
