@@ -1,6 +1,6 @@
 abstract class TimeSlotEvent {
   int? id;
-  final String name;
+  String name;
 
   TimeSlotEvent({this.id, required this.name});
 

@@ -20,22 +20,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
 
     if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('No available time slot'),
-              content:
-                  const Text('There is no available time slot for this task.'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('OK'))
-              ],
-            );
-          });
+      _showNoTimeSlotDialog(context);
     } else {
       // set the task isPlanned to true
       task.isPlanned = true;
@@ -47,8 +32,29 @@ class TimeSlotDrawerListTile extends StatelessWidget {
               DateTime.now().day + 1,
               timeSlot.startTime.hour,
               timeSlot.startTime.minute)),
-          endTime: timeSlot.endTime,
-          event: task,
+          endTime: timeSlot.event is Block
+              // if the free time slot found is a block, we use its end time for the task
+              ? Utils().troncateDateTime(DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day + 1,
+                  timeSlot.endTime.hour,
+                  timeSlot.endTime.minute))
+              // else we simply make the task last 1 hour
+              : Utils().troncateDateTime(DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day + 1,
+                  timeSlot.startTime.hour + 1,
+                  timeSlot.startTime.minute)),
+          event: timeSlot.event is Block
+              // if the free time slot found is a block, we happen its name to the task name
+              ? () {
+                  Task renamedTask = task;
+                  renamedTask.name += ' (${timeSlot.event.name})';
+                  return renamedTask;
+                }()
+              : task,
           createdAt: Utils().troncateDateTime(DateTime.now())));
     }
   }
@@ -62,32 +68,41 @@ class TimeSlotDrawerListTile extends StatelessWidget {
               .timeSlots;
     }
 
+    // only keep time slots of tomorrow and block time slots
+    timeSlots = TimeSlotUseCases().getTomorrowTimeSlots(timeSlots);
+
     TimeSlot? resultTimeSlot = _searchForWorkBlock(timeSlots);
     if (resultTimeSlot != null) {
       // if there is an empty work block, return it
       return resultTimeSlot;
     }
 
-    // only keep time slots of tomorrow
-    timeSlots = TimeSlotUseCases().getTomorrowTimeSlots(timeSlots);
-
     return _searchForEmptyTimeSlot(timeSlots);
   }
 
   TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
-    // TODO : un work block est utilisé plusieurs fois
-    // TODO : fix le début de la tâche et sa durée visuellement
-    List<TimeSlot> workBlocks = [];
-
     for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
-      if ((block.event as Block).isWork == true) {
-        workBlocks.add(block);
+      if ((block.event as Block).isWork == false) {
+        continue;
       }
-    }
 
-    if (workBlocks.isNotEmpty) {
-      // return the first work time slot
-      return workBlocks[0];
+      // is there a time slot that starts at the same time as the block ?
+      if (!timeSlots.any((timeSlot) {
+        // if the time slot is a block, we don't compare it
+        if (timeSlot.event is Block) {
+          return false;
+        }
+        // if the task time slot starts at the same time as the block time slot
+        if (timeSlot.startTime.hour == block.startTime.hour &&
+            timeSlot.startTime.minute == block.startTime.minute) {
+          // the block is already used
+          return true;
+        }
+        // the block is not used
+        return false;
+      })) {
+        return block;
+      }
     }
     return null;
   }
@@ -119,6 +134,25 @@ class TimeSlotDrawerListTile extends StatelessWidget {
     }
     // if no empty time slot was found
     return null;
+  }
+
+  Future<dynamic> _showNoTimeSlotDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No available time slot'),
+            content:
+                const Text('There is no available time slot for this task.'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        });
   }
 
   @override
