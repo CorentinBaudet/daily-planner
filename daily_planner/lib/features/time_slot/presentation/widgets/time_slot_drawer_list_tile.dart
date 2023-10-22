@@ -68,10 +68,15 @@ class TimeSlotDrawerListTile extends StatelessWidget {
       return resultTimeSlot;
     }
 
+    // only keep time slots of tomorrow
+    timeSlots = TimeSlotUseCases().getTomorrowTimeSlots(timeSlots);
+
     return _searchForEmptyTimeSlot(timeSlots);
   }
 
   TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
+    // TODO : un work block est utilisé plusieurs fois
+    // TODO : fix le début de la tâche et sa durée visuellement
     List<TimeSlot> workBlocks = [];
 
     for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
@@ -88,41 +93,25 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   }
 
   TimeSlot? _searchForEmptyTimeSlot(List<TimeSlot> timeSlots) {
-    // TODO : fix parce que ça ne marche pas (almuerzo entre 12h30 et 13h30 par ex)
-    List<DateTime> emptyTimeSlots = [];
-
     // search for the first empty time slot by looking at start times of today
-    List<DateTime> startTimes = TimeSlotUseCases().getStartTimeSlots();
+    List<DateTime> startTimes = TimeSlotUseCases().getTomorrowStartTimes();
     int sixtyMinFlag = 0;
-    for (var currentStartTime in startTimes) {
-      if (timeSlots.any((element) {
-        if (element.startTime.hour == currentStartTime.hour) {
-          if (element.startTime.minute == currentStartTime.minute) {
-            // if the time slot starts at the current start time
-            return true;
-          }
-        }
-
-        if (element.startTime.isBefore(currentStartTime) &&
-            element.endTime.isAfter(currentStartTime)) {
-          // or if the time slot ends begins before and ends after the current start time
-          return true;
-        } else {
-          return false;
-        }
-      })) {
-        // do nothing
+    for (DateTime currentStartTime in startTimes) {
+      // is the current start time at the same time as a time slot tomorrow ?
+      if (timeSlots.any((element) => TimeSlotUseCases().isBetweenInDay(
+          currentStartTime, element.startTime, element.endTime))) {
+        // the current start time is not free, so we reset the flag
         sixtyMinFlag = 0;
       } else {
         sixtyMinFlag++;
         // we count to 4 to see if there is a 60 min empty time slot
         if (sixtyMinFlag == 4) {
-          // add the empty time slot to the list
-          emptyTimeSlots
-              .add(currentStartTime.subtract(const Duration(minutes: 45)));
+          // substract 45 min to the current start time to get the right empty start time
+          currentStartTime =
+              currentStartTime.subtract(const Duration(minutes: 45));
           return TimeSlot(
-              startTime: emptyTimeSlots[0],
-              endTime: emptyTimeSlots[0].add(const Duration(minutes: 60)),
+              startTime: currentStartTime,
+              endTime: currentStartTime.add(const Duration(minutes: 60)),
               event: task,
               createdAt: Utils().troncateDateTime(DateTime.now()));
         }

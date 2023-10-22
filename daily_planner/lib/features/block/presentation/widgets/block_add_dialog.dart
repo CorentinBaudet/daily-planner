@@ -38,7 +38,7 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
           width: 8,
         ),
         DropdownButton(
-          items: TimeSlotUseCases().getStartTimeSlots().map((item) {
+          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
             return DropdownMenuItem(
               value: Utils().formatTime(item),
               child: Text(
@@ -72,7 +72,7 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
           width: 8,
         ),
         DropdownButton(
-          items: TimeSlotUseCases().getStartTimeSlots().map((item) {
+          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
             return DropdownMenuItem(
               value: Utils().formatTime(item),
               child: Text(

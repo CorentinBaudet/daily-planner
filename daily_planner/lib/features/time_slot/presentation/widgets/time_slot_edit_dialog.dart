@@ -25,7 +25,7 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
           width: 16,
         ),
         DropdownButton(
-          items: TimeSlotUseCases().getStartTimeSlots().map((item) {
+          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
             return DropdownMenuItem(
               value: Utils().formatTime(item),
               child: Text(
@@ -59,7 +59,7 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
           width: 16,
         ),
         DropdownButton(
-          items: TimeSlotUseCases().getStartTimeSlots().map((item) {
+          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
             return DropdownMenuItem(
               value: Utils().formatTime(item),
               child: Text(
