@@ -1,13 +1,12 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/utils/utils.dart';
-import 'package:daily_planner/constants/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
+// TODO break down this widget into smaller widgets
 // ignore: must_be_immutable
 class BlockAddDialog extends StatefulWidget {
   TimeSlot blockTimeSlot = TimeSlot(
@@ -29,72 +28,67 @@ class BlockAddDialog extends StatefulWidget {
 class _BlockAddDialogState extends State<BlockAddDialog> {
   TextEditingController blockNameController = TextEditingController();
 
-  // TODO : scroller le contenu du dropdown pour qu'à l'ouverture il soit centré sur l'heure actuelle
-  // TODO : centrer les items dans les dropdowns OU ajuster la longueur des dropdowns aux items
   Row _editStartTime(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text("from", style: TextStyle(color: Theme.of(context).primaryColor)),
+        const Text("from"),
         const SizedBox(
           width: 8,
         ),
-        DropdownButton(
-          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
-            return DropdownMenuItem(
-              value: Utils().formatTime(item),
-              child: Text(
-                Utils().formatTime(item),
-              ),
-            );
-          }).toList(),
-          value: Utils().formatTime(widget.blockTimeSlot.startTime),
-          icon: const Icon(null),
-          menuMaxHeight: 250,
-          onChanged: (value) {
-            setState(() => widget.blockTimeSlot.startTime = DateTime(
-                widget.blockTimeSlot.startTime.year,
-                widget.blockTimeSlot.startTime.month,
-                widget.blockTimeSlot.startTime.day,
-                ConstantsIntl.timeFormat.parse(value.toString()).hour,
-                ConstantsIntl.timeFormat.parse(value.toString()).minute));
+        InkWell(
+          onTap: () async {
+            final selectedTime = await showTimePicker(
+                context: context,
+                initialTime:
+                    TimeOfDay.fromDateTime(widget.blockTimeSlot.startTime),
+                initialEntryMode: TimePickerEntryMode.dial);
+            if (selectedTime != null) {
+              setState(() {
+                widget.blockTimeSlot.startTime = DateTime(
+                    widget.blockTimeSlot.startTime.year,
+                    widget.blockTimeSlot.startTime.month,
+                    widget.blockTimeSlot.startTime.day,
+                    selectedTime.hour,
+                    selectedTime.minute);
+              });
+            }
           },
-        ),
+          child: Text(Utils().formatTime(widget.blockTimeSlot.startTime),
+              style: TextStyle(color: Theme.of(context).primaryColor)),
+        )
       ],
     );
   }
 
-  // TODO : mettre les dropdowns sur la même ligne ?
   Row _editEndTime(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text("to", style: TextStyle(color: Theme.of(context).primaryColor)),
+        const Text("to"),
         const SizedBox(
           width: 8,
         ),
-        DropdownButton(
-          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
-            return DropdownMenuItem(
-              value: Utils().formatTime(item),
-              child: Text(
-                Utils().formatTime(item),
-              ),
-            );
-          }).toList(),
-          value: Utils().formatTime(widget.blockTimeSlot.endTime),
-          icon: const Icon(null),
-          menuMaxHeight: 250,
-          onChanged: (value) {
-            setState(() {
-              widget.blockTimeSlot.endTime = DateTime(
-                  widget.blockTimeSlot.endTime.year,
-                  widget.blockTimeSlot.endTime.month,
-                  widget.blockTimeSlot.endTime.day,
-                  ConstantsIntl.timeFormat.parse(value.toString()).hour,
-                  ConstantsIntl.timeFormat.parse(value.toString()).minute);
-            });
+        InkWell(
+          onTap: () async {
+            final selectedTime = await showTimePicker(
+                context: context,
+                initialTime:
+                    TimeOfDay.fromDateTime(widget.blockTimeSlot.endTime),
+                initialEntryMode: TimePickerEntryMode.dial);
+            if (selectedTime != null) {
+              setState(() {
+                widget.blockTimeSlot.endTime = DateTime(
+                    widget.blockTimeSlot.endTime.year,
+                    widget.blockTimeSlot.endTime.month,
+                    widget.blockTimeSlot.endTime.day,
+                    selectedTime.hour,
+                    selectedTime.minute);
+              });
+            }
           },
+          child: Text(Utils().formatTime(widget.blockTimeSlot.endTime),
+              style: TextStyle(color: Theme.of(context).primaryColor)),
         ),
       ],
     );
@@ -102,12 +96,12 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
 
   Widget _prioritySwitch() {
     return FlutterSwitch(
-      width: 75.0,
-      height: 30.0,
-      valueFontSize: 15.0,
-      toggleSize: 25.0,
+      width: 70.0,
+      height: 27.0,
+      valueFontSize: 13.0,
+      toggleSize: 21.0,
       value: (widget.blockTimeSlot.event as Block).isWork,
-      padding: 6.0,
+      padding: 5.0,
       showOnOff: true,
       inactiveText: '',
       activeText: 'work',
@@ -118,49 +112,6 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
       },
     );
   }
-
-  // Row _editDuration(BuildContext context) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       IconButton(
-  //           onPressed: () {
-  //             if (widget.newBlockTimeSlot.duration <= 15) {
-  //               return;
-  //             }
-  //             setState(() {
-  //               widget.newBlockTimeSlot.duration -= 15;
-  //             });
-  //           },
-  //           icon: const Icon(Icons.remove_rounded)),
-  //       NumberPicker(
-  //         axis: Axis.horizontal,
-  //         itemCount: 3,
-  //         itemWidth: MediaQuery.of(context).size.width * 0.15,
-  //         value: widget.newBlockTimeSlot.duration,
-  //         minValue: 15,
-  //         maxValue: 600,
-  //         step: 15,
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(16),
-  //           border: Border.all(color: Colors.black, width: 0.5),
-  //         ),
-  //         onChanged: (value) =>
-  //             setState(() => widget.newBlockTimeSlot.duration = value),
-  //       ),
-  //       IconButton(
-  //           onPressed: () {
-  //             if (widget.newBlockTimeSlot.duration >= 600) {
-  //               return;
-  //             }
-  //             setState(() {
-  //               widget.newBlockTimeSlot.duration += 15;
-  //             });
-  //           },
-  //           icon: const Icon(Icons.add_rounded)),
-  //     ],
-  //   );
-  // }
 
   @override
   void initState() {
@@ -213,8 +164,13 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
           const SizedBox(
             height: 24,
           ),
-          _editStartTime(context),
-          _editEndTime(context),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _editStartTime(context),
+              _editEndTime(context),
+            ],
+          ),
         ],
       ),
       actions: [

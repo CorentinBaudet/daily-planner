@@ -78,7 +78,6 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
                 decoration: const InputDecoration(hintText: 'task name'),
                 controller: taskNameController,
                 autofocus: true,
-                maxLines: 2,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'task name cannot be empty';

@@ -2,20 +2,7 @@ import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
 class TimeSlotUseCases {
-  // method to get all 15min start time slots for today
-  List<DateTime> getTodayStartTimes() {
-    final timeSlots = <DateTime>[];
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day, 0, 0, 0);
-    final tomorrow = today.add(const Duration(days: 1));
-    const timeSlotDuration = Duration(minutes: 15);
-
-    for (var i = today; i.isBefore(tomorrow); i = i.add(timeSlotDuration)) {
-      timeSlots.add(i);
-    }
-    return timeSlots;
-  }
-
+  // method to get all 15min start time slots for tomorrow
   List<DateTime> getTomorrowStartTimes() {
     final timeSlots = <DateTime>[];
     final now = DateTime.now();
@@ -90,7 +77,13 @@ class TimeSlotUseCases {
   }
 
   bool isBetweenInDay(DateTime time, DateTime startTime, DateTime endTime) {
-    return isBeforeOrSameTimeInDay(startTime, time) &&
-        isAfterInDay(endTime, time);
+    // if the time slot is in the same day
+    if (startTime.isBefore(endTime)) {
+      return isBeforeOrSameTimeInDay(startTime, time) &&
+          isAfterInDay(endTime, time);
+      // if the time slot is between two days
+    } else {
+      return !isBeforeOrSameTimeInDay(endTime, time);
+    }
   }
 }

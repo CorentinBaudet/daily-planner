@@ -29,9 +29,7 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
           ),
           color: Colors.grey.shade100,
         ),
-        height: MediaQuery.of(context)
-            .size
-            .height, // height of the body TODO: improve
+        height: MediaQuery.of(context).size.height - 80,
         padding: const EdgeInsets.only(top: 24, left: 16, right: 16),
         child: Column(
           children: <Widget>[

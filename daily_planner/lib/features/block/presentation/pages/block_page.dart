@@ -21,7 +21,8 @@ class BlockPage extends StatelessWidget {
 
     return timeSlots.isEmpty
         ? const Center(
-            child: Text('no blocks yet'),
+            child: Text('no blocks yet',
+                style: TextStyle(fontStyle: FontStyle.italic)),
           )
         : ListView.builder(
             padding: const EdgeInsets.only(top: 8),
@@ -90,8 +91,7 @@ class BlockPage extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else if (state is LoadedState) {
-              return Container(
-                  child: _buildBlockList(context, state.timeSlots));
+              return _buildBlockList(context, state.timeSlots);
             } else if (state is ErrorState) {
               return const Center(
                 child: Text('error loading blocks'),

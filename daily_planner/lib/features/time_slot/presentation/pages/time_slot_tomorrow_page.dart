@@ -6,25 +6,18 @@ import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_tomorrow_planning.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 
+// ignore: must_be_immutable
 class TimeSlotTomorrowPage extends StatelessWidget {
   TimeSlotTomorrowPage({super.key});
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final _isTaskListVisible = ValueNotifier<bool>(false);
+  bool firstOpenDrawer = true;
 
   // switch back _isTaskListVisible to false when the drawer is closed
   void drawerClosingCallBack() {
     _isTaskListVisible.value = false;
   }
-
-  // @override
-  // void initState() {
-  //     // open the drawer automatically when the page is loaded (with a tiny delay)
-  //   Future.delayed(const Duration(milliseconds: 500), () {
-  //     _isTaskListVisible.value = true;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -76,19 +69,25 @@ class TimeSlotTomorrowPage extends StatelessWidget {
               _isTaskListVisible.value = !_isTaskListVisible.value;
             }),
       ),
-      // TODO : make the drawer takes the height of the calendar
       Positioned(
           right: 0,
+          top: 80, // default height of the appbar
           child: ValueListenableBuilder(
             valueListenable: _isTaskListVisible,
             builder: (context, value, child) {
+              firstOpenDrawer
+                  ? Future.delayed(const Duration(milliseconds: 250), () {
+                      _isTaskListVisible.value = true;
+                      firstOpenDrawer = false;
+                    })
+                  : null;
               return value
                   ? Animate(
                       effects: const [
                         // animate a slide in effect
                         SlideEffect(
                           // set a curve and duration for the animation
-                          curve: Curves.ease,
+                          curve: Curves.easeInOut,
                           duration: Duration(milliseconds: 200),
                           // set begin offset to slide in from the right
                           begin: Offset(1, 0),

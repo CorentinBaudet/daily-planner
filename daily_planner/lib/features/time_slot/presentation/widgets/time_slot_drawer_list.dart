@@ -13,22 +13,17 @@ class TimeSlotDrawerList extends StatelessWidget {
     tasks = TaskUseCases().sortTasks(tasks);
 
     return tasks.isEmpty
-        ? const Padding(
-            padding: EdgeInsets.only(top: 24.0),
+        ? const Expanded(
             child: Center(
                 child: Text("no tasks left",
                     style: TextStyle(fontStyle: FontStyle.italic))),
           )
-        : Flexible(
-            fit: FlexFit.tight,
-            child: ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              itemCount: tasks.length,
-              itemBuilder: (BuildContext context, int index) {
-                return TimeSlotDrawerListTile(task: tasks[index]);
-              },
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
-            ),
+        : ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: tasks.length,
+            itemBuilder: (BuildContext context, int index) {
+              return TimeSlotDrawerListTile(task: tasks[index]);
+            },
           );
   }
 
@@ -48,7 +43,7 @@ class TimeSlotDrawerList extends StatelessWidget {
             ),
           );
         } else if (state is LoadedState) {
-          return Container(child: _buildTaskList(context, state.tasks));
+          return _buildTaskList(context, state.tasks);
         } else if (state is ErrorState) {
           return const Center(
             child: Text('error loading tasks'),

@@ -1,9 +1,6 @@
-import 'package:daily_planner/constants/intl.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
-// import 'package:numberpicker/numberpicker.dart';
 
 // ignore: must_be_immutable
 class TimeSlotEditDialog extends StatefulWidget {
@@ -18,108 +15,65 @@ class TimeSlotEditDialog extends StatefulWidget {
 class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
   Row _editStartTime(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Text("from", style: TextStyle(color: Theme.of(context).primaryColor)),
+        const Text("from"),
         const SizedBox(
-          width: 16,
+          width: 8,
         ),
-        DropdownButton(
-          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
-            return DropdownMenuItem(
-              value: Utils().formatTime(item),
-              child: Text(
-                textAlign: TextAlign.center,
-                Utils().formatTime(item),
-              ),
-            );
-          }).toList(),
-          value: Utils().formatTime(widget.timeSlot.startTime),
-          icon: const Icon(null),
-          menuMaxHeight: 250,
-          onChanged: (value) {
-            setState(() => widget.timeSlot.startTime = DateTime(
-                widget.timeSlot.startTime.year,
-                widget.timeSlot.startTime.month,
-                widget.timeSlot.startTime.day,
-                ConstantsIntl.timeFormat.parse(value.toString()).hour,
-                ConstantsIntl.timeFormat.parse(value.toString()).minute));
+        InkWell(
+          onTap: () async {
+            final selectedTime = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.fromDateTime(widget.timeSlot.startTime),
+                initialEntryMode: TimePickerEntryMode.dial);
+            if (selectedTime != null) {
+              setState(() {
+                widget.timeSlot.startTime = DateTime(
+                    widget.timeSlot.startTime.year,
+                    widget.timeSlot.startTime.month,
+                    widget.timeSlot.startTime.day,
+                    selectedTime.hour,
+                    selectedTime.minute);
+              });
+            }
           },
-        ),
+          child: Text(Utils().formatTime(widget.timeSlot.startTime),
+              style: TextStyle(color: Theme.of(context).primaryColor)),
+        )
       ],
     );
   }
 
   Row _editEndTime(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Text("to", style: TextStyle(color: Theme.of(context).primaryColor)),
+        const Text("to"),
         const SizedBox(
           width: 16,
         ),
-        DropdownButton(
-          items: TimeSlotUseCases().getTodayStartTimes().map((item) {
-            return DropdownMenuItem(
-              value: Utils().formatTime(item),
-              child: Text(
-                textAlign: TextAlign.center,
-                Utils().formatTime(item),
-              ),
-            );
-          }).toList(),
-          value: Utils().formatTime(widget.timeSlot.endTime),
-          icon: const Icon(null),
-          menuMaxHeight: 250,
-          onChanged: (value) {
-            setState(() => widget.timeSlot.endTime = DateTime(
-                widget.timeSlot.endTime.year,
-                widget.timeSlot.endTime.month,
-                widget.timeSlot.endTime.day,
-                ConstantsIntl.timeFormat.parse(value.toString()).hour,
-                ConstantsIntl.timeFormat.parse(value.toString()).minute));
+        InkWell(
+          onTap: () async {
+            final selectedTime = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.fromDateTime(widget.timeSlot.endTime),
+                initialEntryMode: TimePickerEntryMode.dial);
+            if (selectedTime != null) {
+              setState(() {
+                widget.timeSlot.endTime = DateTime(
+                    widget.timeSlot.endTime.year,
+                    widget.timeSlot.endTime.month,
+                    widget.timeSlot.endTime.day,
+                    selectedTime.hour,
+                    selectedTime.minute);
+              });
+            }
           },
+          child: Text(Utils().formatTime(widget.timeSlot.endTime),
+              style: TextStyle(color: Theme.of(context).primaryColor)),
         ),
       ],
     );
   }
-
-  // Row _editDuration(BuildContext context) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       IconButton(
-  //           onPressed: () {
-  //             setState(() {
-  //               widget.timeSlot.duration -= 15;
-  //             });
-  //           },
-  //           icon: const Icon(Icons.remove_rounded)),
-  //       NumberPicker(
-  //         axis: Axis.horizontal,
-  //         itemCount: 3,
-  //         itemWidth: MediaQuery.of(context).size.width * 0.15,
-  //         value: widget.timeSlot.duration,
-  //         minValue: 15,
-  //         maxValue: 180,
-  //         step: 15,
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(16),
-  //           border: Border.all(color: Colors.black, width: 0.5),
-  //         ),
-  //         onChanged: (value) =>
-  //             setState(() => widget.timeSlot.duration = value),
-  //       ),
-  //       IconButton(
-  //           onPressed: () {
-  //             setState(() {
-  //               widget.timeSlot.duration += 15;
-  //             });
-  //           },
-  //           icon: const Icon(Icons.add_rounded)),
-  //     ],
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +93,8 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
       ),
       insetPadding: const EdgeInsets.all(0),
       content: SizedBox(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [_editStartTime(context), _editEndTime(context)],
         ),
       ),
@@ -153,6 +107,11 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
           child: const Text('cancel'),
         ),
         TextButton(
+          style: ButtonStyle(
+              foregroundColor: MaterialStateColor.resolveWith(
+                  (Set<MaterialState> states) => Colors.white),
+              backgroundColor: MaterialStateProperty.all(
+                  Theme.of(context).colorScheme.primary)),
           onPressed: () {
             // edit the time slot
             Navigator.of(context).pop(widget.timeSlot);

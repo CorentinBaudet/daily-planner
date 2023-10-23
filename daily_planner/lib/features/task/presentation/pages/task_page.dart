@@ -22,7 +22,9 @@ class TaskPage extends StatelessWidget {
     tasks = TaskUseCases().sortTasks(tasks);
 
     return tasks.isEmpty
-        ? const Center(child: Text("no tasks yet"))
+        ? const Center(
+            child: Text("no tasks yet",
+                style: TextStyle(fontStyle: FontStyle.italic)))
         : ListView.builder(
             padding: const EdgeInsets.only(top: 16.0, right: 16.0),
             itemCount: tasks.length,
@@ -108,8 +110,7 @@ class TaskPage extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else if (state is LoadedState) {
-              return Container(
-                  child: _buildTaskList(context, state.tasks, _selectedTasks));
+              return _buildTaskList(context, state.tasks, _selectedTasks);
             } else if (state is ErrorState) {
               return const Center(
                 child: Text('error loading tasks'),

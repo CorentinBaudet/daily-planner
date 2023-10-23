@@ -21,11 +21,48 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
   final BuildContext context;
   final List<TimeSlot> timeSlots;
 
+  _handleTimeSlotTap(CalendarTapDetails calendarTapDetails) async {
+    if (calendarTapDetails.appointments == null) {
+      return;
+    }
+
+    Appointment appointment = calendarTapDetails.appointments!.first;
+    TimeSlot timeSlot =
+        TimeSlotLocalStorageRepository().getTimeSlot(appointment.id as int);
+    if (timeSlot.event is Block) {
+      return; // if the content of the time slot is a block, do nothing
+    }
+
+    final result = await showDialog(
+      context: context,
+      builder: (context) => TimeSlotEditDialog(timeSlot: timeSlot),
+    );
+    // check if the widget is still in the widget tree
+    if (!context.mounted) {
+      return;
+    }
+    if (result == null) {
+      return;
+    }
+
+    if (result == false) {
+      // if the content is a task, update isPlanned to false
+      Task task =
+          TaskLocalStorageRepository().getTask(timeSlot.event.id as int);
+      task.isPlanned = false;
+      context.read<TaskCubit>().updateTask(task);
+
+      // and delete the time slot
+      context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);
+    } else {
+      context.read<TimeSlotCubit>().updateTimeSlot(result as TimeSlot);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: SfCalendar(
-        // TODO make a widget for this
         dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots,
             isTomorrow: true),
         headerHeight: 0,
@@ -42,41 +79,8 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
           color: Colors.black,
           fontSize: 12,
         ),
-        onTap: (calendarTapDetails) async {
-          if (calendarTapDetails.appointments == null) {
-            return;
-          }
-
-          Appointment appointment = calendarTapDetails.appointments!.first;
-          TimeSlot timeSlot = TimeSlotLocalStorageRepository()
-              .getTimeSlot(appointment.id as int);
-          if (timeSlot.event is Block) {
-            return; // if the content of the time slot is a block, do nothing
-          }
-
-          final result = await showDialog(
-            context: context,
-            builder: (context) => TimeSlotEditDialog(timeSlot: timeSlot),
-          );
-          // check if the widget is still in the widget tree
-          if (!context.mounted) {
-            return;
-          }
-
-          if (result == null) {
-            return;
-          } else if (result == false) {
-            // if the content is a task, update isPlanned to false
-            Task task =
-                TaskLocalStorageRepository().getTask(timeSlot.event.id as int);
-            task.isPlanned = false;
-            context.read<TaskCubit>().updateTask(task);
-
-            // and delete the time slot
-            context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);
-          } else {
-            context.read<TimeSlotCubit>().updateTimeSlot(result as TimeSlot);
-          }
+        onTap: (calendarTapDetails) {
+          _handleTimeSlotTap(calendarTapDetails);
         },
       ),
     );
