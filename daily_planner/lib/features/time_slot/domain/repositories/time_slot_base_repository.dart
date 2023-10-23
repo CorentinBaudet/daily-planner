@@ -4,7 +4,6 @@ abstract class TimeSlotBaseRepository {
   List<TimeSlot> getTimeSlots();
   TimeSlot getTimeSlot(int id);
   Future<void> create(TimeSlot timeSlot);
-  Future<TimeSlot> read(int id);
   Future<void> update(TimeSlot timeSlot);
   Future<void> delete(int id);
 }

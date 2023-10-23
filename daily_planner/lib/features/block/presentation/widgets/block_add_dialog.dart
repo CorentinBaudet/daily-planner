@@ -10,7 +10,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 
 // ignore: must_be_immutable
 class BlockAddDialog extends StatefulWidget {
-  TimeSlot newBlockTimeSlot = TimeSlot(
+  TimeSlot blockTimeSlot = TimeSlot(
       startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
           DateTime.now().month, DateTime.now().day, DateTime.now().hour + 1)),
       endTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
@@ -27,8 +27,9 @@ class BlockAddDialog extends StatefulWidget {
 }
 
 class _BlockAddDialogState extends State<BlockAddDialog> {
-  final blockNameController = TextEditingController();
+  TextEditingController blockNameController = TextEditingController();
 
+  // TODO : scroller le contenu du dropdown pour qu'à l'ouverture il soit centré sur l'heure actuelle
   // TODO : centrer les items dans les dropdowns OU ajuster la longueur des dropdowns aux items
   Row _editStartTime(BuildContext context) {
     return Row(
@@ -47,16 +48,14 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
               ),
             );
           }).toList(),
-          value: widget.toEditBlock != null
-              ? Utils().formatTime(widget.toEditBlock!.startTime)
-              : Utils().formatTime(widget.newBlockTimeSlot.startTime),
+          value: Utils().formatTime(widget.blockTimeSlot.startTime),
           icon: const Icon(null),
           menuMaxHeight: 250,
           onChanged: (value) {
-            setState(() => widget.newBlockTimeSlot.startTime = DateTime(
-                widget.newBlockTimeSlot.startTime.year,
-                widget.newBlockTimeSlot.startTime.month,
-                widget.newBlockTimeSlot.startTime.day,
+            setState(() => widget.blockTimeSlot.startTime = DateTime(
+                widget.blockTimeSlot.startTime.year,
+                widget.blockTimeSlot.startTime.month,
+                widget.blockTimeSlot.startTime.day,
                 ConstantsIntl.timeFormat.parse(value.toString()).hour,
                 ConstantsIntl.timeFormat.parse(value.toString()).minute));
           },
@@ -83,18 +82,18 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
               ),
             );
           }).toList(),
-          value: widget.toEditBlock != null
-              ? Utils().formatTime(widget.toEditBlock!.endTime)
-              : Utils().formatTime(widget.newBlockTimeSlot.endTime),
+          value: Utils().formatTime(widget.blockTimeSlot.endTime),
           icon: const Icon(null),
           menuMaxHeight: 250,
           onChanged: (value) {
-            setState(() => widget.newBlockTimeSlot.endTime = DateTime(
-                widget.newBlockTimeSlot.endTime.year,
-                widget.newBlockTimeSlot.endTime.month,
-                widget.newBlockTimeSlot.endTime.day,
-                ConstantsIntl.timeFormat.parse(value.toString()).hour,
-                ConstantsIntl.timeFormat.parse(value.toString()).minute));
+            setState(() {
+              widget.blockTimeSlot.endTime = DateTime(
+                  widget.blockTimeSlot.endTime.year,
+                  widget.blockTimeSlot.endTime.month,
+                  widget.blockTimeSlot.endTime.day,
+                  ConstantsIntl.timeFormat.parse(value.toString()).hour,
+                  ConstantsIntl.timeFormat.parse(value.toString()).minute);
+            });
           },
         ),
       ],
@@ -107,16 +106,14 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
       height: 30.0,
       valueFontSize: 15.0,
       toggleSize: 25.0,
-      value: widget.toEditBlock != null
-          ? (widget.toEditBlock!.event as Block).isWork
-          : (widget.newBlockTimeSlot.event as Block).isWork,
+      value: (widget.blockTimeSlot.event as Block).isWork,
       padding: 6.0,
       showOnOff: true,
       inactiveText: '',
       activeText: 'work',
       onToggle: (val) {
         setState(() {
-          (widget.newBlockTimeSlot.event as Block).isWork = val;
+          (widget.blockTimeSlot.event as Block).isWork = val;
         });
       },
     );
@@ -166,6 +163,15 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
   // }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.toEditBlock != null) {
+      widget.blockTimeSlot = widget.toEditBlock!;
+      blockNameController.text = widget.toEditBlock!.event.name;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
 
@@ -183,13 +189,10 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
                 key: formKey,
                 child: Expanded(
                   child: TextFormField(
-                    // controller: blockNameController,
+                    controller: blockNameController,
                     decoration: const InputDecoration(
                       hintText: 'block name',
                     ),
-                    initialValue: widget.toEditBlock != null
-                        ? (widget.toEditBlock!.event as Block).name
-                        : "",
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     autofocus: widget.toEditBlock == null,
                     validator: (value) {
@@ -222,35 +225,50 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
           },
           child: const Text('cancel'),
         ),
-        TextButton(
-          style: ButtonStyle(
-              foregroundColor: MaterialStateColor.resolveWith(
-                  (Set<MaterialState> states) => Colors.white),
-              backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.primary)),
-          onPressed: () {
-            if (!formKey.currentState!.validate()) {
-              return;
-            }
-            // TODO : edit the block if toEditBlock is not null
-            context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
-                startTime:
-                    Utils().troncateDateTime(widget.newBlockTimeSlot.startTime),
-                endTime:
-                    Utils().troncateDateTime(widget.newBlockTimeSlot.endTime),
-                event: Block(
-                    name: blockNameController.text,
-                    isWork: (widget.newBlockTimeSlot.event as Block).isWork),
-                createdAt: Utils().troncateDateTime(DateTime.now())));
-
-            // close the dialog
-            Navigator.of(context).pop();
-          },
-          child: widget.toEditBlock != null
-              ? const Text('edit')
-              : const Text('add'),
-        ),
+        _addButton(context, formKey),
       ],
+    );
+  }
+
+  TextButton _addButton(BuildContext context, GlobalKey<FormState> formKey) {
+    return TextButton(
+      style: ButtonStyle(
+          foregroundColor: MaterialStateColor.resolveWith(
+              (Set<MaterialState> states) => Colors.white),
+          backgroundColor:
+              MaterialStateProperty.all(Theme.of(context).colorScheme.primary)),
+      onPressed: () {
+        if (!formKey.currentState!.validate()) {
+          return;
+        }
+
+        if (widget.toEditBlock != null) {
+          context.read<TimeSlotCubit>().updateTimeSlot(TimeSlot(
+              id: widget.toEditBlock!.id,
+              startTime:
+                  Utils().troncateDateTime(widget.blockTimeSlot.startTime),
+              endTime: Utils().troncateDateTime(widget.blockTimeSlot.endTime),
+              event: Block(
+                  name: blockNameController.text,
+                  isWork: (widget.blockTimeSlot.event as Block).isWork),
+              createdAt: widget.toEditBlock!.createdAt));
+          // close the dialog
+          Navigator.of(context).pop();
+          return;
+        }
+        context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
+            startTime: Utils().troncateDateTime(widget.blockTimeSlot.startTime),
+            endTime: Utils().troncateDateTime(widget.blockTimeSlot.endTime),
+            event: Block(
+                name: blockNameController.text,
+                isWork: (widget.blockTimeSlot.event as Block).isWork),
+            createdAt: Utils().troncateDateTime(DateTime.now())));
+
+        // close the dialog
+        Navigator.of(context).pop();
+      },
+      child:
+          widget.toEditBlock != null ? const Text('edit') : const Text('add'),
     );
   }
 }

@@ -32,12 +32,6 @@ class TimeSlotLocalStorageRepository extends TimeSlotBaseRepository {
   }
 
   @override
-  Future<TimeSlot> read(int id) {
-    // TODO: implement read
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> update(TimeSlot timeSlot) {
     return _myTimeSlots.put(timeSlot.id, timeSlot.toJson());
   }

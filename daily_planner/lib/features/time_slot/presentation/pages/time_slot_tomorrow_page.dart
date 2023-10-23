@@ -18,6 +18,14 @@ class TimeSlotTomorrowPage extends StatelessWidget {
     _isTaskListVisible.value = false;
   }
 
+  // @override
+  // void initState() {
+  //     // open the drawer automatically when the page is loaded (with a tiny delay)
+  //   Future.delayed(const Duration(milliseconds: 500), () {
+  //     _isTaskListVisible.value = true;
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -68,7 +76,6 @@ class TimeSlotTomorrowPage extends StatelessWidget {
               _isTaskListVisible.value = !_isTaskListVisible.value;
             }),
       ),
-      // TODO : open the drawer automatically when the page is loaded (with a tiny delay)
       // TODO : make the drawer takes the height of the calendar
       Positioned(
           right: 0,
