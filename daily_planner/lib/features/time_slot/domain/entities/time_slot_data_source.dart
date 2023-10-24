@@ -85,26 +85,27 @@ class TimeSlotDataSource extends CalendarDataSource {
   static void addOverlap(
       List<Appointment> appointments, TimeSlot timeSlot, bool isTomorrow) {
     appointments.add(Appointment(
-      id: timeSlot.id,
-      startTime: DateTime(DateTime.now().year, DateTime.now().month,
-          isTomorrow ? DateTime.now().day + 1 : DateTime.now().day, 0, 0),
-      endTime: DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-          timeSlot.endTime.hour,
-          timeSlot.endTime.minute),
-      subject: timeSlot.event.name,
-      color: Colors.indigo.shade50,
-    ));
+        id: timeSlot.id,
+        startTime: DateTime(DateTime.now().year, DateTime.now().month,
+            isTomorrow ? DateTime.now().day + 1 : DateTime.now().day, 0, 0),
+        endTime: DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
+            timeSlot.endTime.hour,
+            timeSlot.endTime.minute),
+        subject: timeSlot.event.name,
+        color: Colors.indigo.shade50,
+        recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
   }
 
   static void isTaskPassed(List<Appointment> appointments) {
     for (var appointment in appointments) {
-      if (appointment.appointmentType == AppointmentType.normal) {
+      if (appointment.appointmentType != AppointmentType.normal) {
         continue;
       }
 
+      // if the task is passed, we change its visual
       if (appointment.endTime.isBefore(DateTime.now())) {
         appointment.color = Colors.grey.shade300;
       }

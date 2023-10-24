@@ -129,6 +129,7 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
           },
           child: const Text('cancel'),
         ),
+        // TODO prevent adding a block if the duration is less than 15 minutes
         _addButton(context, formKey),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_tomorrow_page.dart';
+import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,6 +11,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class TimeSlotTodayPage extends StatelessWidget {
   const TimeSlotTodayPage({super.key});
 
+  // TODO : center the calendar on the current time
   Widget _buildPlanner(List<TimeSlot> timeSlots) {
     return Expanded(
       child: SfCalendar(
@@ -31,12 +33,11 @@ class TimeSlotTodayPage extends StatelessWidget {
           fontSize: 12,
         ),
         showCurrentTimeIndicator: true,
-        // loadMoreWidgetBuilder: (context, loadMoreAppointments) {
-        //   // display loader while loading more appointments
-        //   return const Center(
-        //     child: CircularProgressIndicator(),
-        //   );
-        // },
+        appointmentBuilder: (context, calendarAppointmentDetails) {
+          return TimeSlotAppointmentBuilder(
+            appointmentDetails: calendarAppointmentDetails,
+          );
+        },
       ),
     );
   }
