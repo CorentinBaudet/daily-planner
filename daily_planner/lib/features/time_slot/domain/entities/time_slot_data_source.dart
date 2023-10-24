@@ -24,6 +24,9 @@ class TimeSlotDataSource extends CalendarDataSource {
       }
     }
 
+    // update the tasks visualy if they are passed
+    isTaskPassed(appointments);
+
     return TimeSlotDataSource(appointments);
   }
 
@@ -71,7 +74,7 @@ class TimeSlotDataSource extends CalendarDataSource {
                 isOverlap ? 59 : timeSlot.endTime.minute),
             subject: timeSlot.event.name,
             color: Colors.indigo.shade50,
-          ));
+            recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
 
     // if the block ends the next day, we add it again to the calendar the next day
     if (isOverlap) {
@@ -94,5 +97,17 @@ class TimeSlotDataSource extends CalendarDataSource {
       subject: timeSlot.event.name,
       color: Colors.indigo.shade50,
     ));
+  }
+
+  static void isTaskPassed(List<Appointment> appointments) {
+    for (var appointment in appointments) {
+      if (appointment.appointmentType == AppointmentType.normal) {
+        continue;
+      }
+
+      if (appointment.endTime.isBefore(DateTime.now())) {
+        appointment.color = Colors.grey.shade300;
+      }
+    }
   }
 }

@@ -1,12 +1,12 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
+import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_picker.dart';
 import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
-// TODO break down this widget into smaller widgets
 // ignore: must_be_immutable
 class BlockAddDialog extends StatefulWidget {
   TimeSlot blockTimeSlot = TimeSlot(
@@ -28,69 +28,17 @@ class BlockAddDialog extends StatefulWidget {
 class _BlockAddDialogState extends State<BlockAddDialog> {
   TextEditingController blockNameController = TextEditingController();
 
-  Row _editStartTime(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const Text("from"),
-        const SizedBox(
-          width: 8,
-        ),
-        InkWell(
-          onTap: () async {
-            final selectedTime = await showTimePicker(
-                context: context,
-                initialTime:
-                    TimeOfDay.fromDateTime(widget.blockTimeSlot.startTime),
-                initialEntryMode: TimePickerEntryMode.dial);
-            if (selectedTime != null) {
-              setState(() {
-                widget.blockTimeSlot.startTime = DateTime(
-                    widget.blockTimeSlot.startTime.year,
-                    widget.blockTimeSlot.startTime.month,
-                    widget.blockTimeSlot.startTime.day,
-                    selectedTime.hour,
-                    selectedTime.minute);
-              });
-            }
-          },
-          child: Text(Utils().formatTime(widget.blockTimeSlot.startTime),
-              style: TextStyle(color: Theme.of(context).primaryColor)),
-        )
-      ],
+  TimeSlotPicker _editStartTime(BuildContext context) {
+    return TimeSlotPicker(
+      timeSlot: widget.blockTimeSlot,
+      isEndTime: false,
     );
   }
 
-  Row _editEndTime(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const Text("to"),
-        const SizedBox(
-          width: 8,
-        ),
-        InkWell(
-          onTap: () async {
-            final selectedTime = await showTimePicker(
-                context: context,
-                initialTime:
-                    TimeOfDay.fromDateTime(widget.blockTimeSlot.endTime),
-                initialEntryMode: TimePickerEntryMode.dial);
-            if (selectedTime != null) {
-              setState(() {
-                widget.blockTimeSlot.endTime = DateTime(
-                    widget.blockTimeSlot.endTime.year,
-                    widget.blockTimeSlot.endTime.month,
-                    widget.blockTimeSlot.endTime.day,
-                    selectedTime.hour,
-                    selectedTime.minute);
-              });
-            }
-          },
-          child: Text(Utils().formatTime(widget.blockTimeSlot.endTime),
-              style: TextStyle(color: Theme.of(context).primaryColor)),
-        ),
-      ],
+  TimeSlotPicker _editEndTime(BuildContext context) {
+    return TimeSlotPicker(
+      timeSlot: widget.blockTimeSlot,
+      isEndTime: true,
     );
   }
 

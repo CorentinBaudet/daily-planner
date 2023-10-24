@@ -1,5 +1,6 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:flutter/material.dart';
 
 class TimeSlotUseCases {
   // method to get all 15min start time slots for tomorrow
@@ -44,19 +45,23 @@ class TimeSlotUseCases {
   // method to sort time slots by start time and end time
   List<TimeSlot> sortTimeSlots(List<TimeSlot> timeSlots) {
     timeSlots.sort((a, b) {
-      final aStart = a.startTime;
-      final bStart = b.startTime;
-      final aEnd = a.endTime;
-      final bEnd = b.endTime;
+      final aStart = TimeOfDay.fromDateTime(a.startTime);
+      final bStart = TimeOfDay.fromDateTime(b.startTime);
+      final aEnd = TimeOfDay.fromDateTime(a.endTime);
+      final bEnd = TimeOfDay.fromDateTime(b.endTime);
 
-      if (aStart.isBefore(bStart)) {
+      if (aStart.hour < bStart.hour ||
+          (aStart.hour == bStart.hour && aStart.minute < bStart.minute)) {
         return -1;
-      } else if (aStart.isAfter(bStart)) {
+      } else if (aStart.hour > bStart.hour ||
+          (aStart.hour == bStart.hour && aStart.minute > bStart.minute)) {
         return 1;
       } else {
-        if (aEnd.isBefore(bEnd)) {
+        if (aEnd.hour < bEnd.hour ||
+            (aEnd.hour == bEnd.hour && aEnd.minute < bEnd.minute)) {
           return -1;
-        } else if (aEnd.isAfter(bEnd)) {
+        } else if (aEnd.hour > bEnd.hour ||
+            (aEnd.hour == bEnd.hour && aEnd.minute > bEnd.minute)) {
           return 1;
         } else {
           return 0;

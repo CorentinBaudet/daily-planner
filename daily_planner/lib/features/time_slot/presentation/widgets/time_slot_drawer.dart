@@ -13,6 +13,7 @@ class TimeSlotDrawer extends StatefulWidget {
   State<TimeSlotDrawer> createState() => _TimeSlotDrawerState();
 }
 
+// TODO add shadow to the drawer
 class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
   @override
   Widget build(BuildContext context) {

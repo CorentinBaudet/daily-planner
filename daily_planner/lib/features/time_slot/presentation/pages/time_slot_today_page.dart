@@ -19,7 +19,10 @@ class TimeSlotTodayPage extends StatelessWidget {
         allowDragAndDrop: true,
         viewNavigationMode:
             ViewNavigationMode.none, // prevent from swiping to other days
-        // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35),
+        // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35), // reduce the width of the time ruler
+        timeSlotViewSettings: const TimeSlotViewSettings(
+            timeIntervalHeight:
+                75), // increase the height of 1 hour slot to make text appear for 15 min slots
         dragAndDropSettings: const DragAndDropSettings(
           allowNavigation: false,
         ),
@@ -27,6 +30,13 @@ class TimeSlotTodayPage extends StatelessWidget {
           color: Colors.black,
           fontSize: 12,
         ),
+        showCurrentTimeIndicator: true,
+        // loadMoreWidgetBuilder: (context, loadMoreAppointments) {
+        //   // display loader while loading more appointments
+        //   return const Center(
+        //     child: CircularProgressIndicator(),
+        //   );
+        // },
       ),
     );
   }

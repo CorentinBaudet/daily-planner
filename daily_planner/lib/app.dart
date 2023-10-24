@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class App extends StatelessWidget {
   const App({super.key});
 
+// TODO define the theme
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

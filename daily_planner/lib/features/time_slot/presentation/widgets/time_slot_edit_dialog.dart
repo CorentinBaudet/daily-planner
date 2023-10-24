@@ -1,5 +1,5 @@
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/utils/utils.dart';
+import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_picker.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -13,66 +13,12 @@ class TimeSlotEditDialog extends StatefulWidget {
 }
 
 class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
-  Row _editStartTime(BuildContext context) {
-    return Row(
-      children: [
-        const Text("from"),
-        const SizedBox(
-          width: 8,
-        ),
-        InkWell(
-          onTap: () async {
-            final selectedTime = await showTimePicker(
-                context: context,
-                initialTime: TimeOfDay.fromDateTime(widget.timeSlot.startTime),
-                initialEntryMode: TimePickerEntryMode.dial);
-            if (selectedTime != null) {
-              setState(() {
-                widget.timeSlot.startTime = DateTime(
-                    widget.timeSlot.startTime.year,
-                    widget.timeSlot.startTime.month,
-                    widget.timeSlot.startTime.day,
-                    selectedTime.hour,
-                    selectedTime.minute);
-              });
-            }
-          },
-          child: Text(Utils().formatTime(widget.timeSlot.startTime),
-              style: TextStyle(color: Theme.of(context).primaryColor)),
-        )
-      ],
-    );
+  TimeSlotPicker _editStartTime(BuildContext context) {
+    return TimeSlotPicker(timeSlot: widget.timeSlot, isEndTime: false);
   }
 
-  Row _editEndTime(BuildContext context) {
-    return Row(
-      children: [
-        const Text("to"),
-        const SizedBox(
-          width: 16,
-        ),
-        InkWell(
-          onTap: () async {
-            final selectedTime = await showTimePicker(
-                context: context,
-                initialTime: TimeOfDay.fromDateTime(widget.timeSlot.endTime),
-                initialEntryMode: TimePickerEntryMode.dial);
-            if (selectedTime != null) {
-              setState(() {
-                widget.timeSlot.endTime = DateTime(
-                    widget.timeSlot.endTime.year,
-                    widget.timeSlot.endTime.month,
-                    widget.timeSlot.endTime.day,
-                    selectedTime.hour,
-                    selectedTime.minute);
-              });
-            }
-          },
-          child: Text(Utils().formatTime(widget.timeSlot.endTime),
-              style: TextStyle(color: Theme.of(context).primaryColor)),
-        ),
-      ],
-    );
+  TimeSlotPicker _editEndTime(BuildContext context) {
+    return TimeSlotPicker(timeSlot: widget.timeSlot, isEndTime: true);
   }
 
   @override

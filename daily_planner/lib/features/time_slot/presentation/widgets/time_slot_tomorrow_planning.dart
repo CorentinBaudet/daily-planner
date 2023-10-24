@@ -71,6 +71,9 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
         viewNavigationMode:
             ViewNavigationMode.none, // prevent from swiping to other days
         // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35), // reduce the width of the time ruler
+        timeSlotViewSettings: const TimeSlotViewSettings(
+            timeIntervalHeight:
+                75), // increase the height of 1 hour slot to make text appear for 15 min slots
         initialDisplayDate: DateTime.now().add(const Duration(days: 1)),
         dragAndDropSettings: const DragAndDropSettings(
           allowNavigation: false,

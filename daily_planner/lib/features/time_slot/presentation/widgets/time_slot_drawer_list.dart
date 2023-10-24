@@ -13,11 +13,9 @@ class TimeSlotDrawerList extends StatelessWidget {
     tasks = TaskUseCases().sortTasks(tasks);
 
     return tasks.isEmpty
-        ? const Expanded(
-            child: Center(
-                child: Text("no tasks left",
-                    style: TextStyle(fontStyle: FontStyle.italic))),
-          )
+        ? const Center(
+            child: Text("no tasks left",
+                style: TextStyle(fontStyle: FontStyle.italic)))
         : ListView.builder(
             physics: const BouncingScrollPhysics(),
             itemCount: tasks.length,
@@ -43,7 +41,8 @@ class TimeSlotDrawerList extends StatelessWidget {
             ),
           );
         } else if (state is LoadedState) {
-          return _buildTaskList(context, state.tasks);
+          // we need expanded to indicate that the _buildTaskList should take the remaining space
+          return Expanded(child: _buildTaskList(context, state.tasks));
         } else if (state is ErrorState) {
           return const Center(
             child: Text('error loading tasks'),
