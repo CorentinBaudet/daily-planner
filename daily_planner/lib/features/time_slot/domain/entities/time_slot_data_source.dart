@@ -73,6 +73,7 @@ class TimeSlotDataSource extends CalendarDataSource {
                 isOverlap ? 23 : timeSlot.endTime.hour,
                 isOverlap ? 59 : timeSlot.endTime.minute),
             subject: timeSlot.event.name,
+            // notes: timeSlot.event.name,
             color: Colors.indigo.shade50,
             recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
 

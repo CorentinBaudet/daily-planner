@@ -1,7 +1,10 @@
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
+import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -12,7 +15,7 @@ class TimeSlotAppointmentBuilder extends StatefulWidget {
 
   TimeSlotAppointmentBuilder({super.key, required this.appointmentDetails});
 
-  late Appointment appointment;
+  Appointment? appointment;
   late TimeSlot timeSlot;
   late Task task;
 
@@ -32,7 +35,6 @@ class _TimeSlotAppointmentBuilderState
       constraints: const BoxConstraints(),
       onPressed: () {
         // TODO : add task to tomorrow
-        // open confirmation dialog
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -62,31 +64,91 @@ class _TimeSlotAppointmentBuilderState
         ).then((value) {
           if (value == true) {
             // if confirmed, add task to tomorrow
-            context.read<TimeSlotCubit>().createTimeSlot(
-                  TimeSlot(
-                    startTime:
-                        widget.timeSlot.startTime.add(const Duration(days: 1)),
-                    endTime:
-                        widget.timeSlot.endTime.add(const Duration(days: 1)),
-                    event: widget.timeSlot.event,
-                    createdAt: widget.timeSlot.createdAt,
-                  ),
-                );
+            _addTimeSlot(context);
           }
         });
       },
     );
   }
 
+  Future<dynamic> _noTimeSlotDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No available time slot'),
+            content:
+                const Text('There is no available time slot for this task.'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'))
+            ],
+          );
+        });
+  }
+
+  _addTimeSlot(BuildContext context) {
+    TimeSlot? timeSlot = TimeSlotUseCases()
+        .searchForTimeSlot(context, widget.timeSlot.event as Task);
+
+    if (timeSlot == null) {
+      // display a dialog indicating that there is no available time slot
+      _noTimeSlotDialog(context);
+    } else {
+      context.read<TimeSlotCubit>().createTimeSlot(
+            TimeSlot(
+              startTime: Utils().troncateDateTime(DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day + 1,
+                  timeSlot.startTime.hour,
+                  timeSlot.startTime.minute)),
+              endTime: timeSlot.event is Block
+                  // if the free time slot found is a block, we use its end time for the task
+                  ? Utils().troncateDateTime(DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day + 1,
+                      timeSlot.endTime.hour,
+                      timeSlot.endTime.minute))
+                  // else we simply make the task last 1 hour
+                  : Utils().troncateDateTime(DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day + 1,
+                      timeSlot.startTime.hour + 1,
+                      timeSlot.startTime.minute)),
+              event: timeSlot.event is Block
+                  // if the free time slot found is a block, we happen its name to the task name
+                  ? () {
+                      Block renamedBlock = timeSlot.event as Block;
+                      renamedBlock.name += ' (${timeSlot.event.name})';
+                      return renamedBlock;
+                    }()
+                  : timeSlot.event,
+              createdAt: widget.timeSlot.createdAt,
+            ),
+          );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     widget.appointment = widget.appointmentDetails.appointments.first;
-    if (widget.appointment.appointmentType == AppointmentType.normal) {
+
+    if (widget.appointment == null) {
+      return;
+    }
+
+    if (widget.appointment!.appointmentType == AppointmentType.normal) {
       widget.timeSlot = context
           .read<TimeSlotCubit>()
           .repository
-          .getTimeSlot(widget.appointment.id as int);
+          .getTimeSlot(widget.appointment!.id as int);
       widget.task = context
           .read<TaskCubit>()
           .repository
@@ -95,9 +157,11 @@ class _TimeSlotAppointmentBuilderState
     }
   }
 
+  // TODO display work block, and display task on top of it !!!
+  // TODO try to display appointment notes (name of the block) with FlutterFlow eventually
   @override
   Widget build(BuildContext context) {
-    if (widget.appointment.appointmentType != AppointmentType.normal) {
+    if (widget.appointment!.appointmentType != AppointmentType.normal) {
       return Container(
         width: widget.appointmentDetails.bounds.width,
         height: widget.appointmentDetails.bounds.height,
@@ -107,7 +171,7 @@ class _TimeSlotAppointmentBuilderState
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: Text(widget.appointment.subject),
+              child: Text(widget.appointment!.subject),
             ),
             IconButton(
               icon: const Icon(
@@ -132,13 +196,13 @@ class _TimeSlotAppointmentBuilderState
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
-                widget.appointment.subject,
+                widget.appointment!.subject,
                 style: checked
                     ? const TextStyle(decoration: TextDecoration.lineThrough)
                     : null,
               ),
             ),
-            widget.appointment.endTime.isBefore(DateTime.now())
+            widget.appointment!.endTime.isBefore(DateTime.now())
                 ? Row(
                     children: [
                       checked
