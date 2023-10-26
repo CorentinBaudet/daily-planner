@@ -15,7 +15,7 @@ class TimeSlotAppointmentBuilder extends StatefulWidget {
 
   TimeSlotAppointmentBuilder({super.key, required this.appointmentDetails});
 
-  Appointment? appointment;
+  // Appointment? appointment = appointmentDetails.appointments.first;
   late TimeSlot timeSlot;
   late Task task;
 
@@ -94,6 +94,7 @@ class _TimeSlotAppointmentBuilderState
     TimeSlot? timeSlot = TimeSlotUseCases()
         .searchForTimeSlot(context, widget.timeSlot.event as Task);
 
+    // TODO : reschedule doesn't seem to work, it adds a copy of the block in case the task is reschudeled in a block
     if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot
       _noTimeSlotDialog(context);
@@ -121,14 +122,7 @@ class _TimeSlotAppointmentBuilderState
                       DateTime.now().day + 1,
                       timeSlot.startTime.hour + 1,
                       timeSlot.startTime.minute)),
-              event: timeSlot.event is Block
-                  // if the free time slot found is a block, we happen its name to the task name
-                  ? () {
-                      Block renamedBlock = timeSlot.event as Block;
-                      renamedBlock.name += ' (${timeSlot.event.name})';
-                      return renamedBlock;
-                    }()
-                  : timeSlot.event,
+              event: timeSlot.event,
               createdAt: widget.timeSlot.createdAt,
             ),
           );
@@ -138,17 +132,18 @@ class _TimeSlotAppointmentBuilderState
   @override
   void initState() {
     super.initState();
-    widget.appointment = widget.appointmentDetails.appointments.first;
+    // widget.appointment = widget.appointmentDetails.appointments.first;
 
-    if (widget.appointment == null) {
-      return;
-    }
+    // if (widget.appointment == null) {
+    //   return;
+    // }
 
-    if (widget.appointment!.appointmentType == AppointmentType.normal) {
+    if (widget.appointmentDetails.appointments.first.appointmentType ==
+        AppointmentType.normal) {
       widget.timeSlot = context
           .read<TimeSlotCubit>()
           .repository
-          .getTimeSlot(widget.appointment!.id as int);
+          .getTimeSlot(widget.appointmentDetails.appointments.first.id as int);
       widget.task = context
           .read<TaskCubit>()
           .repository
@@ -161,7 +156,8 @@ class _TimeSlotAppointmentBuilderState
   // TODO try to display appointment notes (name of the block) with FlutterFlow eventually
   @override
   Widget build(BuildContext context) {
-    if (widget.appointment!.appointmentType != AppointmentType.normal) {
+    if (widget.appointmentDetails.appointments.first.appointmentType !=
+        AppointmentType.normal) {
       return Container(
         width: widget.appointmentDetails.bounds.width,
         height: widget.appointmentDetails.bounds.height,
@@ -171,7 +167,7 @@ class _TimeSlotAppointmentBuilderState
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: Text(widget.appointment!.subject),
+              child: Text(widget.appointmentDetails.appointments.first.subject),
             ),
             IconButton(
               icon: const Icon(
@@ -196,13 +192,14 @@ class _TimeSlotAppointmentBuilderState
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: Text(
-                widget.appointment!.subject,
+                widget.appointmentDetails.appointments.first.subject,
                 style: checked
                     ? const TextStyle(decoration: TextDecoration.lineThrough)
                     : null,
               ),
             ),
-            widget.appointment!.endTime.isBefore(DateTime.now())
+            widget.appointmentDetails.appointments.first.endTime
+                    .isBefore(DateTime.now())
                 ? Row(
                     children: [
                       checked
