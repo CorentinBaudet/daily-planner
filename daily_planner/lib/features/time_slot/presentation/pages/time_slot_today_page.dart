@@ -12,10 +12,10 @@ class TimeSlotTodayPage extends StatelessWidget {
   const TimeSlotTodayPage({super.key});
 
   // TODO : center the calendar on the current time
-  Widget _buildPlanner(List<TimeSlot> timeSlots) {
+  Widget _buildPlanner(BuildContext context, List<TimeSlot> timeSlots) {
     return Expanded(
       child: SfCalendar(
-        dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots),
+        dataSource: TimeSlotDataSource.getPlannerDataSource(context, timeSlots),
         headerHeight: 0,
         backgroundColor: Colors.transparent,
         allowDragAndDrop: true,
@@ -64,7 +64,7 @@ class TimeSlotTodayPage extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is LoadedState) {
-                  return _buildPlanner(state.timeSlots);
+                  return _buildPlanner(context, state.timeSlots);
                 } else if (state is ErrorState) {
                   return const Center(
                     child: Text('error loading planning'),

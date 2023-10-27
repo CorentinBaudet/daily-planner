@@ -1,7 +1,9 @@
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlotDataSource extends CalendarDataSource {
@@ -9,7 +11,8 @@ class TimeSlotDataSource extends CalendarDataSource {
     appointments = source;
   }
 
-  static CalendarDataSource getPlannerDataSource(List<TimeSlot> timeSlots,
+  static CalendarDataSource getPlannerDataSource(
+      BuildContext context, List<TimeSlot> timeSlots,
       {bool isTomorrow = false}) {
     List<Appointment> appointments =
         <Appointment>[]; // the SfCalendar requires a list of Appointment objects
@@ -24,8 +27,8 @@ class TimeSlotDataSource extends CalendarDataSource {
       }
     }
 
-    // update the tasks visualy if they are passed
-    isTaskPassed(appointments);
+    // update the tasks visually if they are passed
+    handleTasksPassed(context, appointments);
 
     return TimeSlotDataSource(appointments);
   }
@@ -55,27 +58,28 @@ class TimeSlotDataSource extends CalendarDataSource {
     bool isOverlap =
         timeSlot.endTime.isBefore(timeSlot.startTime) ? true : false;
 
-    (timeSlot.event as Block).isWork
-        ? null // if this is a work block, we don't add it since we don't find a way to display it without hiding the task linked to
-        : appointments.add(Appointment(
-            id: timeSlot.id,
-            startTime: DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-                timeSlot.startTime.hour,
-                timeSlot.startTime.minute),
-            endTime: DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-                // in case of overlap, end at 24:00 makes a double arrow appear which hides the block name
-                isOverlap ? 23 : timeSlot.endTime.hour,
-                isOverlap ? 59 : timeSlot.endTime.minute),
-            subject: timeSlot.event.name,
-            // notes: timeSlot.event.name,
-            color: Colors.indigo.shade50,
-            recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
+    // (timeSlot.event as Block).isWork
+    //     ? null // if this is a work block, we don't add it since we don't find a way to display it without hiding the task linked to
+    //     :
+    appointments.add(Appointment(
+        id: timeSlot.id,
+        startTime: DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
+            timeSlot.startTime.hour,
+            timeSlot.startTime.minute),
+        endTime: DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
+            // in case of overlap, end at 24:00 makes a double arrow appear which hides the block name
+            isOverlap ? 23 : timeSlot.endTime.hour,
+            isOverlap ? 59 : timeSlot.endTime.minute),
+        subject: timeSlot.event.name,
+        // notes: timeSlot.event.name,
+        color: Colors.indigo.shade50,
+        recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
 
     // if the block ends the next day, we add it again to the calendar the next day
     if (isOverlap) {
@@ -100,15 +104,27 @@ class TimeSlotDataSource extends CalendarDataSource {
         recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
   }
 
-  static void isTaskPassed(List<Appointment> appointments) {
+  static void handleTasksPassed(
+      BuildContext context, List<Appointment> appointments) {
     for (var appointment in appointments) {
       if (appointment.appointmentType != AppointmentType.normal) {
         continue;
       }
 
-      // if the task is passed, we change its visual
+      // if the appointment is passed, we change its color to grey
       if (appointment.endTime.isBefore(DateTime.now())) {
         appointment.color = Colors.grey.shade300;
+
+        // and we set the task to unplanned
+        TimeSlot timeSlot = context
+            .read<TimeSlotCubit>()
+            .repository
+            .getTimeSlot(appointment.id as int);
+        Task task = context
+            .read<TaskCubit>()
+            .repository
+            .getTask((timeSlot.event as Task).id as int);
+        task.isPlanned = false;
       }
     }
   }

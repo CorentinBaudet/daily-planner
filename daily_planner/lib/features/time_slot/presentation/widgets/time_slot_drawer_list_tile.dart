@@ -25,6 +25,8 @@ class TimeSlotDrawerListTile extends StatelessWidget {
       // set the task isPlanned to true
       task.isPlanned = true;
       context.read<TaskCubit>().updateTask(task);
+
+      // add the task to the time slot
       context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
           startTime: Utils().troncateDateTime(DateTime(
               DateTime.now().year,
@@ -47,14 +49,16 @@ class TimeSlotDrawerListTile extends StatelessWidget {
                   DateTime.now().day + 1,
                   timeSlot.startTime.hour + 1,
                   timeSlot.startTime.minute)),
-          event: timeSlot.event is Block
-              // if the free time slot found is a block, we happen its name to the task name
-              ? () {
-                  Task renamedTask = task;
-                  renamedTask.name += ' (${timeSlot.event.name})';
-                  return renamedTask;
-                }()
-              : task,
+          event:
+              // timeSlot.event is Block
+              // // if the free time slot found is a block, we happen its name to the task name
+              // ? () {
+              //     Task renamedTask = task;
+              //     renamedTask.name += ' (${timeSlot.event.name})';
+              //     return renamedTask;
+              //   }()
+              // :
+              task,
           createdAt: Utils().troncateDateTime(DateTime.now())));
     }
   }

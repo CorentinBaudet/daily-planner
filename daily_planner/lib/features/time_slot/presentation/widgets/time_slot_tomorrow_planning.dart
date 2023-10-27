@@ -63,7 +63,7 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: SfCalendar(
-        dataSource: TimeSlotDataSource.getPlannerDataSource(timeSlots,
+        dataSource: TimeSlotDataSource.getPlannerDataSource(context, timeSlots,
             isTomorrow: true),
         headerHeight: 0,
         backgroundColor: Colors.transparent,

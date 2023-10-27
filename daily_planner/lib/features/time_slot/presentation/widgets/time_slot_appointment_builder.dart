@@ -30,7 +30,7 @@ class _TimeSlotAppointmentBuilderState
 
   IconButton _rescheduleButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.double_arrow_rounded),
+      icon: const Icon(Icons.add_rounded),
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
       onPressed: () {
@@ -91,8 +91,8 @@ class _TimeSlotAppointmentBuilderState
   }
 
   _addTimeSlot(BuildContext context) {
-    TimeSlot? timeSlot = TimeSlotUseCases()
-        .searchForTimeSlot(context, widget.timeSlot.event as Task);
+    TimeSlot? timeSlot =
+        TimeSlotUseCases().searchForTimeSlot(context, widget.task);
 
     // TODO : reschedule doesn't seem to work, it adds a copy of the block in case the task is reschudeled in a block
     if (timeSlot == null) {
@@ -122,8 +122,8 @@ class _TimeSlotAppointmentBuilderState
                       DateTime.now().day + 1,
                       timeSlot.startTime.hour + 1,
                       timeSlot.startTime.minute)),
-              event: timeSlot.event,
-              createdAt: widget.timeSlot.createdAt,
+              event: widget.task,
+              createdAt: Utils().troncateDateTime(DateTime.now()),
             ),
           );
     }
@@ -169,14 +169,12 @@ class _TimeSlotAppointmentBuilderState
               padding: const EdgeInsets.only(left: 8),
               child: Text(widget.appointmentDetails.appointments.first.subject),
             ),
-            IconButton(
-              icon: const Icon(
+            const Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: Icon(
                 Icons.change_circle_rounded,
                 size: 19,
               ),
-              padding: const EdgeInsets.only(right: 8),
-              constraints: const BoxConstraints(),
-              onPressed: () {},
             )
           ],
         ),
@@ -202,7 +200,8 @@ class _TimeSlotAppointmentBuilderState
                     .isBefore(DateTime.now())
                 ? Row(
                     children: [
-                      checked
+                      // TODO : si la tâche n'est pas replanifiée, ou qu'est n'est pas done, on affiche le bouton
+                      !widget.task.isPlanned || checked
                           ? const SizedBox.shrink()
                           : _rescheduleButton(context),
                       Checkbox(
