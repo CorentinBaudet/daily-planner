@@ -96,6 +96,14 @@ class TimeSlotUseCases {
     }
   }
 
+  // method to check if two time slots are starting and ending at the same hour and minute
+  bool isSameTimeSlot(TimeSlot timeSlot, first) {
+    return timeSlot.startTime.hour == first.startTime.hour &&
+        timeSlot.startTime.minute == first.startTime.minute &&
+        timeSlot.endTime.hour == first.endTime.hour &&
+        timeSlot.endTime.minute == first.endTime.minute;
+  }
+
   TimeSlot? searchForTimeSlot(BuildContext context, Task task) {
     List<TimeSlot> timeSlots = [];
 

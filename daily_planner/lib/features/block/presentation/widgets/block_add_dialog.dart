@@ -27,6 +27,7 @@ class BlockAddDialog extends StatefulWidget {
 
 class _BlockAddDialogState extends State<BlockAddDialog> {
   TextEditingController blockNameController = TextEditingController();
+  late FocusNode blockNameFocusNode;
 
   TimeSlotPicker _editStartTime(BuildContext context) {
     return TimeSlotPicker(
@@ -68,7 +69,16 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
       widget.blockTimeSlot = widget.toEditBlock!;
       blockNameController.text = widget.toEditBlock!.event.name;
     }
+
+    // To manage the lifecycle, create the FocusNode in the initState method
+    blockNameFocusNode = FocusNode();
+    if (blockNameController.text == '') {
+      // if the block name is not empty, we focus on the end time
+      blockNameFocusNode.requestFocus();
+    }
   }
+
+  // TODO : do not focus back on the block name text field after editing times if the block name is not empty
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +103,8 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
                       hintText: 'block name',
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    autofocus: widget.toEditBlock == null,
+                    // autofocus: widget.toEditBlock == null,
+                    focusNode: blockNameFocusNode,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter a name';
@@ -175,5 +186,13 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
       child:
           widget.toEditBlock != null ? const Text('edit') : const Text('add'),
     );
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    blockNameFocusNode.dispose();
+
+    super.dispose();
   }
 }

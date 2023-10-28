@@ -1,6 +1,7 @@
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,11 +19,28 @@ class TimeSlotDataSource extends CalendarDataSource {
         <Appointment>[]; // the SfCalendar requires a list of Appointment objects
 
     for (var timeSlot in timeSlots) {
-      // if the event is a task, it is a one-time event
       if (timeSlot.event.runtimeType == Task) {
-        addTaskToCalendar(appointments, timeSlot);
-        // if the event is a block, it is a recurring event
+        // if the event is a task, it is a one-time event
+
+        List<TimeSlot> allTimeSlots =
+            context.read<TimeSlotCubit>().repository.getTimeSlots();
+        bool taskIsOnWorkBlock = false;
+        // look for a timeslot containing a work block starting and ending at the same time as the current appointment
+        for (var timeSlotItem in allTimeSlots) {
+          if (timeSlotItem.event is Block &&
+              (timeSlotItem.event as Block).isWork &&
+              TimeSlotUseCases().isSameTimeSlot(timeSlotItem, timeSlot)) {
+            // if a work block is found, we don't add the task
+            taskIsOnWorkBlock = true;
+            break;
+          }
+        }
+        if (!taskIsOnWorkBlock) {
+          // if no work block is found, we add the task
+          addTaskToCalendar(appointments, timeSlot);
+        }
       } else {
+        // else the event is a block, it is a recurring event
         addBlockToCalendar(timeSlot, appointments, isTomorrow);
       }
     }
@@ -58,9 +76,6 @@ class TimeSlotDataSource extends CalendarDataSource {
     bool isOverlap =
         timeSlot.endTime.isBefore(timeSlot.startTime) ? true : false;
 
-    // (timeSlot.event as Block).isWork
-    //     ? null // if this is a work block, we don't add it since we don't find a way to display it without hiding the task linked to
-    //     :
     appointments.add(Appointment(
         id: timeSlot.id,
         startTime: DateTime(
@@ -115,16 +130,15 @@ class TimeSlotDataSource extends CalendarDataSource {
       if (appointment.endTime.isBefore(DateTime.now())) {
         appointment.color = Colors.grey.shade300;
 
-        // and we set the task to unplanned
-        TimeSlot timeSlot = context
-            .read<TimeSlotCubit>()
-            .repository
-            .getTimeSlot(appointment.id as int);
-        Task task = context
-            .read<TaskCubit>()
-            .repository
-            .getTask((timeSlot.event as Task).id as int);
-        task.isPlanned = false;
+        // TimeSlot timeSlot = context
+        //     .read<TimeSlotCubit>()
+        //     .repository
+        //     .getTimeSlot(appointment.id as int);
+        // Task task = context
+        //     .read<TaskCubit>()
+        //     .repository
+        //     .getTask((timeSlot.event as Task).id as int);
+        // task.isPlanned = true;
       }
     }
   }
