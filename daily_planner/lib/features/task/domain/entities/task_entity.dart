@@ -3,16 +3,18 @@ import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event
 class Task extends TimeSlotEvent {
   final Priority priority;
   final DateTime createdAt;
-  bool isDone;
   bool isPlanned;
+  bool isDone;
+  bool isRescheduled;
 
   Task({
     super.id,
     required super.name,
     required this.priority,
     required this.createdAt,
-    this.isDone = false,
     this.isPlanned = false,
+    this.isDone = false,
+    this.isRescheduled = false,
   });
 
   factory Task.fromJson(Map<dynamic, dynamic> json) {
@@ -24,8 +26,9 @@ class Task extends TimeSlotEvent {
         orElse: () => Priority.normal,
       ),
       createdAt: DateTime.parse(json['createdAt']),
-      isDone: json['isDone'] as bool,
       isPlanned: json['isPlanned'] as bool,
+      isDone: json['isDone'] as bool,
+      isRescheduled: json['isRescheduled'] as bool,
     );
   }
 
@@ -36,8 +39,9 @@ class Task extends TimeSlotEvent {
       'name': name,
       'priority': priority.toString().split('.').last,
       'createdAt': createdAt.toString(),
-      'isDone': isDone,
       'isPlanned': isPlanned,
+      'isDone': isDone,
+      'isRescheduled': isRescheduled,
     };
   }
 }

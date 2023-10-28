@@ -13,11 +13,8 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class TimeSlotAppointmentBuilder extends StatefulWidget {
   final CalendarAppointmentDetails appointmentDetails;
 
-  TimeSlotAppointmentBuilder({super.key, required this.appointmentDetails});
-
-  // Appointment? appointment = appointmentDetails.appointments.first;
-  late TimeSlot timeSlot;
-  late Task task;
+  const TimeSlotAppointmentBuilder(
+      {super.key, required this.appointmentDetails});
 
   @override
   State<TimeSlotAppointmentBuilder> createState() =>
@@ -26,21 +23,47 @@ class TimeSlotAppointmentBuilder extends StatefulWidget {
 
 class _TimeSlotAppointmentBuilderState
     extends State<TimeSlotAppointmentBuilder> {
-  bool checked = false;
-
-  IconButton _rescheduleButton(BuildContext context) {
+  IconButton _taskStateButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.add_rounded),
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.only(right: 8),
       constraints: const BoxConstraints(),
       onPressed: () {
-        // TODO : add task to tomorrow
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('reschedule task'),
-            content:
-                const Text('this will add the task to tomorrow\'s planning'),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      // set task to done
+                      context.read<TaskCubit>().updateTask(
+                            Task(
+                              id: task!.id as int,
+                              name: task!.name,
+                              priority: task!.priority,
+                              createdAt: task!.createdAt,
+                              isPlanned: task!.isPlanned,
+                              isDone: !task!.isDone,
+                              isRescheduled: task!.isRescheduled,
+                            ),
+                          );
+                      // ask for reload of timeslot state
+                      context.read<TimeSlotCubit>().getTimeSlots();
+
+                      Navigator.pop(context, true);
+                    },
+                    child: const Text('done')),
+                TextButton(
+                    onPressed: () {
+                      // reschedule task to first available time slot of tomorrow
+                      _addTimeSlot(context);
+                      Navigator.pop(context, true);
+                    },
+                    child: const Text('reschedule')),
+              ],
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -48,25 +71,9 @@ class _TimeSlotAppointmentBuilderState
                 },
                 child: const Text('cancel'),
               ),
-              TextButton(
-                style: ButtonStyle(
-                    foregroundColor: MaterialStateColor.resolveWith(
-                        (Set<MaterialState> states) => Colors.white),
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.primary)),
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: const Text('confirm'),
-              ),
             ],
           ),
-        ).then((value) {
-          if (value == true) {
-            // if confirmed, add task to tomorrow
-            _addTimeSlot(context);
-          }
-        });
+        );
       },
     );
   }
@@ -91,16 +98,16 @@ class _TimeSlotAppointmentBuilderState
   }
 
   _addTimeSlot(BuildContext context) {
-    TimeSlot? timeSlot =
-        TimeSlotUseCases().searchForTimeSlot(context, widget.task);
+    TimeSlot? timeSlot = TimeSlotUseCases().searchForTimeSlot(context, task!);
 
-    // TODO : reschedule doesn't seem to work, it adds a copy of the block in case the task is reschudeled in a block
     if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot
       _noTimeSlotDialog(context);
     } else {
+      // create a new time slot with the task tomorrow
       context.read<TimeSlotCubit>().createTimeSlot(
             TimeSlot(
+              // TODO : only pass parameters to troncateDateTime and let it handle the rest to avoid code duplication and make it more readable
               startTime: Utils().troncateDateTime(DateTime(
                   DateTime.now().year,
                   DateTime.now().month,
@@ -122,40 +129,55 @@ class _TimeSlotAppointmentBuilderState
                       DateTime.now().day + 1,
                       timeSlot.startTime.hour + 1,
                       timeSlot.startTime.minute)),
-              event: widget.task,
+              event: task!,
               createdAt: Utils().troncateDateTime(DateTime.now()),
             ),
           );
+      // set task to rescheduled
+      context.read<TaskCubit>().updateTask(
+            Task(
+              id: task!.id as int,
+              name: task!.name,
+              priority: task!.priority,
+              createdAt: task!.createdAt,
+              isPlanned: task!.isPlanned,
+              isDone: task!.isDone,
+              isRescheduled: !task!.isRescheduled,
+            ),
+          );
+    }
+  }
+
+  _initTasks(BuildContext context) {
+    if (widget.appointmentDetails.appointments.first.appointmentType ==
+        AppointmentType.normal) {
+      timeSlot = context
+          .read<TimeSlotCubit>()
+          .repository
+          .getTimeSlot(widget.appointmentDetails.appointments.first.id as int);
+      task = context
+          .read<TaskCubit>()
+          .repository
+          .getTask((timeSlot!.event as Task).id as int);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    // widget.appointment = widget.appointmentDetails.appointments.first;
-
-    // if (widget.appointment == null) {
-    //   return;
-    // }
-
-    if (widget.appointmentDetails.appointments.first.appointmentType ==
-        AppointmentType.normal) {
-      widget.timeSlot = context
-          .read<TimeSlotCubit>()
-          .repository
-          .getTimeSlot(widget.appointmentDetails.appointments.first.id as int);
-      widget.task = context
-          .read<TaskCubit>()
-          .repository
-          .getTask((widget.timeSlot.event as Task).id as int);
-      checked = widget.task.isDone;
-    }
+    _initTasks(context);
   }
+
+  TimeSlot? timeSlot;
+  Task? task;
 
   // TODO display work block, and display task on top of it !!!
   // TODO try to display appointment notes (name of the block) with FlutterFlow eventually
+  // TODO : STYLE
   @override
   Widget build(BuildContext context) {
+    _initTasks(context);
+
     if (widget.appointmentDetails.appointments.first.appointmentType !=
         AppointmentType.normal) {
       return Container(
@@ -191,7 +213,7 @@ class _TimeSlotAppointmentBuilderState
               padding: const EdgeInsets.only(left: 8),
               child: Text(
                 widget.appointmentDetails.appointments.first.subject,
-                style: checked
+                style: task!.isDone || task!.isRescheduled
                     ? const TextStyle(decoration: TextDecoration.lineThrough)
                     : null,
               ),
@@ -200,28 +222,27 @@ class _TimeSlotAppointmentBuilderState
                     .isBefore(DateTime.now())
                 ? Row(
                     children: [
-                      // TODO : si la tâche n'est pas replanifiée, ou qu'est n'est pas done, on affiche le bouton
-                      !widget.task.isPlanned || checked
+                      // on affiche le bouton si la tâche n'est pas replanifiée, ou si elle n'est pas done
+                      (task!.isDone || task!.isRescheduled)
                           ? const SizedBox.shrink()
-                          : _rescheduleButton(context),
-                      Checkbox(
-                          value: checked,
-                          onChanged: (c) {
-                            setState(() {
-                              checked = c!;
-                            });
-                            // TODO : set task to done
-                            context.read<TaskCubit>().updateTask(
-                                  Task(
-                                    id: widget.task.id as int,
-                                    name: widget.task.name,
-                                    priority: widget.task.priority,
-                                    createdAt: widget.task.createdAt,
-                                    isDone: true,
-                                    isPlanned: widget.task.isPlanned,
-                                  ),
-                                );
-                          }),
+                          : _taskStateButton(context),
+
+                      // if the task is rescheduled, we display a schedule icon
+                      task!.isRescheduled
+                          ? const Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child:
+                                  Icon(Icons.calendar_today_rounded, size: 19),
+                            )
+                          : const SizedBox.shrink(),
+
+                      // if the task is done, we display a check icon
+                      task!.isDone
+                          ? const Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: Icon(Icons.check_circle_rounded, size: 19),
+                            )
+                          : const SizedBox.shrink(),
                     ],
                   )
                 : const SizedBox.shrink()
