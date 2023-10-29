@@ -16,7 +16,8 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   const TimeSlotDrawerListTile({super.key, required this.task});
 
   _addTimeSlot(BuildContext context) {
-    TimeSlot? timeSlot = TimeSlotUseCases().searchForTimeSlot(context, task);
+    TimeSlot? timeSlot =
+        TimeSlotUseCases().searchForEmptyTimeSlot(context, task);
 
     if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot

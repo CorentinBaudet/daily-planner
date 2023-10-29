@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,8 @@ class TimeSlotEditDialog extends StatefulWidget {
 }
 
 class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
+  bool isTimeSlotValid = true;
+
   TimeSlotPicker _editStartTime(BuildContext context) {
     return TimeSlotPicker(timeSlot: widget.timeSlot, isEndTime: false);
   }
@@ -27,8 +30,11 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('edit time slot'),
+          Text('edit ${widget.timeSlot.event.name}'),
           IconButton(
+            // remove all padding of this icon button
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
             onPressed: () {
               // delete the time slot
               Navigator.of(context).pop(false);
@@ -38,11 +44,22 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
         ],
       ),
       insetPadding: const EdgeInsets.all(0),
-      content: SizedBox(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [_editStartTime(context), _editEndTime(context)],
-        ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [_editStartTime(context), _editEndTime(context)],
+          ),
+          Visibility(
+              visible: !isTimeSlotValid,
+              child: const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text('invalid time slot',
+                    style: TextStyle(color: Colors.red, fontSize: 14)),
+              )),
+        ],
       ),
       actions: [
         TextButton(
@@ -59,7 +76,16 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
               backgroundColor: MaterialStateProperty.all(
                   Theme.of(context).colorScheme.primary)),
           onPressed: () {
-            // edit the time slot
+            if (!TimeSlotUseCases().isValidTimeSlot(widget.timeSlot)) {
+              // if the timeslot is invalid, set isTimeSlotValid to false
+              setState(() {
+                isTimeSlotValid = false;
+              });
+              return;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('time slot updated')),
+            );
             Navigator.of(context).pop(widget.timeSlot);
           },
           child: const Text('edit'),

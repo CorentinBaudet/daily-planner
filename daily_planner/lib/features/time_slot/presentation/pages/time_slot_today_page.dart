@@ -11,7 +11,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class TimeSlotTodayPage extends StatelessWidget {
   const TimeSlotTodayPage({super.key});
 
-  // TODO : center the calendar on the current time
+  // TODO center the calendar on the current time
   Widget _buildPlanner(BuildContext context, List<TimeSlot> timeSlots) {
     return Expanded(
       child: SfCalendar(

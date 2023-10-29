@@ -19,7 +19,7 @@ void main() async {
   // await Hive.openBox('my_blocks');
 
   runApp(const MainApp());
-  // TODO : add tooltips to rounded buttons
+  // TODO add tooltips to rounded buttons
 }
 
 class MainApp extends StatelessWidget {

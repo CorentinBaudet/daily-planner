@@ -6,6 +6,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 
+// TODO make the free task creation faster by not using a dialog, but directly typing into a new list item
 class TaskAddDialog extends StatefulWidget {
   const TaskAddDialog({super.key});
 

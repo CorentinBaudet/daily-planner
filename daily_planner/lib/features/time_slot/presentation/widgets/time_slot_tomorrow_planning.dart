@@ -5,7 +5,9 @@ import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_local_storage_repository.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
+import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_builder.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_edit_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,16 +23,36 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
   final BuildContext context;
   final List<TimeSlot> timeSlots;
 
-  _handleTimeSlotTap(CalendarTapDetails calendarTapDetails) async {
+  _handleTimeSlotTap(
+      BuildContext context, CalendarTapDetails calendarTapDetails) async {
     if (calendarTapDetails.appointments == null) {
       return;
     }
 
     Appointment appointment = calendarTapDetails.appointments!.first;
-    TimeSlot timeSlot =
-        TimeSlotLocalStorageRepository().getTimeSlot(appointment.id as int);
+    TimeSlot timeSlot = context
+        .read<TimeSlotCubit>()
+        .repository
+        .getTimeSlot(appointment.id as int);
+    var taskTimeSlot;
     if (timeSlot.event is Block) {
-      return; // if the content of the time slot is a block, do nothing
+      // check if there is a task associated to the block
+      List<TimeSlot> timeSlots =
+          TimeSlotLocalStorageRepository().getTimeSlots();
+      // look for a timeslot containing a task starting and ending at the same time as the work timeslot
+      for (var item in timeSlots) {
+        if (item.event is Task &&
+            TimeSlotUseCases().isSameTimeSlot(item, appointment)) {
+          taskTimeSlot = item;
+          break;
+        }
+      }
+      if (taskTimeSlot == null) {
+        // if no task found for the block, return
+        return;
+      }
+      // else, update the edited time slot to be the task time slot
+      timeSlot = taskTimeSlot;
     }
 
     final result = await showDialog(
@@ -82,8 +104,14 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
           color: Colors.black,
           fontSize: 12,
         ),
+        appointmentBuilder: (context, calendarAppointmentDetails) {
+          return TimeSlotAppointmentBuilder(
+            appointmentDetails: calendarAppointmentDetails,
+            isTomorrow: true,
+          );
+        },
         onTap: (calendarTapDetails) {
-          _handleTimeSlotTap(calendarTapDetails);
+          _handleTimeSlotTap(context, calendarTapDetails);
         },
       ),
     );

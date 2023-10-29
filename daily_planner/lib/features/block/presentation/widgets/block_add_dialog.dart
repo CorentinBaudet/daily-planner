@@ -1,5 +1,6 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_picker.dart';
 import 'package:daily_planner/utils/utils.dart';
@@ -28,6 +29,7 @@ class BlockAddDialog extends StatefulWidget {
 class _BlockAddDialogState extends State<BlockAddDialog> {
   TextEditingController blockNameController = TextEditingController();
   late FocusNode blockNameFocusNode;
+  bool isTimeSlotValid = true;
 
   TimeSlotPicker _editStartTime(BuildContext context) {
     return TimeSlotPicker(
@@ -78,7 +80,58 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
     }
   }
 
-  // TODO : do not focus back on the block name text field after editing times if the block name is not empty
+  TextButton _addButton(BuildContext context, GlobalKey<FormState> formKey) {
+    return TextButton(
+      style: ButtonStyle(
+          foregroundColor: MaterialStateColor.resolveWith(
+              (Set<MaterialState> states) => Colors.white),
+          backgroundColor:
+              MaterialStateProperty.all(Theme.of(context).colorScheme.primary)),
+      onPressed: () {
+        // use the TextFormField to validate the block name
+        if (!formKey.currentState!.validate()) {
+          return;
+        }
+
+        // check if the time slot is valid
+        if (!TimeSlotUseCases().isValidTimeSlot(widget.blockTimeSlot)) {
+          setState(() {
+            isTimeSlotValid = false;
+          });
+          return;
+        }
+
+        if (widget.toEditBlock != null) {
+          context.read<TimeSlotCubit>().updateTimeSlot(TimeSlot(
+              id: widget.toEditBlock!.id,
+              startTime:
+                  Utils().troncateDateTime(widget.blockTimeSlot.startTime),
+              endTime: Utils().troncateDateTime(widget.blockTimeSlot.endTime),
+              event: Block(
+                  name: blockNameController.text,
+                  isWork: (widget.blockTimeSlot.event as Block).isWork),
+              createdAt: widget.toEditBlock!.createdAt));
+          // close the dialog
+          Navigator.of(context).pop();
+          return;
+        }
+        context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
+            startTime: Utils().troncateDateTime(widget.blockTimeSlot.startTime),
+            endTime: Utils().troncateDateTime(widget.blockTimeSlot.endTime),
+            event: Block(
+                name: blockNameController.text,
+                isWork: (widget.blockTimeSlot.event as Block).isWork),
+            createdAt: Utils().troncateDateTime(DateTime.now())));
+
+        // close the dialog
+        Navigator.of(context).pop();
+      },
+      child:
+          widget.toEditBlock != null ? const Text('edit') : const Text('add'),
+    );
+  }
+
+  // TODO do not focus back on the block name text field after editing times if the block name is not empty
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +183,13 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
               _editEndTime(context),
             ],
           ),
+          Visibility(
+              visible: !isTimeSlotValid,
+              child: const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text('invalid time slot',
+                    style: TextStyle(color: Colors.red, fontSize: 14)),
+              )),
         ],
       ),
       actions: [
@@ -140,51 +200,8 @@ class _BlockAddDialogState extends State<BlockAddDialog> {
           },
           child: const Text('cancel'),
         ),
-        // TODO prevent adding a block if the duration is less than 15 minutes
         _addButton(context, formKey),
       ],
-    );
-  }
-
-  TextButton _addButton(BuildContext context, GlobalKey<FormState> formKey) {
-    return TextButton(
-      style: ButtonStyle(
-          foregroundColor: MaterialStateColor.resolveWith(
-              (Set<MaterialState> states) => Colors.white),
-          backgroundColor:
-              MaterialStateProperty.all(Theme.of(context).colorScheme.primary)),
-      onPressed: () {
-        if (!formKey.currentState!.validate()) {
-          return;
-        }
-
-        if (widget.toEditBlock != null) {
-          context.read<TimeSlotCubit>().updateTimeSlot(TimeSlot(
-              id: widget.toEditBlock!.id,
-              startTime:
-                  Utils().troncateDateTime(widget.blockTimeSlot.startTime),
-              endTime: Utils().troncateDateTime(widget.blockTimeSlot.endTime),
-              event: Block(
-                  name: blockNameController.text,
-                  isWork: (widget.blockTimeSlot.event as Block).isWork),
-              createdAt: widget.toEditBlock!.createdAt));
-          // close the dialog
-          Navigator.of(context).pop();
-          return;
-        }
-        context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
-            startTime: Utils().troncateDateTime(widget.blockTimeSlot.startTime),
-            endTime: Utils().troncateDateTime(widget.blockTimeSlot.endTime),
-            event: Block(
-                name: blockNameController.text,
-                isWork: (widget.blockTimeSlot.event as Block).isWork),
-            createdAt: Utils().troncateDateTime(DateTime.now())));
-
-        // close the dialog
-        Navigator.of(context).pop();
-      },
-      child:
-          widget.toEditBlock != null ? const Text('edit') : const Text('add'),
     );
   }
 

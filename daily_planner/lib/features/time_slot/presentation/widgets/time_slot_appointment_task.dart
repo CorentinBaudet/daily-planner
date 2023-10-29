@@ -13,12 +13,14 @@ class TimeSlotAppointmentTask extends StatelessWidget {
   final String displayName;
   final Appointment appointment;
   final Task task;
+  final bool isTomorrow;
 
   const TimeSlotAppointmentTask(
       {super.key,
       required this.displayName,
       required this.appointment,
-      required this.task});
+      required this.task,
+      this.isTomorrow = false});
 
   IconButton _taskStateButton(BuildContext context) {
     return IconButton(
@@ -76,16 +78,18 @@ class TimeSlotAppointmentTask extends StatelessWidget {
   }
 
   _addTimeSlot(BuildContext context) {
-    TimeSlot? timeSlot = TimeSlotUseCases().searchForTimeSlot(context, task);
+    TimeSlot? timeSlot =
+        TimeSlotUseCases().searchForEmptyTimeSlot(context, task);
 
     if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot
       _noTimeSlotDialog(context);
     } else {
+      // TODO try to avoid reloading the today planning page when rescheduling a task, or at least scroll to where the user was
       // create a new time slot with the task tomorrow
       context.read<TimeSlotCubit>().createTimeSlot(
             TimeSlot(
-              // TODO : only pass parameters to troncateDateTime and let it handle the rest to avoid code duplication and make it more readable
+              // TODO only pass parameters to troncateDateTime and let it handle the rest to avoid code duplication and make it more readable
               startTime: Utils().troncateDateTime(DateTime(
                   DateTime.now().year,
                   DateTime.now().month,
@@ -147,45 +151,60 @@ class TimeSlotAppointmentTask extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8),
-          child: Text(
-            displayName,
-            style: task.isDone || task.isRescheduled
-                ? const TextStyle(decoration: TextDecoration.lineThrough)
-                : null,
-          ),
-        ),
-        appointment.endTime.isBefore(DateTime.now())
-            ? Row(
-                children: [
-                  // on affiche le bouton si la tâche n'est pas replanifiée, ou si elle n'est pas done
-                  (task.isDone || task.isRescheduled)
-                      ? const SizedBox.shrink()
-                      : _taskStateButton(context),
+    return isTomorrow
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  displayName,
+                ),
+              ),
+            ],
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  displayName,
+                  style: task.isDone || task.isRescheduled
+                      ? const TextStyle(decoration: TextDecoration.lineThrough)
+                      : null,
+                ),
+              ),
+              appointment.endTime.isBefore(DateTime.now())
+                  ? Row(
+                      children: [
+                        // on affiche le bouton si la tâche n'est pas replanifiée, ou si elle n'est pas done
+                        (task.isDone || task.isRescheduled)
+                            ? const SizedBox.shrink()
+                            : _taskStateButton(context),
 
-                  // if the task is rescheduled, we display a schedule icon
-                  task.isRescheduled
-                      ? const Padding(
-                          padding: EdgeInsets.only(right: 8),
-                          child: Icon(Icons.calendar_today_rounded, size: 19),
-                        )
-                      : const SizedBox.shrink(),
+                        // if the task is rescheduled, we display a schedule icon
+                        task.isRescheduled
+                            ? const Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child: Icon(Icons.calendar_today_rounded,
+                                    size: 19),
+                              )
+                            : const SizedBox.shrink(),
 
-                  // if the task is done, we display a check icon
-                  task.isDone
-                      ? const Padding(
-                          padding: EdgeInsets.only(right: 8),
-                          child: Icon(Icons.check_circle_rounded, size: 19),
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              )
-            : const SizedBox.shrink()
-      ],
-    );
+                        // if the task is done, we display a check icon
+                        task.isDone
+                            ? const Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child:
+                                    Icon(Icons.check_circle_rounded, size: 19),
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    )
+                  : const SizedBox.shrink()
+            ],
+          );
   }
 }

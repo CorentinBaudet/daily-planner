@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+// TODO refactor this entity, too much logic in it
 class TimeSlotDataSource extends CalendarDataSource {
   TimeSlotDataSource(List<Appointment> source) {
     appointments = source;
@@ -52,7 +53,7 @@ class TimeSlotDataSource extends CalendarDataSource {
   }
 
   static void addTaskToCalendar(
-      // TODO : handle overlapping tasks
+      // TODO handle overlapping tasks
       List<Appointment> appointments,
       TimeSlot timeSlot) {
     appointments.add(Appointment(

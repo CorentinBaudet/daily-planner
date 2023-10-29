@@ -2,6 +2,7 @@ import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_task.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,10 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 // ignore: must_be_immutable
 class TimeSlotAppointmentBuilder extends StatefulWidget {
   final CalendarAppointmentDetails appointmentDetails;
+  final bool isTomorrow;
 
   const TimeSlotAppointmentBuilder(
-      {super.key, required this.appointmentDetails});
+      {super.key, required this.appointmentDetails, this.isTomorrow = false});
 
   @override
   State<TimeSlotAppointmentBuilder> createState() =>
@@ -42,10 +44,8 @@ class _TimeSlotAppointmentBuilderState
       // look for a timeslot containing a task starting and ending at the same time as the work timeslot
       for (var timeSlot in timeSlots) {
         if (timeSlot.event is Task &&
-            timeSlot.startTime ==
-                widget.appointmentDetails.appointments.first.startTime &&
-            timeSlot.endTime ==
-                widget.appointmentDetails.appointments.first.endTime) {
+            TimeSlotUseCases().isSameTimeSlot(
+                timeSlot, widget.appointmentDetails.appointments.first)) {
           task = context
               .read<TaskCubit>()
               .repository
@@ -66,12 +66,11 @@ class _TimeSlotAppointmentBuilderState
   Task? task;
 
   // TODO try @override reassemble method for time slot and task init
-  // TODO try to display appointment notes (name of the block) with FlutterFlow eventually
-  // TODO : STYLE
+  // TODO bug when a block duration is modified, the task does not appear under it anymore (because the link is created with the same duration, should be with an id for example)
 
   @override
   void reassemble() {
-    // TODO: implement reassemble
+    // TODO implement reassemble
     super.reassemble();
   }
 
@@ -91,16 +90,13 @@ class _TimeSlotAppointmentBuilderState
               return Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                    padding: const EdgeInsets.fromLTRB(8, 3, 8, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Text(widget
-                              .appointmentDetails.appointments.first.subject),
-                        ),
+                        Text(widget
+                            .appointmentDetails.appointments.first.subject),
                         const Icon(
                           Icons.change_circle_rounded,
                           size: 19,
@@ -113,7 +109,9 @@ class _TimeSlotAppointmentBuilderState
                           padding: const EdgeInsets.only(left: 8, top: 24),
                           child: Container(
                             // if the task is passed, we change its color to grey
-                            color: timeSlot!.startTime.isBefore(DateTime.now())
+                            color: widget.appointmentDetails.appointments.first
+                                    .startTime
+                                    .isBefore(DateTime.now())
                                 ? Colors.grey.shade300
                                 : Colors.lightBlue.shade100,
                             constraints: const BoxConstraints
@@ -123,6 +121,7 @@ class _TimeSlotAppointmentBuilderState
                               appointment:
                                   widget.appointmentDetails.appointments.first,
                               task: task!,
+                              isTomorrow: widget.isTomorrow,
                             ),
                           ),
                         )
@@ -132,16 +131,12 @@ class _TimeSlotAppointmentBuilderState
             } else {
               // if it is a standard block, we display it as a normal appointment
               return Padding(
-                padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                padding: const EdgeInsets.only(left: 8, right: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                          widget.appointmentDetails.appointments.first.subject),
-                    ),
+                    Text(widget.appointmentDetails.appointments.first.subject),
                     const Icon(
                       Icons.change_circle_rounded,
                       size: 19,
@@ -152,11 +147,18 @@ class _TimeSlotAppointmentBuilderState
             }
           } else {
             // if it is a task
-            return TimeSlotAppointmentTask(
-                displayName:
-                    widget.appointmentDetails.appointments.first.subject,
-                appointment: widget.appointmentDetails.appointments.first,
-                task: task!);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TimeSlotAppointmentTask(
+                    displayName:
+                        widget.appointmentDetails.appointments.first.subject,
+                    appointment: widget.appointmentDetails.appointments.first,
+                    task: task!,
+                    isTomorrow: widget.isTomorrow),
+              ],
+            );
           }
         }());
   }

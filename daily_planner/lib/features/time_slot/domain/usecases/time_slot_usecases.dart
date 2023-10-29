@@ -6,6 +6,7 @@ import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// TODO this class might have too much methods, some of them may be moved to extensions for example
 class TimeSlotUseCases {
   // method to get all 15min start time slots for tomorrow
   List<DateTime> getTomorrowStartTimes() {
@@ -104,7 +105,7 @@ class TimeSlotUseCases {
         timeSlot.endTime.minute == first.endTime.minute;
   }
 
-  TimeSlot? searchForTimeSlot(BuildContext context, Task task) {
+  TimeSlot? searchForEmptyTimeSlot(BuildContext context, Task task) {
     List<TimeSlot> timeSlots = [];
 
     if (context.read<TimeSlotCubit>().state is LoadedState) {
@@ -121,7 +122,7 @@ class TimeSlotUseCases {
       return resultTimeSlot;
     }
 
-    return _searchForEmptyTimeSlot(timeSlots, task);
+    return _searchForTimeSlot(timeSlots, task);
   }
 
   TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
@@ -151,7 +152,7 @@ class TimeSlotUseCases {
     return null;
   }
 
-  TimeSlot? _searchForEmptyTimeSlot(List<TimeSlot> timeSlots, Task task) {
+  TimeSlot? _searchForTimeSlot(List<TimeSlot> timeSlots, Task task) {
     // search for the first empty time slot by looking at start times of today
     List<DateTime> startTimes = TimeSlotUseCases().getTomorrowStartTimes();
     int sixtyMinFlag = 0;
@@ -178,5 +179,20 @@ class TimeSlotUseCases {
     }
     // if no empty time slot was found
     return null;
+  }
+
+  bool isValidTimeSlot(TimeSlot timeSlot) {
+    // test if the end time is before the start time
+    if (timeSlot.endTime.isBefore(timeSlot.startTime) ||
+        timeSlot.endTime.isAtSameMomentAs(timeSlot.startTime)) {
+      return false;
+    }
+
+    // test if the time slot duration is atleast 15 min
+    if (timeSlot.endTime.difference(timeSlot.startTime).inMinutes < 15) {
+      return false;
+    }
+
+    return true;
   }
 }

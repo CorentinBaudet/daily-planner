@@ -1,6 +1,6 @@
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event.dart';
 
-// TODO : maybe a work block should be a separate entity with a task nested inside
+// TODO maybe a work block should be a separate entity with a task nested inside
 class Block extends TimeSlotEvent {
   bool isWork;
 
