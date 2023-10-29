@@ -13,8 +13,10 @@ dependencies:
   flutter_animate: ^4.2.0+1
   flutter_switch: ^0.3.2
   flutter_bloc: ^8.1.3
+  google_fonts: ^6.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  im_stepper: ^1.0.1+1
   intl: ^0.18.1
   localstorage: ^4.0.1+4
   numberpicker: ^2.1.2
