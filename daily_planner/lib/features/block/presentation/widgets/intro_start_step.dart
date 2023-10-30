@@ -118,7 +118,7 @@ class _IntroStartStepState extends State<IntroStartStep>
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

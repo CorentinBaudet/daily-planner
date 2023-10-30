@@ -12,6 +12,10 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.yellow.shade600,
         // ···
+        primary: Color(0xFFFCBF49),
+        secondary: Color(0xFFDD614A),
+        // tertiary: Color(0xFF003049),
+        tertiary: Color(0xFFA8DCD9),
         brightness: Brightness.dark,
       ),
 
