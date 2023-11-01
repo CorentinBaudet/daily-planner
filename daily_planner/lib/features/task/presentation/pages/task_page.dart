@@ -82,8 +82,10 @@ class TaskPage extends StatelessWidget {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          title: const Text('tasks'),
+          title: Text('tasks',
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold)),
           actions: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               DoubleValueListenableBuilder(

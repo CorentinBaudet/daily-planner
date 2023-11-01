@@ -30,7 +30,9 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('edit ${widget.timeSlot.event.name}'),
+          Text(widget.timeSlot.event.name.characters.length > 18
+              ? '${widget.timeSlot.event.name.characters.take(18)}...'
+              : widget.timeSlot.event.name),
           IconButton(
             // remove all padding of this icon button
             padding: EdgeInsets.zero,
@@ -43,13 +45,13 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
           ),
         ],
       ),
-      insetPadding: const EdgeInsets.all(0),
+      insetPadding: const EdgeInsets.all(10),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [_editStartTime(context), _editEndTime(context)],
           ),
           Visibility(

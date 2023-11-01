@@ -19,14 +19,23 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        widget.isEndTime ? const Text("to") : const Text("from"),
+        widget.isEndTime
+            ? const Text(
+                "to",
+                style: TextStyle(fontSize: 16),
+              )
+            : const Text(
+                "from",
+                style: TextStyle(fontSize: 16),
+              ),
         const SizedBox(
-          width: 8,
+          width: 4,
         ),
         InkWell(
           onTap: () async {
             final selectedTime = await showTimePicker(
                 context: context,
+                helpText: widget.isEndTime ? "end time" : "start time",
                 initialTime: widget.isEndTime
                     ? TimeOfDay.fromDateTime(widget.timeSlot.endTime)
                     : TimeOfDay.fromDateTime(widget.timeSlot.startTime),
@@ -51,9 +60,11 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
           },
           child: widget.isEndTime
               ? Text(Utils().formatTime(widget.timeSlot.endTime),
-                  style: TextStyle(color: Theme.of(context).primaryColor))
+                  style: TextStyle(
+                      fontSize: 16, color: Theme.of(context).primaryColor))
               : Text(Utils().formatTime(widget.timeSlot.startTime),
-                  style: TextStyle(color: Theme.of(context).primaryColor)),
+                  style: TextStyle(
+                      fontSize: 16, color: Theme.of(context).primaryColor)),
         )
       ],
     );

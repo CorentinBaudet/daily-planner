@@ -25,8 +25,10 @@ class TimeSlotTomorrowPage extends StatelessWidget {
       Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          title: const Text('tomorrow'),
+          title: Text('tomorrow',
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold)),
         ),
         body: Column(
           mainAxisSize: MainAxisSize.min,

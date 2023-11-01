@@ -1,4 +1,3 @@
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/block/presentation/widgets/block_add_dialog.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/utils/utils.dart';
@@ -51,14 +50,10 @@ class _BlockListTileState extends State<BlockListTile> {
                 if (widget.isDeleteModeOn) {
                   return isSelected
                       ? Colors.grey.shade400
-                      : (widget.timeSlot.event as Block).isWork
-                          ? Colors.lightBlue.shade50
-                          : Colors.indigo.shade50;
+                      : Colors.indigo.shade50;
                 } else {
                   isSelected = false;
-                  return (widget.timeSlot.event as Block).isWork
-                      ? Colors.lightBlue.shade50
-                      : Colors.indigo.shade50;
+                  return Colors.indigo.shade50;
                 }
               }(),
               borderRadius: BorderRadius.circular(8.0),

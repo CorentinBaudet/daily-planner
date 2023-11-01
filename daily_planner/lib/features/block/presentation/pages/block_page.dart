@@ -63,8 +63,10 @@ class BlockPage extends StatelessWidget {
     // display a list of the blocks
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          title: const Text('blocks'),
+          title: Text('blocks',
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold)),
           actions: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               DoubleValueListenableBuilder(

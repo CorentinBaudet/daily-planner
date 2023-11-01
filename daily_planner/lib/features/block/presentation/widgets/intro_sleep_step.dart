@@ -3,16 +3,16 @@ import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class IntroWorkStep extends StatefulWidget {
-  TimeSlot workTimeSlot;
+class IntroSleepStep extends StatefulWidget {
+  TimeSlot sleepTimeSlot;
 
-  IntroWorkStep({Key? key, required this.workTimeSlot}) : super(key: key);
+  IntroSleepStep({Key? key, required this.sleepTimeSlot}) : super(key: key);
 
   @override
-  State<IntroWorkStep> createState() => _IntroWorkStepState();
+  State<IntroSleepStep> createState() => _IntroSleepStepState();
 }
 
-class _IntroWorkStepState extends State<IntroWorkStep> {
+class _IntroSleepStepState extends State<IntroSleepStep> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -32,82 +32,59 @@ class _IntroWorkStepState extends State<IntroWorkStep> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   const Expanded(
-                    flex: 7,
+                    flex: 15,
                     child: SizedBox(
                       width: double.infinity,
                       height: double.infinity,
-                      // constraints: BoxConstraints(
-                      //   maxHeight: MediaQuery.sizeOf(context).height * 0.66,
-                      // ),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Flexible(
-                          //   child: ClipRRect(
-                          //     borderRadius: BorderRadius.circular(8),
-                          //     child: Image.network(
-                          //       'https://cdn3d.iconscout.com/3d/premium/thumb/focus-6048933-4997123.png?f=webp',
-                          //       width: double.infinity,
-                          //       height: 400,
-                          //       fit: BoxFit.cover,
-                          //     ),
-                          //   ),
-                          // ),
                           Text(
-                            '🧠',
-                            style: TextStyle(fontSize: 192),
-                          )
+                            '😴',
+                            style: TextStyle(
+                              fontSize: 192,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: 5,
                     child: SizedBox(
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Text(
-                            'what is your\nbest time to focus?',
+                            'at which time\ndo you sleep ?',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: 'Readex Pro',
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0C7489),
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsetsDirectional.only(top: 16),
-                            child: Text(
-                              'being efficient at work is a matter of context and environment',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: 'Readex Pro',
-                                  fontSize: 15,
-                                  fontStyle: FontStyle.italic),
-                            ),
+                                fontFamily: 'Readex Pro',
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0C7489),
+                                letterSpacing: 0.5),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 12),
+                            padding: const EdgeInsets.only(top: 24),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 TimeSlotPicker(
-                                  timeSlot: widget.workTimeSlot,
+                                  timeSlot: widget.sleepTimeSlot,
                                 ),
                                 const SizedBox(
                                   width: 16,
                                 ),
                                 TimeSlotPicker(
-                                  timeSlot: widget.workTimeSlot,
+                                  timeSlot: widget.sleepTimeSlot,
                                   isEndTime: true,
                                 ),
                               ],
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -116,6 +93,7 @@ class _IntroWorkStepState extends State<IntroWorkStep> {
               ),
             ),
           ),
+          // ),
         ],
       ),
     );

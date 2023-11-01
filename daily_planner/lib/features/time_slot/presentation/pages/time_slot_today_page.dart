@@ -48,8 +48,11 @@ class TimeSlotTodayPage extends StatelessWidget {
       children: [
         Scaffold(
           appBar: AppBar(
-              backgroundColor: Theme.of(context).primaryColor,
-              title: const Text('today')),
+              // backgroundColor: Colors.white,
+              title: Text('today',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold))),
           body: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
