@@ -25,8 +25,10 @@ class _IntroSleepStepState extends State<IntroSleepStep> {
         children: [
           Expanded(
             child: Container(
+              // decoration: const BoxDecoration(
+              //   color: Color(0xFFe8e9eb),
               decoration: const BoxDecoration(
-                color: Color(0xFFe8e9eb),
+                color: Color(0xFFEAE0D5),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -64,7 +66,7 @@ class _IntroSleepStepState extends State<IntroSleepStep> {
                                 fontFamily: 'Readex Pro',
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF0C7489),
+                                // color: Color(0xFF0C7489),
                                 letterSpacing: 0.5),
                           ),
                           Padding(

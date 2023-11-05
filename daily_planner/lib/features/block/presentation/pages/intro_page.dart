@@ -45,7 +45,8 @@ class _IntroPageState extends State<IntroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFe8e9eb),
+      // backgroundColor: const Color(0xFFe8e9eb),
+      backgroundColor: const Color(0xFFEAE0D5),
       // appBar: AppBar(
       //   backgroundColor: Theme.of(context).primaryColor,
       //   automaticallyImplyLeading: false,

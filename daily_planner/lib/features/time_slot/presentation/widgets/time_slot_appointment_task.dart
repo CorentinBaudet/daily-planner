@@ -157,7 +157,7 @@ class TimeSlotAppointmentTask extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(left: 16),
                 child: Text(
                   displayName,
                 ),

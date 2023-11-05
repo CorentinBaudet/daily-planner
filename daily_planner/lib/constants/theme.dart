@@ -10,7 +10,10 @@ class AppTheme {
 
       // Define the default brightness and colors.
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0C7489),
+        // seedColor: const Color(0xFF0C7489),
+        // seedColor: const Color(0xFFEAE0D5),
+        // seedColor: const Color(0xFFC6AC8F),
+        seedColor: const Color(0xFFFF8552),
         // ···
         // primary: const Color(0xFF0C7489),
         // primary: const Color(0xFFFCBF49),
@@ -29,22 +32,22 @@ class AppTheme {
 
       // Define the default `TextTheme`. Use this to specify the default
       // text styling for headlines, titles, bodies of text, and more.
-      textTheme: const TextTheme(
-        displaySmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-        displayMedium: TextStyle(fontSize: 48.0, fontWeight: FontWeight.bold),
-        displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-        // displayLarge: TextStyle(
-        //   fontSize: 72,
-        //   fontWeight: FontWeight.bold,
-        // ),
-        // ···
-        // titleLarge: GoogleFonts.oswald(
-        //   fontSize: 30,
-        //   fontStyle: FontStyle.italic,
-        // ),
-        // bodyMedium: GoogleFonts.merriweather(),
-        // displaySmall: GoogleFonts.pacifico(),
-      ),
+      // textTheme: const TextTheme(
+      //   displaySmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+      //   displayMedium: TextStyle(fontSize: 48.0, fontWeight: FontWeight.bold),
+      //   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+      // displayLarge: TextStyle(
+      //   fontSize: 72,
+      //   fontWeight: FontWeight.bold,
+      // ),
+      // ···
+      // titleLarge: GoogleFonts.oswald(
+      //   fontSize: 30,
+      //   fontStyle: FontStyle.italic,
+      // ),
+      // bodyMedium: GoogleFonts.merriweather(),
+      // displaySmall: GoogleFonts.pacifico(),
+      // ),
 
       // iconTheme: const IconThemeData(
       //   color: Colors.white,
