@@ -108,12 +108,15 @@ class _TimeSlotAppointmentBuilderState
                       ? Padding(
                           padding: const EdgeInsets.only(left: 8, top: 24),
                           child: Container(
-                            // if the task is passed, we change its color to grey
-                            color: widget.appointmentDetails.appointments.first
-                                    .startTime
-                                    .isBefore(DateTime.now())
-                                ? Colors.grey.shade300
-                                : Colors.lightBlue.shade100,
+                            decoration: BoxDecoration(
+                                // if the task is passed, we change its color to grey
+                                color: widget.appointmentDetails.appointments
+                                        .first.startTime
+                                        .isBefore(DateTime.now())
+                                    ? Colors.grey.shade300
+                                    // : Colors.lightBlue.shade100,
+                                    : const Color(0xFFffc2a9),
+                                borderRadius: BorderRadius.circular(8.0)),
                             constraints: const BoxConstraints
                                 .expand(), // to make the task fill the available space left
                             child: TimeSlotAppointmentTask(

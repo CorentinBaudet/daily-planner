@@ -57,18 +57,22 @@ class TimeSlotDataSource extends CalendarDataSource {
       List<Appointment> appointments,
       TimeSlot timeSlot) {
     appointments.add(Appointment(
-      id: timeSlot.id,
-      startTime: DateTime(
-          timeSlot.startTime.year,
-          timeSlot.startTime.month,
-          timeSlot.startTime.day,
-          timeSlot.startTime.hour,
-          timeSlot.startTime.minute),
-      endTime: DateTime(timeSlot.endTime.year, timeSlot.endTime.month,
-          timeSlot.endTime.day, timeSlot.endTime.hour, timeSlot.endTime.minute),
-      subject: timeSlot.event.name,
-      color: Colors.lightBlue.shade100,
-    ));
+        id: timeSlot.id,
+        startTime: DateTime(
+            timeSlot.startTime.year,
+            timeSlot.startTime.month,
+            timeSlot.startTime.day,
+            timeSlot.startTime.hour,
+            timeSlot.startTime.minute),
+        endTime: DateTime(
+            timeSlot.endTime.year,
+            timeSlot.endTime.month,
+            timeSlot.endTime.day,
+            timeSlot.endTime.hour,
+            timeSlot.endTime.minute),
+        subject: timeSlot.event.name,
+        // color: Colors.lightBlue.shade100,
+        color: const Color(0xFFffceba)));
   }
 
   static void addBlockToCalendar(
@@ -94,7 +98,8 @@ class TimeSlotDataSource extends CalendarDataSource {
             isOverlap ? 59 : timeSlot.endTime.minute),
         subject: timeSlot.event.name,
         // notes: timeSlot.event.name,
-        color: Colors.indigo.shade50,
+        // color: Colors.indigo.shade50,
+        color: const Color(0xFFffe7dc),
         recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
 
     // if the block ends the next day, we add it again to the calendar the next day
@@ -116,7 +121,8 @@ class TimeSlotDataSource extends CalendarDataSource {
             timeSlot.endTime.hour,
             timeSlot.endTime.minute),
         subject: timeSlot.event.name,
-        color: Colors.indigo.shade50,
+        // color: Colors.indigo.shade50,
+        color: const Color(0xFFffe7dc),
         recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
   }
 

@@ -50,10 +50,10 @@ class _BlockListTileState extends State<BlockListTile> {
                 if (widget.isDeleteModeOn) {
                   return isSelected
                       ? Colors.grey.shade400
-                      : Colors.indigo.shade50;
+                      : const Color(0xFFffe7dc);
                 } else {
                   isSelected = false;
-                  return Colors.indigo.shade50;
+                  return const Color(0xFFffe7dc);
                 }
               }(),
               borderRadius: BorderRadius.circular(8.0),

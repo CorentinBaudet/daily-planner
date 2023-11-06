@@ -23,14 +23,14 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
         constraints: const BoxConstraints(
           maxWidth: 175,
         ),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(32.0),
-            bottomLeft: Radius.circular(32.0),
-          ),
-          color: Colors.grey.shade100,
-        ),
-        height: MediaQuery.of(context).size.height - 80,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(32.0),
+              bottomLeft: Radius.circular(32.0),
+            ),
+            // color: Colors.grey.shade100,
+            color: Color(0xFFfff3ee)),
+        height: MediaQuery.of(context).size.height - 60,
         padding: const EdgeInsets.only(top: 24, left: 16, right: 16),
         child: Column(
           children: <Widget>[
@@ -49,7 +49,8 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
                 },
               ),
               // Spacer(),
-              const Text('my tasks', style: TextStyle(fontSize: 16)),
+              const Text('my tasks',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ]),
             const TimeSlotDrawerList(),
           ],

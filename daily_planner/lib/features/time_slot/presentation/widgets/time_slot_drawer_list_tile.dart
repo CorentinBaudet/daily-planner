@@ -95,7 +95,8 @@ class TimeSlotDrawerListTile extends StatelessWidget {
           height: 56,
           margin: const EdgeInsets.only(bottom: 9.0),
           decoration: BoxDecoration(
-              color: Colors.lightBlue.shade100,
+              // color: Colors.lightBlue.shade100,
+              color: const Color(0xFFffc2a9),
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: const [
                 BoxShadow(

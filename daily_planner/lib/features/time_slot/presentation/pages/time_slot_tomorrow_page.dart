@@ -73,7 +73,7 @@ class TimeSlotTomorrowPage extends StatelessWidget {
       ),
       Positioned(
           right: 0,
-          top: 80, // default height of the appbar
+          top: 60, // default height of the appbar
           child: ValueListenableBuilder(
             valueListenable: _isTaskListVisible,
             builder: (context, value, child) {
