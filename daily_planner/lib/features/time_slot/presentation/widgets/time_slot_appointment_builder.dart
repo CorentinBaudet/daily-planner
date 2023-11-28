@@ -120,12 +120,11 @@ class _TimeSlotAppointmentBuilderState
                             constraints: const BoxConstraints
                                 .expand(), // to make the task fill the available space left
                             child: TimeSlotAppointmentTask(
-                              displayName: task!.name,
-                              appointment:
-                                  widget.appointmentDetails.appointments.first,
-                              task: task!,
-                              isTomorrow: widget.isTomorrow,
-                            ),
+                                displayName: task!.name,
+                                appointment: widget
+                                    .appointmentDetails.appointments.first,
+                                task: task!,
+                                isTomorrow: widget.isTomorrow),
                           ),
                         )
                       : const SizedBox.shrink(),
