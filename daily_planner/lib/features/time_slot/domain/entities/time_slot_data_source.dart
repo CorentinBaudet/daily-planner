@@ -72,7 +72,7 @@ class TimeSlotDataSource extends CalendarDataSource {
             timeSlot.endTime.minute),
         subject: timeSlot.event.name,
         // color: Colors.lightBlue.shade100,
-        color: const Color(0xFFffceba)));
+        color: const Color(0xFFffc2a9)));
   }
 
   static void addBlockToCalendar(
