@@ -1,6 +1,5 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
@@ -24,6 +23,9 @@ class TimeSlotAppointmentBuilder extends StatefulWidget {
 
 class _TimeSlotAppointmentBuilderState
     extends State<TimeSlotAppointmentBuilder> {
+  TimeSlot? timeSlot;
+  Task? task;
+
   _initTasks(BuildContext context) {
     // TODO pass the timeSlot to the widget instead of retrieving it here ? Custom AppointmentDetails class ?
     timeSlot = context
@@ -40,11 +42,15 @@ class _TimeSlotAppointmentBuilderState
       List<TimeSlot> timeSlots =
           context.read<TimeSlotCubit>().repository.getTimeSlots();
       // look for a timeslot containing a task starting and ending at the same time as the work timeslot
-      for (var timeSlot in timeSlots) {
-        if (timeSlot.event is Task &&
+      for (var timeSlotItem in timeSlots) {
+        if (timeSlotItem.event is Task &&
             TimeSlotUseCases().isSameTimeSlot(
-                timeSlot, widget.appointmentDetails.appointments.first)) {
-          task = timeSlot.event as Task;
+                timeSlotItem, widget.appointmentDetails.appointments.first)) {
+          // verify that the task is planned for the same day as the work block
+          // task = timeSlotItem.startTime.day == timeSlot!.startTime.day
+          //     ? timeSlotItem.event as Task
+          //     : null;
+          task = timeSlotItem.event as Task;
           break;
         }
       }
@@ -56,9 +62,6 @@ class _TimeSlotAppointmentBuilderState
   //   super.initState();
   //   _initTasks(context);
   // }
-
-  TimeSlot? timeSlot;
-  Task? task;
 
   // TODO bug when a block duration is modified, the task does not appear under it anymore (because the link is created with the same duration, should be with an id for example)
 
