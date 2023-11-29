@@ -25,6 +25,7 @@ class TimeSlotAppointmentBuilder extends StatefulWidget {
 class _TimeSlotAppointmentBuilderState
     extends State<TimeSlotAppointmentBuilder> {
   _initTasks(BuildContext context) {
+    // TODO pass the timeSlot to the widget instead of retrieving it here ? Custom AppointmentDetails class ?
     timeSlot = context
         .read<TimeSlotCubit>()
         .repository
@@ -33,10 +34,7 @@ class _TimeSlotAppointmentBuilderState
     if (widget.appointmentDetails.appointments.first.appointmentType ==
         AppointmentType.normal) {
       // retrieve the task from the current time slot if the appointment is normal (not recurring)
-      task = context
-          .read<TaskCubit>()
-          .repository
-          .getTask((timeSlot!.event as Task).id as int);
+      task = timeSlot!.event as Task;
     } else {
       // if the appointment is recurring, check if there is a task associated to it
       List<TimeSlot> timeSlots =
@@ -46,33 +44,23 @@ class _TimeSlotAppointmentBuilderState
         if (timeSlot.event is Task &&
             TimeSlotUseCases().isSameTimeSlot(
                 timeSlot, widget.appointmentDetails.appointments.first)) {
-          task = context
-              .read<TaskCubit>()
-              .repository
-              .getTask((timeSlot.event as Task).id as int);
+          task = timeSlot.event as Task;
           break;
         }
       }
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _initTasks(context);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _initTasks(context);
+  // }
 
   TimeSlot? timeSlot;
   Task? task;
 
-  // TODO try @override reassemble method for time slot and task init
   // TODO bug when a block duration is modified, the task does not appear under it anymore (because the link is created with the same duration, should be with an id for example)
-
-  @override
-  void reassemble() {
-    // TODO implement reassemble
-    super.reassemble();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+// TODO refactor this widget, too much logic in it
 class TimeSlotAppointmentTask extends StatelessWidget {
   final String displayName;
   final Appointment appointment;

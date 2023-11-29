@@ -52,16 +52,18 @@ class TimeSlotDataSource extends CalendarDataSource {
     return TimeSlotDataSource(appointments);
   }
 
+  // TODO handle overlapping tasks
   static void addTaskToCalendar(
-      // TODO handle overlapping tasks
-      List<Appointment> appointments,
-      TimeSlot timeSlot) {
+      List<Appointment> appointments, TimeSlot timeSlot) {
+    print('name: ${timeSlot.event.name}');
+    print('startTime: ${timeSlot.startTime}');
+    print('endTime: ${timeSlot.endTime}');
+
     appointments.add(Appointment(
         id: timeSlot.id,
         startTime: timeSlot.startTime,
         endTime: timeSlot.endTime,
         subject: timeSlot.event.name,
-        // color: Colors.lightBlue.shade100,
         color: const Color(0xFFffc2a9)));
   }
 
@@ -70,19 +72,24 @@ class TimeSlotDataSource extends CalendarDataSource {
     // if the end time is before the start time, it means that the block ends the next day
     bool isOverlap =
         timeSlot.endTime.isBefore(timeSlot.startTime) ? true : false;
-    RecurrenceProperties recurrenceProperties =
-        RecurrenceProperties(startDate: DateTime.now());
-    recurrenceProperties.recurrenceType = RecurrenceType.daily;
+    // RecurrenceProperties recurrenceProperties =
+    //     RecurrenceProperties(startDate: DateTime.now());
+    // recurrenceProperties.recurrenceType = RecurrenceType.daily;
+
+    print('name: ${timeSlot.event.name}');
+    print('startTime: ${timeSlot.startTime}');
+    print('endTime: ${timeSlot.endTime}');
 
     appointments.add(Appointment(
         id: timeSlot.id,
-        startTime: DateTime(
-            timeSlot.startTime.year,
-            timeSlot.startTime.month,
-            // isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-            timeSlot.startTime.day,
-            timeSlot.startTime.hour,
-            timeSlot.startTime.minute),
+        startTime: timeSlot.startTime,
+        // DateTime(
+        //     timeSlot.startTime.year,
+        //     timeSlot.startTime.month,
+        //     // isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
+        //     timeSlot.startTime.day,
+        //     timeSlot.startTime.hour,
+        //     timeSlot.startTime.minute),
         endTime: DateTime(
             timeSlot.endTime.year,
             timeSlot.endTime.month,
@@ -95,11 +102,7 @@ class TimeSlotDataSource extends CalendarDataSource {
         // notes: timeSlot.event.name,
         // color: Colors.indigo.shade50,
         color: const Color(0xFFffe7dc),
-        recurrenceRule: SfCalendar.generateRRule(
-          recurrenceProperties,
-          timeSlot.startTime,
-          timeSlot.endTime,
-        )));
+        recurrenceRule: 'FREQ=DAILY;'));
 
     // if the block ends the next day, we add it again to the calendar the next day
     if (isOverlap) {
