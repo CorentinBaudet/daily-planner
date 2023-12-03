@@ -107,8 +107,8 @@ class BlockPage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            showDialog(
-                context: context, builder: (context) => BlockAddDialog());
+            // showDialog(
+            //     context: context, builder: (context) => BlockAddDialog());
           },
           child: const Icon(Icons.add),
         ));

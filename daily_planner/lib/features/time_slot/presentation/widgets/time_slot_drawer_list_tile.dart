@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:flutter/material.dart';
@@ -15,54 +16,54 @@ class TimeSlotDrawerListTile extends StatelessWidget {
 
   const TimeSlotDrawerListTile({super.key, required this.task});
 
-  _addTimeSlot(BuildContext context) {
-    TimeSlot? timeSlot =
-        TimeSlotUseCases().searchForEmptyTimeSlot(context, task);
+  // _addTimeSlot(BuildContext context) {
+  //   TimeSlot? timeSlot =
+  //       TimeSlotUseCases().searchForEmptyTimeSlot(context, task);
 
-    if (timeSlot == null) {
-      // display a dialog indicating that there is no available time slot
-      _noTimeSlotDialog(context);
-    } else {
-      // set the task isPlanned to true
-      task.isPlanned = true;
-      context.read<TaskCubit>().updateTask(task);
+  //   if (timeSlot == null) {
+  //     // display a dialog indicating that there is no available time slot
+  //     _noTimeSlotDialog(context);
+  //   } else {
+  //     // set the task isPlanned to true
+  //     task.isPlanned = true;
+  //     context.read<TaskCubit>().updateTask(task);
 
-      // add the task to the time slot
-      context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
-          startTime: Utils().troncateDateTime(DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              DateTime.now().day + 1,
-              timeSlot.startTime.hour,
-              timeSlot.startTime.minute)),
-          endTime: timeSlot.event is Block
-              // if the free time slot found is a block, we use its end time for the task
-              ? Utils().troncateDateTime(DateTime(
-                  DateTime.now().year,
-                  DateTime.now().month,
-                  DateTime.now().day + 1,
-                  timeSlot.endTime.hour,
-                  timeSlot.endTime.minute))
-              // else we simply make the task last 1 hour
-              : Utils().troncateDateTime(DateTime(
-                  DateTime.now().year,
-                  DateTime.now().month,
-                  DateTime.now().day + 1,
-                  timeSlot.startTime.hour + 1,
-                  timeSlot.startTime.minute)),
-          event:
-              // timeSlot.event is Block
-              // // if the free time slot found is a block, we happen its name to the task name
-              // ? () {
-              //     Task renamedTask = task;
-              //     renamedTask.name += ' (${timeSlot.event.name})';
-              //     return renamedTask;
-              //   }()
-              // :
-              task,
-          createdAt: Utils().troncateDateTime(DateTime.now())));
-    }
-  }
+  //     // add the task to the time slot
+  //     context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
+  //         startTime: Utils().troncateDateTime(DateTime(
+  //             DateTime.now().year,
+  //             DateTime.now().month,
+  //             DateTime.now().day + 1,
+  //             timeSlot.startTime.hour,
+  //             timeSlot.startTime.minute)),
+  //         endTime: timeSlot.event is Block
+  //             // if the free time slot found is a block, we use its end time for the task
+  //             ? Utils().troncateDateTime(DateTime(
+  //                 DateTime.now().year,
+  //                 DateTime.now().month,
+  //                 DateTime.now().day + 1,
+  //                 timeSlot.endTime.hour,
+  //                 timeSlot.endTime.minute))
+  //             // else we simply make the task last 1 hour
+  //             : Utils().troncateDateTime(DateTime(
+  //                 DateTime.now().year,
+  //                 DateTime.now().month,
+  //                 DateTime.now().day + 1,
+  //                 timeSlot.startTime.hour + 1,
+  //                 timeSlot.startTime.minute)),
+  //         event:
+  //             // timeSlot.event is Block
+  //             // // if the free time slot found is a block, we happen its name to the task name
+  //             // ? () {
+  //             //     Task renamedTask = task;
+  //             //     renamedTask.name += ' (${timeSlot.event.name})';
+  //             //     return renamedTask;
+  //             //   }()
+  //             // :
+  //             task,
+  //         createdAt: Utils().troncateDateTime(DateTime.now())));
+  //   }
+  // }
 
   Future<dynamic> _noTimeSlotDialog(BuildContext context) {
     return showDialog(
@@ -87,7 +88,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _addTimeSlot(context);
+        // _addTimeSlot(context);
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),

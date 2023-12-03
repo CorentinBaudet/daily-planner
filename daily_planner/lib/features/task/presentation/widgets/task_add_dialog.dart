@@ -1,3 +1,5 @@
+import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
+import 'package:daily_planner/utils/extension.dart';
 import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +54,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
         context.read<TaskCubit>().createTask(Task(
             name: taskNameController.text,
             priority: isHighPriority ? Priority.high : Priority.normal,
-            createdAt: Utils().troncateDateTime(DateTime.now())));
+            createdAt: DateTime.now().troncateDateTime()));
 
         Navigator.of(context).pop();
       },

@@ -1,5 +1,6 @@
 import 'package:daily_planner/features/block/presentation/widgets/block_add_dialog.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/utils/extension.dart';
 import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -65,26 +66,26 @@ class _BlockListTileState extends State<BlockListTile> {
                 )
               ]),
           child: ListTile(
-            title: Text(widget.timeSlot.event.name),
+            title: Text(widget.timeSlot.subject),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(Utils().formatTime(widget.timeSlot.startTime)),
+                    Text(widget.timeSlot.startTime.formatTime()),
                     const Text('|'),
-                    Text(Utils().formatTime(widget.timeSlot.endTime)),
+                    Text(widget.timeSlot.endTime.formatTime()),
                   ],
                 ),
                 const SizedBox(width: 24.0),
                 IconButton(
                     icon: const Icon(Icons.edit_rounded),
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) =>
-                              BlockAddDialog(toEditBlock: widget.timeSlot));
+                      // showDialog(
+                      //     context: context,
+                      //     builder: (context) =>
+                      //         BlockAddDialog(toEditBlock: widget.timeSlot));
                     }),
               ],
             ),

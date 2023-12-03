@@ -1,10 +1,7 @@
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
-import 'package:daily_planner/utils/utils.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // TODO this class might have too much methods, some of them may be moved to extensions for example
 class TimeSlotUseCases {
@@ -105,29 +102,29 @@ class TimeSlotUseCases {
         timeSlot.endTime.minute == first.endTime.minute;
   }
 
-  TimeSlot? searchForEmptyTimeSlot(BuildContext context, Task task) {
-    List<TimeSlot> timeSlots = [];
+  // TimeSlot? searchForEmptyTimeSlot(BuildContext context, Task task) {
+  //   List<TimeSlot> timeSlots = [];
 
-    if (context.read<TimeSlotCubit>().state is LoadedState) {
-      timeSlots =
-          (context.read<TimeSlotCubit>().state as LoadedState).timeSlots;
-    }
+  //   if (context.read<TimeSlotCubit>().state is LoadedState) {
+  //     timeSlots =
+  //         (context.read<TimeSlotCubit>().state as LoadedState).timeSlots;
+  //   }
 
-    // only keep time slots of tomorrow and block time slots
-    timeSlots = TimeSlotUseCases().getTomorrowTimeSlots(timeSlots);
+  //   // only keep time slots of tomorrow and block time slots
+  //   timeSlots = TimeSlotUseCases().getTomorrowTimeSlots(timeSlots);
 
-    TimeSlot? resultTimeSlot = _searchForWorkBlock(timeSlots);
-    if (resultTimeSlot != null) {
-      // if there is an empty work block, return it
-      return resultTimeSlot;
-    }
+  //   TimeSlot? resultTimeSlot = _searchForWorkBlock(timeSlots);
+  //   if (resultTimeSlot != null) {
+  //     // if there is an empty work block, return it
+  //     return resultTimeSlot;
+  //   }
 
-    return _searchForTimeSlot(timeSlots, task);
-  }
+  //   return _searchForTimeSlot(timeSlots, task);
+  // }
 
   TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
     for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
-      if ((block.event as Block).isWork == false) {
+      if (block.runtimeType != WorkBlock) {
         continue;
       }
 
@@ -152,34 +149,34 @@ class TimeSlotUseCases {
     return null;
   }
 
-  TimeSlot? _searchForTimeSlot(List<TimeSlot> timeSlots, Task task) {
-    // search for the first empty time slot by looking at start times of today
-    List<DateTime> startTimes = TimeSlotUseCases().getTomorrowStartTimes();
-    int sixtyMinFlag = 0;
-    for (DateTime currentStartTime in startTimes) {
-      // is the current start time at the same time as a time slot tomorrow ?
-      if (timeSlots.any((element) => TimeSlotUseCases().isBetweenInDay(
-          currentStartTime, element.startTime, element.endTime))) {
-        // the current start time is not free, so we reset the flag
-        sixtyMinFlag = 0;
-      } else {
-        sixtyMinFlag++;
-        // we count to 4 to see if there is a 60 min empty time slot
-        if (sixtyMinFlag == 4) {
-          // substract 45 min to the current start time to get the right empty start time
-          currentStartTime =
-              currentStartTime.subtract(const Duration(minutes: 45));
-          return TimeSlot(
-              startTime: currentStartTime,
-              endTime: currentStartTime.add(const Duration(minutes: 60)),
-              event: task,
-              createdAt: Utils().troncateDateTime(DateTime.now()));
-        }
-      }
-    }
-    // if no empty time slot was found
-    return null;
-  }
+  // TimeSlot? _searchForTimeSlot(List<TimeSlot> timeSlots, Task task) {
+  //   // search for the first empty time slot by looking at start times of today
+  //   List<DateTime> startTimes = TimeSlotUseCases().getTomorrowStartTimes();
+  //   int sixtyMinFlag = 0;
+  //   for (DateTime currentStartTime in startTimes) {
+  //     // is the current start time at the same time as a time slot tomorrow ?
+  //     if (timeSlots.any((element) => TimeSlotUseCases().isBetweenInDay(
+  //         currentStartTime, element.startTime, element.endTime))) {
+  //       // the current start time is not free, so we reset the flag
+  //       sixtyMinFlag = 0;
+  //     } else {
+  //       sixtyMinFlag++;
+  //       // we count to 4 to see if there is a 60 min empty time slot
+  //       if (sixtyMinFlag == 4) {
+  //         // substract 45 min to the current start time to get the right empty start time
+  //         currentStartTime =
+  //             currentStartTime.subtract(const Duration(minutes: 45));
+  //         return TimeSlot(
+  //             startTime: currentStartTime,
+  //             endTime: currentStartTime.add(const Duration(minutes: 60)),
+  //             event: task,
+  //             createdAt: Utils().troncateDateTime(DateTime.now()));
+  //       }
+  //     }
+  //   }
+  //   // if no empty time slot was found
+  //   return null;
+  // }
 
   bool isValidTimeSlot(TimeSlot timeSlot) {
     // test if the end time is before the start time

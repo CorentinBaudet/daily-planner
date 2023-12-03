@@ -1,14 +1,16 @@
 import 'package:daily_planner/app.dart';
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/block/presentation/widgets/intro_sleep_step.dart';
 import 'package:daily_planner/features/block/presentation/widgets/intro_start_step.dart';
 import 'package:daily_planner/features/block/presentation/widgets/intro_work_step.dart';
+import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
-import 'package:daily_planner/utils/utils.dart';
+import 'package:daily_planner/utils/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:im_stepper/stepper.dart';
@@ -26,20 +28,30 @@ class _IntroPageState extends State<IntroPage> {
   int upperBound = 2; // upperBound MUST BE total number of icons minus 1.
 
   TimeSlot sleepTimeSlot = TimeSlot(
-      startTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
-          DateTime.now().month, DateTime.now().day, 23, 0)),
-      endTime: Utils().troncateDateTime(DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day, 8, 0)),
-      event: Block(name: 'sleep 💤', isWork: false),
-      createdAt: Utils().troncateDateTime(DateTime.now()));
+      startTime: DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, 23, 0)
+          .troncateDateTime(),
+      endTime: DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, 8, 0)
+          .troncateDateTime(),
+      subject: 'sleep 💤',
+      event: Block(createdAt: DateTime.now().troncateDateTime()),
+      color: const Color(0xFFffe7dc),
+      recurrenceRule: 'FREQ=DAILY');
 
   TimeSlot workTimeSlot = TimeSlot(
-      startTime: Utils().troncateDateTime(DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day, 9, 0)),
-      endTime: Utils().troncateDateTime(DateTime(DateTime.now().year,
-          DateTime.now().month, DateTime.now().day, 10, 30)),
-      event: Block(name: 'deep work 🧠', isWork: true),
-      createdAt: Utils().troncateDateTime(DateTime.now()));
+      startTime: DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, 9, 0)
+          .troncateDateTime(),
+      endTime: DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, 10, 30)
+          .troncateDateTime(),
+      subject: 'deep work 🧠',
+      color: const Color(0xFFffe7dc),
+      event:
+          // Block(createdAt: DateTime.now().troncateDateTime()),
+          WorkBlock(createdAt: DateTime.now().troncateDateTime()),
+      recurrenceRule: 'FREQ=DAILY');
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +236,6 @@ class _IntroPageState extends State<IntroPage> {
     }
 
     // create the sleep time slot
-    print('${sleepTimeSlot.startTime} - ${sleepTimeSlot.endTime}');
     context.read<TimeSlotCubit>().createTimeSlot(sleepTimeSlot);
 
     // create the deep work time slot
@@ -234,7 +245,7 @@ class _IntroPageState extends State<IntroPage> {
     context.read<TaskCubit>().createTask(Task(
         name: 'setup your everyday blocks 🔧',
         priority: Priority.normal,
-        createdAt: Utils().troncateDateTime(DateTime.now())));
+        createdAt: DateTime.now().troncateDateTime()));
   }
 }
 

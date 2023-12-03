@@ -1,7 +1,7 @@
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/domain/repositories/task_local_storage_repository.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_local_storage_repository.dart';
@@ -13,15 +13,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class TimeSlotTomorrowPlanning extends StatelessWidget {
-  const TimeSlotTomorrowPlanning({
+class TimeSlotTomorrowPlanner extends StatelessWidget {
+  final BuildContext context;
+  final List<TimeSlot> timeSlots;
+
+  const TimeSlotTomorrowPlanner({
     super.key,
     required this.context,
     required this.timeSlots,
   });
-
-  final BuildContext context;
-  final List<TimeSlot> timeSlots;
 
   _handleTimeSlotTap(
       BuildContext context, CalendarTapDetails calendarTapDetails) async {
@@ -68,9 +68,10 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
     }
 
     if (result == false) {
+      // TODO weird and probably not clean use of local storage repository directly
       // if the content is a task, update isPlanned to false
-      Task task =
-          TaskLocalStorageRepository().getTask(timeSlot.event.id as int);
+      Task task = TaskLocalStorageRepository()
+          .getTask((timeSlot.event as Task).id as int);
       task.isPlanned = false;
       context.read<TaskCubit>().updateTask(task);
 
@@ -83,9 +84,10 @@ class TimeSlotTomorrowPlanning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO center the calendar on the current time
     return Expanded(
       child: SfCalendar(
-        dataSource: TimeSlotDataSource.getPlannerDataSource(context, timeSlots,
+        dataSource: TimeSlotDataSource.getDataSource(context, timeSlots,
             isTomorrow: true),
         headerHeight: 0,
         backgroundColor: Colors.transparent,

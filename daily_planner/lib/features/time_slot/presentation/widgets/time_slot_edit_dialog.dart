@@ -30,9 +30,9 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(widget.timeSlot.event.name.characters.length > 18
-              ? '${widget.timeSlot.event.name.characters.take(18)}...'
-              : widget.timeSlot.event.name),
+          Text(widget.timeSlot.subject.characters.length > 18
+              ? '${widget.timeSlot.subject.characters.take(18)}...'
+              : widget.timeSlot.subject),
           IconButton(
             // remove all padding of this icon button
             padding: EdgeInsets.zero,

@@ -23,7 +23,7 @@ class BlockDeleteConfirmationDialog extends StatelessWidget {
         ? AlertDialog(
             title: const Text("delete block"),
             content: Text(
-                'would you like to permanently delete "${selectedBlocks.first.event.name}"?'),
+                'would you like to permanently delete "${selectedBlocks.first.subject}"?'),
             actions: [
               noButton,
               yesButton,

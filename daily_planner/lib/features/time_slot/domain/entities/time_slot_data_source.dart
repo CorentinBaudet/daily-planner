@@ -1,118 +1,107 @@
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
-import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 // TODO refactor this entity, too much logic in it
 class TimeSlotDataSource extends CalendarDataSource {
-  TimeSlotDataSource(List<Appointment> source) {
-    appointments = source;
+  TimeSlotDataSource(this.source);
+
+  List<TimeSlot> source;
+
+  @override
+  List<dynamic> get appointments => source;
+
+  static CalendarDataSource getDataSource(
+      BuildContext context, List<TimeSlot> storedTimeSlots,
+      {bool isTomorrow = false}) {
+    List<TimeSlot> builtTimeSlots =
+        _buildDataSource(context, storedTimeSlots, isTomorrow: isTomorrow);
+
+    // update the tasks visually if they are passed
+    _handleTasksPassed(context, builtTimeSlots);
+
+    return TimeSlotDataSource(builtTimeSlots);
   }
 
-  static CalendarDataSource getPlannerDataSource(
-      BuildContext context, List<TimeSlot> timeSlots,
+  static List<TimeSlot> _buildDataSource(
+      BuildContext context, List<TimeSlot> storedTimeSlots,
       {bool isTomorrow = false}) {
-    List<Appointment> appointments =
-        <Appointment>[]; // the SfCalendar requires a list of Appointment objects
+    // TODO something is wrong : buildTimeSlots is created two times
+    List<TimeSlot> builtTimeSlots =
+        <TimeSlot>[]; // the SfCalendar requires a list of Appointment objects to build the data source
 
-    for (var timeSlot in timeSlots) {
-      if (timeSlot.event.runtimeType == Task) {
-        // if the event is a task, it is a one-time event
+    for (var timeSlot in storedTimeSlots) {
+      switch (timeSlot.event.runtimeType) {
+        case Task:
+          print('task: ${timeSlot.event.runtimeType}');
+          // if the event is a task, it is a one-time event
+          _handleTask(builtTimeSlots, timeSlot);
+          break;
 
-        List<TimeSlot> allTimeSlots =
-            context.read<TimeSlotCubit>().repository.getTimeSlots();
-        bool taskIsOnWorkBlock = false;
-        // look for a timeslot containing a work block starting and ending at the same time as the current appointment
-        for (var timeSlotItem in allTimeSlots) {
-          if (timeSlotItem.event is Block &&
-              (timeSlotItem.event as Block).isWork &&
-              TimeSlotUseCases().isSameTimeSlot(timeSlotItem, timeSlot)) {
-            // if a work block is found, we don't add the task
-            taskIsOnWorkBlock = true;
-            break;
-          }
-        }
-        if (!taskIsOnWorkBlock) {
-          // if no work block is found, we add the task
-          addTaskToCalendar(appointments, timeSlot);
-        }
-      } else {
-        // else the event is a block, it is a recurring event
-        addBlockToCalendar(timeSlot, appointments, isTomorrow);
+        case Block:
+        case WorkBlock:
+          print('block or workblock: ${timeSlot.event.runtimeType}');
+          _handleBlock(builtTimeSlots, timeSlot, isTomorrow);
+          break;
       }
     }
 
-    // update the tasks visually if they are passed
-    handleTasksPassed(context, appointments);
-
-    return TimeSlotDataSource(appointments);
+    return builtTimeSlots;
   }
 
   // TODO handle overlapping tasks
-  static void addTaskToCalendar(
-      List<Appointment> appointments, TimeSlot timeSlot) {
-    print('name: ${timeSlot.event.name}');
+  static void _handleTask(List<TimeSlot> builtTimeSlots, TimeSlot timeSlot) {
+    print('name: ${timeSlot.subject}');
     print('startTime: ${timeSlot.startTime}');
     print('endTime: ${timeSlot.endTime}');
 
-    appointments.add(Appointment(
-        id: timeSlot.id,
-        startTime: timeSlot.startTime,
-        endTime: timeSlot.endTime,
-        subject: timeSlot.event.name,
-        color: const Color(0xFFffc2a9)));
+    builtTimeSlots.add(timeSlot);
+    // appointments.add(TimeSlot(
+    //     id: timeSlotEvent.id,
+    //     startTime: timeSlotEvent.startTime,
+    //     endTime: timeSlotEvent.endTime,
+    //     subject: timeSlotEvent.event.name,
+    //     color: const Color(0xFFffc2a9)));
   }
 
-  static void addBlockToCalendar(
-      TimeSlot timeSlot, List<Appointment> appointments, bool isTomorrow) {
+  static void _handleBlock(
+      List<TimeSlot> builtTimeSlots, TimeSlot timeSlot, bool isTomorrow) {
     // if the end time is before the start time, it means that the block ends the next day
     bool isOverlap =
         timeSlot.endTime.isBefore(timeSlot.startTime) ? true : false;
-    // RecurrenceProperties recurrenceProperties =
-    //     RecurrenceProperties(startDate: DateTime.now());
-    // recurrenceProperties.recurrenceType = RecurrenceType.daily;
 
-    print('name: ${timeSlot.event.name}');
+    print('name: ${timeSlot.subject}');
     print('startTime: ${timeSlot.startTime}');
     print('endTime: ${timeSlot.endTime}');
 
-    appointments.add(Appointment(
+    // if the block ends the next day, we add it again to the calendar the next day
+    if (isOverlap) {
+      builtTimeSlots.add(TimeSlot(
         id: timeSlot.id,
         startTime: timeSlot.startTime,
-        // DateTime(
-        //     timeSlot.startTime.year,
-        //     timeSlot.startTime.month,
-        //     // isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-        //     timeSlot.startTime.day,
-        //     timeSlot.startTime.hour,
-        //     timeSlot.startTime.minute),
         endTime: DateTime(
             timeSlot.endTime.year,
             timeSlot.endTime.month,
-            // isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
             timeSlot.startTime.day,
             // in case of overlap, end at 24:00 makes a double arrow appear which hides the block name
-            isOverlap ? 23 : timeSlot.endTime.hour,
-            isOverlap ? 59 : timeSlot.endTime.minute),
-        subject: timeSlot.event.name,
-        // notes: timeSlot.event.name,
-        // color: Colors.indigo.shade50,
-        color: const Color(0xFFffe7dc),
-        recurrenceRule: 'FREQ=DAILY;'));
-
-    // if the block ends the next day, we add it again to the calendar the next day
-    if (isOverlap) {
-      addOverlap(appointments, timeSlot, isTomorrow);
+            23,
+            59),
+        subject: timeSlot.subject,
+        event: timeSlot.event,
+        color: timeSlot.color,
+        recurrenceRule: timeSlot.recurrenceRule,
+      ));
+      builtTimeSlots.add(_addOverlap(timeSlot, isTomorrow));
+    } else {
+      builtTimeSlots.add(timeSlot);
     }
   }
 
-  static void addOverlap(
-      List<Appointment> appointments, TimeSlot timeSlot, bool isTomorrow) {
-    appointments.add(Appointment(
+  static TimeSlot _addOverlap(TimeSlot timeSlot, bool isTomorrow) {
+    return TimeSlot(
         id: timeSlot.id,
         startTime: DateTime(DateTime.now().year, DateTime.now().month,
             isTomorrow ? DateTime.now().day + 1 : DateTime.now().day, 0, 0),
@@ -122,13 +111,13 @@ class TimeSlotDataSource extends CalendarDataSource {
             isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
             timeSlot.endTime.hour,
             timeSlot.endTime.minute),
-        subject: timeSlot.event.name,
-        // color: Colors.indigo.shade50,
-        color: const Color(0xFFffe7dc),
-        recurrenceRule: 'FREQ=DAILY;INTERVAL=1'));
+        subject: timeSlot.subject,
+        event: timeSlot.event,
+        color: timeSlot.color,
+        recurrenceRule: 'FREQ=DAILY;');
   }
 
-  static void handleTasksPassed(
+  static void _handleTasksPassed(
       BuildContext context, List<Appointment> appointments) {
     for (var appointment in appointments) {
       if (appointment.appointmentType != AppointmentType.normal) {
@@ -150,5 +139,25 @@ class TimeSlotDataSource extends CalendarDataSource {
         // task.isPlanned = true;
       }
     }
+  }
+
+  TimeSlot? searchForEmptyTimeSlot(TimeSlot timeSlot,
+      {bool isTomorrow = false}) {
+    DateTime startDate = isTomorrow
+        ? DateTime.now().add(const Duration(days: 1))
+        : DateTime.now();
+
+    List<Appointment> appointments = getVisibleAppointments(startDate, '');
+
+    // traitement
+
+    return TimeSlot(
+      startTime: appointments[0].startTime,
+      endTime: appointments[0].endTime.add(const Duration(minutes: 60)),
+      subject: timeSlot.subject,
+      color: timeSlot.color,
+      event: timeSlot.event,
+      recurrenceRule: timeSlot.event is Block ? 'FREQ=DAILY;' : null,
+    );
   }
 }

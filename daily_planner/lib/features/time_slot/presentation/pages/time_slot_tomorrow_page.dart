@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_drawer.dart';
-import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_tomorrow_planning.dart';
+import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_tomorrow_planner.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 
 // ignore: must_be_immutable
@@ -47,7 +47,7 @@ class TimeSlotTomorrowPage extends StatelessWidget {
                 } else if (state is LoadedState) {
                   return Column(
                     children: [
-                      TimeSlotTomorrowPlanning(
+                      TimeSlotTomorrowPlanner(
                           context: context, timeSlots: state.timeSlots),
                     ],
                   );

@@ -1,46 +1,12 @@
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_tomorrow_page.dart';
-import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:daily_planner/features/time_slot/presentation/pages/time_slot_tomorrow_page.dart';
+import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_today_planner.dart';
 
 class TimeSlotTodayPage extends StatelessWidget {
   const TimeSlotTodayPage({super.key});
-
-  // TODO center the calendar on the current time
-  Widget _buildPlanner(BuildContext context, List<TimeSlot> timeSlots) {
-    return Expanded(
-      child: SfCalendar(
-        dataSource: TimeSlotDataSource.getPlannerDataSource(context, timeSlots),
-        headerHeight: 0,
-        backgroundColor: Colors.transparent,
-        allowDragAndDrop: true,
-        viewNavigationMode:
-            ViewNavigationMode.none, // prevent from swiping to other days
-        // timeSlotViewSettings: const TimeSlotViewSettings(timeRulerSize: 35), // reduce the width of the time ruler
-        timeSlotViewSettings: const TimeSlotViewSettings(
-            timeIntervalHeight:
-                75), // increase the height of 1 hour slot to make text appear for 15 min slots
-        dragAndDropSettings: const DragAndDropSettings(
-          allowNavigation: false,
-        ),
-        appointmentTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 12,
-        ),
-        showCurrentTimeIndicator: true,
-        appointmentBuilder: (context, calendarAppointmentDetails) {
-          return TimeSlotAppointmentBuilder(
-            appointmentDetails: calendarAppointmentDetails,
-          );
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +33,8 @@ class TimeSlotTodayPage extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is LoadedState) {
-                  return _buildPlanner(context, state.timeSlots);
+                  return TimeSlotTodayPlanner(
+                      context: context, timeSlots: state.timeSlots);
                 } else if (state is ErrorState) {
                   return const Center(
                     child: Text('error loading planning'),

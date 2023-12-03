@@ -1,3 +1,4 @@
+import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 
 class TaskUseCases {

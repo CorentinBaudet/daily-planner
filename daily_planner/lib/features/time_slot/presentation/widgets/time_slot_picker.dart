@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/utils/extension.dart';
 import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -59,10 +60,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             }
           },
           child: widget.isEndTime
-              ? Text(Utils().formatTime(widget.timeSlot.endTime),
+              ? Text(widget.timeSlot.endTime.formatTime(),
                   style: TextStyle(
                       fontSize: 16, color: Theme.of(context).primaryColor))
-              : Text(Utils().formatTime(widget.timeSlot.startTime),
+              : Text(widget.timeSlot.startTime.formatTime(),
                   style: TextStyle(
                       fontSize: 16, color: Theme.of(context).primaryColor)),
         )
