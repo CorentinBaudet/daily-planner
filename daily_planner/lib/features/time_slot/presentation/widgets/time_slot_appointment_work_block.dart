@@ -1,5 +1,6 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_task.dart';
+import 'package:daily_planner/utils/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -16,33 +17,35 @@ class TimeSlotAppointmentWorkBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Padding(
-          padding: task != null
-              ? const EdgeInsets.fromLTRB(8, 3, 8, 0)
-              : const EdgeInsets.only(left: 8, right: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+    bool isTaskPlannedOnSameDay = task != null &&
+        task!.plannedOn != null &&
+        task!.plannedOn!.isSameDay(appointment.startTime);
+
+    return isTaskPlannedOnSameDay
+        ? // if there is a task, and the planned date is corresponding, we use a stack to display the task on top of the work block
+        Stack(
             children: [
-              Text(appointment.subject),
-              const Icon(
-                Icons.change_circle_rounded,
-                size: 19,
-              )
-            ],
-          ),
-        ),
-        task != null
-            ? Padding(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 3, 8, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(appointment.subject),
+                    const Icon(
+                      Icons.change_circle_rounded,
+                      size: 19,
+                    )
+                  ],
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.only(left: 8, top: 24),
                 child: Container(
                   decoration: BoxDecoration(
                       // if the task is passed, we change its color to grey
                       color: DateTime.now().isAfter(appointment.endTime)
                           ? Colors.grey.shade300
-                          // : Colors.lightBlue.shade100,
                           : const Color(0xFFffc2a9),
                       borderRadius: BorderRadius.circular(8.0)),
                   constraints: const BoxConstraints
@@ -52,9 +55,23 @@ class TimeSlotAppointmentWorkBlock extends StatelessWidget {
                       task: task!,
                       isTomorrow: isTomorrow),
                 ),
-              )
-            : const SizedBox.shrink(),
-      ],
-    );
+              ),
+            ],
+          )
+        : // if there is no task, we display the block as a normal appointment
+        Padding(
+            padding: const EdgeInsets.only(left: 8, right: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(appointment.subject),
+                const Icon(
+                  Icons.change_circle_rounded,
+                  size: 19,
+                )
+              ],
+            ),
+          );
   }
 }

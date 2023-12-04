@@ -1,16 +1,7 @@
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/domain/repositories/task_local_storage_repository.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_local_storage_repository.dart';
-import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
-import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_builder.dart';
-import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_edit_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlotTomorrowPlanner extends StatelessWidget {
@@ -25,61 +16,61 @@ class TimeSlotTomorrowPlanner extends StatelessWidget {
 
   _handleTimeSlotTap(
       BuildContext context, CalendarTapDetails calendarTapDetails) async {
-    if (calendarTapDetails.appointments == null) {
-      return;
-    }
+    // if (calendarTapDetails.appointments == null) {
+    //   return;
+    // }
 
-    Appointment appointment = calendarTapDetails.appointments!.first;
-    TimeSlot timeSlot = context
-        .read<TimeSlotCubit>()
-        .repository
-        .getTimeSlot(appointment.id as int);
-    var taskTimeSlot;
-    if (timeSlot.event is Block) {
-      // check if there is a task associated to the block
-      List<TimeSlot> timeSlots =
-          TimeSlotLocalStorageRepository().getTimeSlots();
-      // look for a timeslot containing a task starting and ending at the same time as the work timeslot
-      for (var item in timeSlots) {
-        if (item.event is Task &&
-            TimeSlotUseCases().isSameTimeSlot(item, appointment)) {
-          taskTimeSlot = item;
-          break;
-        }
-      }
-      if (taskTimeSlot == null) {
-        // if no task found for the block, return
-        return;
-      }
-      // else, update the edited time slot to be the task time slot
-      timeSlot = taskTimeSlot;
-    }
+    // Appointment appointment = calendarTapDetails.appointments!.first;
+    // TimeSlot timeSlot = context
+    //     .read<TimeSlotCubit>()
+    //     .repository
+    //     .getTimeSlot(appointment.id as int);
+    // TimeSlot taskTimeSlot;
+    // if (timeSlot.event is Block) {
+    //   // check if there is a task associated to the block
+    //   List<TimeSlot> timeSlots =
+    //       TimeSlotLocalStorageRepository().getTimeSlots();
+    //   // look for a timeslot containing a task starting and ending at the same time as the work timeslot
+    //   for (var item in timeSlots) {
+    //     if (item.event is Task &&
+    //         TimeSlotUseCases().isSameTimeSlot(item, appointment)) {
+    //       taskTimeSlot = item;
+    //       break;
+    //     }
+    //   }
+    //   if (taskTimeSlot == null) {
+    //     // if no task found for the block, return
+    //     return;
+    //   }
+    //   // else, update the edited time slot to be the task time slot
+    //   timeSlot = taskTimeSlot;
+    // }
 
-    final result = await showDialog(
-      context: context,
-      builder: (context) => TimeSlotEditDialog(timeSlot: timeSlot),
-    );
-    // check if the widget is still in the widget tree
-    if (!context.mounted) {
-      return;
-    }
-    if (result == null) {
-      return;
-    }
+    // final result = await showDialog(
+    //   context: context,
+    //   builder: (context) => TimeSlotEditDialog(timeSlot: timeSlot),
+    // );
+    // // check if the widget is still in the widget tree
+    // if (!context.mounted) {
+    //   return;
+    // }
+    // if (result == null) {
+    //   return;
+    // }
 
-    if (result == false) {
-      // TODO weird and probably not clean use of local storage repository directly
-      // if the content is a task, update isPlanned to false
-      Task? task = TaskLocalStorageRepository()
-          .getTask((timeSlot.event as Task).id as int);
-      task?.isPlanned = false;
-      context.read<TaskCubit>().updateTask(task!);
+    // if (result == false) {
+    //   // TODO weird and probably not clean use of local storage repository directly
+    //   // if the content is a task, update isPlanned to false
+    //   Task? task = TaskLocalStorageRepository()
+    //       .getTask((timeSlot.event as Task).id as int);
+    //   task?.isPlanned = false;
+    //   context.read<TaskCubit>().updateTask(task!);
 
-      // and delete the time slot
-      context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);
-    } else {
-      context.read<TimeSlotCubit>().updateTimeSlot(result as TimeSlot);
-    }
+    //   // and delete the time slot
+    //   context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);
+    // } else {
+    //   context.read<TimeSlotCubit>().updateTimeSlot(result as TimeSlot);
+    // }
   }
 
   @override

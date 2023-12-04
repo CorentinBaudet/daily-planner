@@ -1,11 +1,13 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
+import 'package:daily_planner/utils/extension.dart';
 
 class Task extends TimeSlotEvent {
   int? id;
   String name;
   final Priority priority;
   bool isPlanned;
+  DateTime? plannedOn;
   bool isDone;
   bool isRescheduled;
 
@@ -15,6 +17,7 @@ class Task extends TimeSlotEvent {
     required this.priority,
     required super.createdAt,
     this.isPlanned = false,
+    this.plannedOn,
     this.isDone = false,
     this.isRescheduled = false,
   });
@@ -29,6 +32,7 @@ class Task extends TimeSlotEvent {
       ),
       createdAt: DateTime.parse(json['createdAt']),
       isPlanned: json['isPlanned'] as bool,
+      plannedOn: DateTime.parse(json['plannedOn']),
       isDone: json['isDone'] as bool,
       isRescheduled: json['isRescheduled'] as bool,
     );
@@ -40,8 +44,9 @@ class Task extends TimeSlotEvent {
       'id': id,
       'name': name,
       'priority': priority.toString().split('.').last,
-      'createdAt': createdAt.toString(),
+      'createdAt': createdAt.troncateDateTime().toString(),
       'isPlanned': isPlanned,
+      'plannedOn': plannedOn?.formatDate(),
       'isDone': isDone,
       'isRescheduled': isRescheduled,
     };

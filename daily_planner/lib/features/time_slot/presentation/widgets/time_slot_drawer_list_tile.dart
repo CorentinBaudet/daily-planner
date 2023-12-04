@@ -1,15 +1,7 @@
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart'
-    as ts_cubit;
-import 'package:daily_planner/utils/utils.dart';
 
 class TimeSlotDrawerListTile extends StatelessWidget {
   final Task task;
@@ -65,24 +57,24 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   //   }
   // }
 
-  Future<dynamic> _noTimeSlotDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('No available time slot'),
-            content:
-                const Text('There is no available time slot for this task.'),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'))
-            ],
-          );
-        });
-  }
+  // Future<dynamic> _noTimeSlotDialog(BuildContext context) {
+  //   return showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: const Text('No available time slot'),
+  //           content:
+  //               const Text('There is no available time slot for this task.'),
+  //           actions: [
+  //             TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: const Text('OK'))
+  //           ],
+  //         );
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {

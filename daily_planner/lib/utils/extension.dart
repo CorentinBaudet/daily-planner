@@ -8,7 +8,15 @@ extension ExtDateTime on DateTime {
         .parse(ConstantsIntl.dateTimeFormat.format(this));
   }
 
+  String formatDate() {
+    return ConstantsIntl.dateFormat.format(this);
+  }
+
   String formatTime() {
     return ConstantsIntl.timeFormat.format(this);
+  }
+
+  bool isSameDay(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
   }
 }

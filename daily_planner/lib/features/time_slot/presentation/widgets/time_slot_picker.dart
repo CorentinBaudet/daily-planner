@@ -1,6 +1,5 @@
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/utils/extension.dart';
-import 'package:daily_planner/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class TimeSlotPicker extends StatefulWidget {

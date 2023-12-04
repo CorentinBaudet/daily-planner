@@ -1,6 +1,5 @@
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:flutter/material.dart';
 
 // TODO this class might have too much methods, some of them may be moved to extensions for example
@@ -122,32 +121,32 @@ class TimeSlotUseCases {
   //   return _searchForTimeSlot(timeSlots, task);
   // }
 
-  TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
-    for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
-      if (block.runtimeType != WorkBlock) {
-        continue;
-      }
+  // TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
+  //   for (var block in TimeSlotUseCases().getBlockTimeSlots(timeSlots)) {
+  //     if (block.runtimeType != WorkBlock) {
+  //       continue;
+  //     }
 
-      // is there a time slot that starts at the same time as the block ?
-      if (!timeSlots.any((timeSlot) {
-        // if the time slot is a block, we don't compare it
-        if (timeSlot.event is Block) {
-          return false;
-        }
-        // if the task time slot starts at the same time as the block time slot
-        if (timeSlot.startTime.hour == block.startTime.hour &&
-            timeSlot.startTime.minute == block.startTime.minute) {
-          // the block is already used
-          return true;
-        }
-        // the block is not used
-        return false;
-      })) {
-        return block;
-      }
-    }
-    return null;
-  }
+  //     // is there a time slot that starts at the same time as the block ?
+  //     if (!timeSlots.any((timeSlot) {
+  //       // if the time slot is a block, we don't compare it
+  //       if (timeSlot.event is Block) {
+  //         return false;
+  //       }
+  //       // if the task time slot starts at the same time as the block time slot
+  //       if (timeSlot.startTime.hour == block.startTime.hour &&
+  //           timeSlot.startTime.minute == block.startTime.minute) {
+  //         // the block is already used
+  //         return true;
+  //       }
+  //       // the block is not used
+  //       return false;
+  //     })) {
+  //       return block;
+  //     }
+  //   }
+  //   return null;
+  // }
 
   // TimeSlot? _searchForTimeSlot(List<TimeSlot> timeSlots, Task task) {
   //   // search for the first empty time slot by looking at start times of today

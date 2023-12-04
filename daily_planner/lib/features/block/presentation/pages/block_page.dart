@@ -1,4 +1,3 @@
-import 'package:daily_planner/features/block/presentation/widgets/block_add_dialog.dart';
 import 'package:daily_planner/features/block/presentation/widgets/block_delete_mode_widgets.dart';
 import 'package:daily_planner/features/block/presentation/widgets/block_list_tile.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';

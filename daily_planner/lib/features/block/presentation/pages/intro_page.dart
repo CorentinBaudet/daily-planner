@@ -48,9 +48,7 @@ class _IntroPageState extends State<IntroPage> {
           .troncateDateTime(),
       subject: 'deep work 🧠',
       color: const Color(0xFFffe7dc),
-      event:
-          // Block(createdAt: DateTime.now().troncateDateTime()),
-          WorkBlock(createdAt: DateTime.now().troncateDateTime()),
+      event: WorkBlock(createdAt: DateTime.now().troncateDateTime()),
       recurrenceRule: 'FREQ=DAILY');
 
   @override
@@ -242,7 +240,8 @@ class _IntroPageState extends State<IntroPage> {
     int id = await context.read<TaskCubit>().createTask(Task(
         name: 'setup your everyday blocks 🔧',
         priority: Priority.normal,
-        createdAt: DateTime.now().troncateDateTime()));
+        createdAt: DateTime.now().troncateDateTime(),
+        plannedOn: DateTime.now().add(const Duration(days: 1))));
     if (!context.mounted) {
       return; // to avoid using build context across asynchronous gap
     }

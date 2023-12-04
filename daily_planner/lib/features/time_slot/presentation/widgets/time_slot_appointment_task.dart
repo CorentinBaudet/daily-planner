@@ -135,24 +135,24 @@ class TimeSlotAppointmentTask extends StatelessWidget {
   //   }
   // }
 
-  Future<dynamic> _noTimeSlotDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('No available time slot'),
-            content:
-                const Text('There is no available time slot for this task.'),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'))
-            ],
-          );
-        });
-  }
+  // Future<dynamic> _noTimeSlotDialog(BuildContext context) {
+  //   return showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: const Text('No available time slot'),
+  //           content:
+  //               const Text('There is no available time slot for this task.'),
+  //           actions: [
+  //             TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: const Text('OK'))
+  //           ],
+  //         );
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +169,7 @@ class TimeSlotAppointmentTask extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
                     child: Text(
-                      appointment.subject,
+                      task.name,
                     ),
                   ),
                 ],
@@ -180,7 +180,7 @@ class TimeSlotAppointmentTask extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Text(
-                      appointment.subject,
+                      task.name,
                       style: task.isDone || task.isRescheduled
                           ? const TextStyle(
                               decoration: TextDecoration.lineThrough)
