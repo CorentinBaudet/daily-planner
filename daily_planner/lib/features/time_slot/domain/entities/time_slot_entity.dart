@@ -27,11 +27,16 @@ class TimeSlot extends Appointment {
     try {
       event = Task.fromJson(json['event']);
     } catch (e) {
-      try {
+      if (json['event']['taskId'] != null) {
         event = WorkBlock.fromJson(json['event']);
-      } catch (e) {
+      } else {
         event = Block.fromJson(json['event']);
       }
+      // try {
+      //   event = WorkBlock.fromJson(json['event']);
+      // } catch (e) {
+      //   event = Block.fromJson(json['event']);
+      // }
     }
     return TimeSlot(
       id: json['id'],

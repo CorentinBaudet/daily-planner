@@ -219,7 +219,7 @@ class _IntroPageState extends State<IntroPage> {
     );
   }
 
-  _createDefaultData() {
+  _createDefaultData() async {
     // check if the work time slot is valid
     if (!TimeSlotUseCases().isValidTimeSlot(workTimeSlot)) {
       // show error message with snack bar
@@ -238,14 +238,18 @@ class _IntroPageState extends State<IntroPage> {
     // create the sleep time slot
     context.read<TimeSlotCubit>().createTimeSlot(sleepTimeSlot);
 
-    // create the deep work time slot
-    context.read<TimeSlotCubit>().createTimeSlot(workTimeSlot);
-
     // create default tasks
-    context.read<TaskCubit>().createTask(Task(
+    int id = await context.read<TaskCubit>().createTask(Task(
         name: 'setup your everyday blocks 🔧',
         priority: Priority.normal,
         createdAt: DateTime.now().troncateDateTime()));
+    if (!context.mounted) {
+      return; // to avoid using build context across asynchronous gap
+    }
+
+    // create the deep work time slot
+    (workTimeSlot.event as WorkBlock).taskId = id;
+    context.read<TimeSlotCubit>().createTimeSlot(workTimeSlot);
   }
 }
 

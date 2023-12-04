@@ -22,13 +22,15 @@ class TaskCubit extends Cubit<TaskState> {
     }
   }
 
-  void createTask(Task task) async {
+  Future<int> createTask(Task task) async {
     try {
       emit(LoadingState());
-      await repository.createTask(task);
+      int id = await repository.createTask(task);
       getTasks();
+      return id;
     } catch (e) {
       emit(ErrorState(message: e.toString()));
+      return 0;
     }
   }
 

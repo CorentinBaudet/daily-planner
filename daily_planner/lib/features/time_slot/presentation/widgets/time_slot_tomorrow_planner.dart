@@ -70,10 +70,10 @@ class TimeSlotTomorrowPlanner extends StatelessWidget {
     if (result == false) {
       // TODO weird and probably not clean use of local storage repository directly
       // if the content is a task, update isPlanned to false
-      Task task = TaskLocalStorageRepository()
+      Task? task = TaskLocalStorageRepository()
           .getTask((timeSlot.event as Task).id as int);
-      task.isPlanned = false;
-      context.read<TaskCubit>().updateTask(task);
+      task?.isPlanned = false;
+      context.read<TaskCubit>().updateTask(task!);
 
       // and delete the time slot
       context.read<TimeSlotCubit>().deleteTimeSlot(timeSlot.id as int);

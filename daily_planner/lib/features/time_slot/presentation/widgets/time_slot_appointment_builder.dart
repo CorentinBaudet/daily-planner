@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
@@ -40,10 +41,13 @@ class _TimeSlotAppointmentBuilderState
     if (appointment.appointmentType == AppointmentType.normal) {
       // if the appointment is normal (not recurring), retrieve the task from the current time slot
       task = timeSlot.event as Task;
-    } else {
+    } else if (timeSlot.event is WorkBlock) {
       // if it is a work block, we should be able to retrieve the task from it
-      if (timeSlot.event is WorkBlock) {
-        task = (timeSlot.event as WorkBlock).task;
+      if ((timeSlot.event as WorkBlock).taskId != null) {
+        task = context
+            .read<TaskCubit>()
+            .repository
+            .getTask((timeSlot.event as WorkBlock).taskId!);
       }
 
       // // check if there is a task associated to it

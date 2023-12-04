@@ -1,16 +1,15 @@
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
 import 'package:daily_planner/utils/extension.dart';
 
 class WorkBlock extends TimeSlotEvent {
-  Task? task;
+  int? taskId;
 
-  WorkBlock({required super.createdAt, this.task});
+  WorkBlock({required super.createdAt, this.taskId});
 
   factory WorkBlock.fromJson(Map<dynamic, dynamic> json) {
     return WorkBlock(
       createdAt: DateTime.parse(json['createdAt']),
-      task: Task.fromJson(json['task']),
+      taskId: json['taskId'],
     );
   }
 
@@ -18,7 +17,7 @@ class WorkBlock extends TimeSlotEvent {
   Map toJson() {
     return {
       'createdAt': createdAt.troncateDateTime().toString(),
-      'task': task!.toJson(),
+      'taskId': taskId ?? 0,
     };
   }
 }

@@ -21,18 +21,23 @@ class TaskLocalStorageRepository implements TaskBaseRepository {
   }
 
   @override
-  Task getTask(int id) {
+  Task? getTask(int id) {
     // get a task by id from Hive box 'my_tasks'
-    final task = getTasks().firstWhere((task) => task.id == id);
-
+    Task? task;
+    try {
+      task = getTasks().firstWhere((task) => task.id == id);
+    } catch (e) {
+      task = null;
+    }
     return task;
   }
 
   @override
-  Future<void> createTask(Task task) async {
+  Future<int> createTask(Task task) async {
     // add a task in Hive box 'my_tasks'
     task.id = task.hashCode;
     await _myTasks.put(task.id, task.toJson());
+    return Future<int>.value(task.id);
   }
 
   @override
