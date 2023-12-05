@@ -30,9 +30,9 @@ class Task extends TimeSlotEvent {
         (priority) => priority.toString() == 'Priority.${json['priority']}',
         orElse: () => Priority.normal,
       ),
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt'] ?? "0000-00-00"),
       isPlanned: json['isPlanned'] as bool,
-      plannedOn: DateTime.parse(json['plannedOn']),
+      plannedOn: DateTime.parse(json['plannedOn'] ?? "0000-00-00"),
       isDone: json['isDone'] as bool,
       isRescheduled: json['isRescheduled'] as bool,
     );

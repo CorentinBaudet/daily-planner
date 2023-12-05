@@ -8,6 +8,7 @@ import 'package:daily_planner/utils/double_value_listenable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// TODO : switching to other tab while in delete mode does not reset the delete mode widgets when coming back
 class TaskPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _isDeleteModeOn = ValueNotifier<bool>(false);
@@ -81,6 +82,7 @@ class TaskPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
+        // TODO : wrap the AppBar into a custom widget to make code clearer
         appBar: AppBar(
           title: Text('tasks',
               style: TextStyle(

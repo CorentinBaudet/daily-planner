@@ -236,8 +236,8 @@ class _IntroPageState extends State<IntroPage> {
     // create the sleep time slot
     context.read<TimeSlotCubit>().createTimeSlot(sleepTimeSlot);
 
-    // create default tasks
-    int id = await context.read<TaskCubit>().createTask(Task(
+    // create the default task
+    context.read<TaskCubit>().createTask(Task(
         name: 'setup your everyday blocks 🔧',
         priority: Priority.normal,
         createdAt: DateTime.now().troncateDateTime(),
@@ -247,7 +247,7 @@ class _IntroPageState extends State<IntroPage> {
     }
 
     // create the deep work time slot
-    (workTimeSlot.event as WorkBlock).taskId = id;
+    // (workTimeSlot.event as WorkBlock).taskId = id;
     context.read<TimeSlotCubit>().createTimeSlot(workTimeSlot);
   }
 }

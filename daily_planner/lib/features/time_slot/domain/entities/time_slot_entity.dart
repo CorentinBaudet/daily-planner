@@ -9,7 +9,6 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlot extends Appointment {
   final TimeSlotEvent event;
-  // final DateTime createdAt;
 
   TimeSlot({
     super.id,
@@ -19,7 +18,6 @@ class TimeSlot extends Appointment {
     required this.event,
     super.color,
     super.recurrenceRule = '',
-    // required this.createdAt,
   });
 
   factory TimeSlot.fromJson(Map<dynamic, dynamic> json) {
@@ -32,11 +30,6 @@ class TimeSlot extends Appointment {
       } else {
         event = Block.fromJson(json['event']);
       }
-      // try {
-      //   event = WorkBlock.fromJson(json['event']);
-      // } catch (e) {
-      //   event = Block.fromJson(json['event']);
-      // }
     }
     return TimeSlot(
       id: json['id'],
@@ -46,7 +39,6 @@ class TimeSlot extends Appointment {
       event: event,
       color: Color(int.parse(json['color'])),
       recurrenceRule: json['recurrenceRule'],
-      // createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
@@ -59,7 +51,6 @@ class TimeSlot extends Appointment {
       'event': event.toJson(),
       'color': color.value.toString(),
       'recurrenceRule': recurrenceRule,
-      // 'createdAt': createdAt.troncateDateTime().toString(),
     };
   }
 }

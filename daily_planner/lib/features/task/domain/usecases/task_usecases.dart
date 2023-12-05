@@ -25,8 +25,8 @@ class TaskUseCases {
         .toList(growable: false);
 
     // sort each list by creation date in reverse order
-    highPriorityTasks.sort((a, b) => compareCreationDate(a, b));
-    normalPriorityTasks.sort((a, b) => compareCreationDate(a, b));
+    highPriorityTasks.sort((a, b) => _compareCreationDate(a, b));
+    normalPriorityTasks.sort((a, b) => _compareCreationDate(a, b));
 
     // merge the two lists
     tasks = [...highPriorityTasks, ...normalPriorityTasks];
@@ -35,7 +35,7 @@ class TaskUseCases {
   }
 
   // method to sort tasks by creation date
-  int compareCreationDate(Task a, Task b) {
+  int _compareCreationDate(Task a, Task b) {
     if (a == b) return 0;
     return a.createdAt.compareTo(b.createdAt);
   }

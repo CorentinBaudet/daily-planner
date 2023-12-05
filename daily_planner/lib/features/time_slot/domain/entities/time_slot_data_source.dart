@@ -52,6 +52,7 @@ class TimeSlotDataSource extends CalendarDataSource {
     return builtTimeSlots;
   }
 
+  // this function will never be called I think
   // TODO handle overlapping tasks
   static void _handleTask(List<TimeSlot> builtTimeSlots, TimeSlot timeSlot) {
     print('name: ${timeSlot.subject}');
