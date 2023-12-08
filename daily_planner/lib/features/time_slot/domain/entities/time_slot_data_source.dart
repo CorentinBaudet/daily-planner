@@ -3,6 +3,7 @@ import 'package:daily_planner/features/time_slot/domain/entities/block_entity.da
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -37,14 +38,12 @@ class TimeSlotDataSource extends CalendarDataSource {
     for (var timeSlot in storedTimeSlots) {
       switch (timeSlot.event.runtimeType) {
         case Task:
-          print('task: ${timeSlot.event.runtimeType}');
           // if the event is a task, it is a one-time event
           _handleTask(builtTimeSlots, timeSlot);
           break;
 
         case Block:
         case WorkBlock:
-          print('block or workblock: ${timeSlot.event.runtimeType}');
           _handleBlock(builtTimeSlots, timeSlot, isTomorrow);
           break;
       }
@@ -56,10 +55,6 @@ class TimeSlotDataSource extends CalendarDataSource {
   // this function will never be called I think
   // TODO handle overlapping tasks
   static void _handleTask(List<TimeSlot> builtTimeSlots, TimeSlot timeSlot) {
-    print('name: ${timeSlot.subject}');
-    print('startTime: ${timeSlot.startTime}');
-    print('endTime: ${timeSlot.endTime}');
-
     builtTimeSlots.add(timeSlot);
     // appointments.add(TimeSlot(
     //     id: timeSlotEvent.id,
@@ -74,10 +69,6 @@ class TimeSlotDataSource extends CalendarDataSource {
     // if the end time is before the start time, it means that the block ends the next day
     bool isOverlap =
         timeSlot.endTime.isBefore(timeSlot.startTime) ? true : false;
-
-    print('name: ${timeSlot.subject}');
-    print('startTime: ${timeSlot.startTime}');
-    print('endTime: ${timeSlot.endTime}');
 
     // if the block ends the next day, we add it again to the calendar the next day
     if (isOverlap) {
@@ -149,15 +140,13 @@ class TimeSlotDataSource extends CalendarDataSource {
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     startDate = isTomorrow ? startDate.add(const Duration(days: 1)) : startDate;
 
+    print("source: $source");
     List<Appointment> appointments = getVisibleAppointments(startDate, '');
 
     // traitement
     switch (timeSlotEvent.runtimeType) {
       case Task:
-        return _searchForEmptyTimeSlotTask(appointments, timeSlotEvent as Task);
-      case Block:
-      case WorkBlock:
-        return _searchForEmptyTimeSlotBlock(appointments, timeSlotEvent);
+        return _searchForEmptyTimeSlotForTask(source, timeSlotEvent as Task);
     }
     return null;
 
@@ -171,31 +160,19 @@ class TimeSlotDataSource extends CalendarDataSource {
     // );
   }
 
-  TimeSlot? _searchForEmptyTimeSlotTask(
-      List<Appointment> appointments, Task task) {
+  TimeSlot? _searchForEmptyTimeSlotForTask(
+      List<TimeSlot> timeSlots, Task task) {
     print('searching for empty time slot for task');
-    print('appointments: $appointments');
-    print('timeSlotEvent: $task');
 
-    // if there is no appointment, we return the first time slot of the day
-    if (appointments.isEmpty) {
-      return TimeSlot(
-        startTime: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day, 0, 0),
-        endTime: DateTime(DateTime.now().year, DateTime.now().month,
-                DateTime.now().day, 0, 0)
-            .add(const Duration(days: 1)),
-        subject: task.name,
-        color: const Color(0xFFffc2a9),
-        event: task,
-      );
+    // traitement dans TimeSlotUseCases
+    TimeSlot? emptyTimeSlot =
+        TimeSlotUseCases().getEmptyTimeSlotForTask(timeSlots, task);
+
+    if (emptyTimeSlot == null) {
+      return null;
     }
 
-    return null;
-  }
-
-  TimeSlot? _searchForEmptyTimeSlotBlock(
-      List<Appointment> appointments, TimeSlotEvent timeSlotEvent) {
+    // sinon retourne l'objet time slot complet
     return null;
   }
 }
