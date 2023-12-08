@@ -1,10 +1,8 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
-import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
-import 'package:daily_planner/utils/extension.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart'
+    as ts_cubit;
 import 'package:flutter/material.dart';
 
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
@@ -16,55 +14,70 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   const TimeSlotDrawerListTile({super.key, required this.task});
 
   _addTimeSlot(BuildContext context) {
+    List<TimeSlot> storedTimeSlots = [];
+
+    if (context.read<ts_cubit.TimeSlotCubit>().state is ts_cubit.LoadedState) {
+      storedTimeSlots =
+          (context.read<ts_cubit.TimeSlotCubit>().state as ts_cubit.LoadedState)
+              .timeSlots;
+    }
+
+    // get the time slots from the data source
+    TimeSlotDataSource timeSlotDataSource =
+        TimeSlotDataSource.getDataSource(context, storedTimeSlots);
+
+    // search for an empty time slot
     TimeSlot? timeSlot =
-        TimeSlotUseCases().searchForEmptyTimeSlot(context, task);
+        timeSlotDataSource.searchForEmptyTimeSlot(task, isTomorrow: true);
 
     if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot
       _noTimeSlotDialog(context);
     } else {
-      // set the task isPlanned to true
-      task.isPlanned = true;
-      context.read<TaskCubit>().updateTask(task);
+      print('timeSlot: $timeSlot');
 
-      // add the task to the time slot
-      context.read<TimeSlotCubit>().createTimeSlot(TimeSlot(
-            startTime: DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month,
-                    DateTime.now().day + 1,
-                    timeSlot.startTime.hour,
-                    timeSlot.startTime.minute)
-                .troncateDateTime(),
-            endTime: timeSlot.event is Block
-                // if the free time slot found is a block, we use its end time for the task
-                ? DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day + 1,
-                        timeSlot.endTime.hour,
-                        timeSlot.endTime.minute)
-                    .troncateDateTime()
-                // else we simply make the task last 1 hour
-                : DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day + 1,
-                        timeSlot.startTime.hour + 1,
-                        timeSlot.startTime.minute)
-                    .troncateDateTime(),
-            subject: task.name,
-            event:
-                // timeSlot.event is Block
-                // // if the free time slot found is a block, we happen its name to the task name
-                // ? () {
-                //     Task renamedTask = task;
-                //     renamedTask.name += ' (${timeSlot.event.name})';
-                //     return renamedTask;
-                //   }()
-                // :
-                task,
-          ));
+      // // set the task isPlanned to true
+      // task.isPlanned = true;
+      // context.read<TaskCubit>().updateTask(task);
+
+      // // add the task to the time slot
+      // context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
+      //       startTime: DateTime(
+      //               DateTime.now().year,
+      //               DateTime.now().month,
+      //               DateTime.now().day + 1,
+      //               timeSlot.startTime.hour,
+      //               timeSlot.startTime.minute)
+      //           .troncateDateTime(),
+      //       endTime: timeSlot.event is Block
+      //           // if the free time slot found is a block, we use its end time for the task
+      //           ? DateTime(
+      //                   DateTime.now().year,
+      //                   DateTime.now().month,
+      //                   DateTime.now().day + 1,
+      //                   timeSlot.endTime.hour,
+      //                   timeSlot.endTime.minute)
+      //               .troncateDateTime()
+      //           // else we simply make the task last 1 hour
+      //           : DateTime(
+      //                   DateTime.now().year,
+      //                   DateTime.now().month,
+      //                   DateTime.now().day + 1,
+      //                   timeSlot.startTime.hour + 1,
+      //                   timeSlot.startTime.minute)
+      //               .troncateDateTime(),
+      //       subject: task.name,
+      //       event:
+      //           // timeSlot.event is Block
+      //           // // if the free time slot found is a block, we happen its name to the task name
+      //           // ? () {
+      //           //     Task renamedTask = task;
+      //           //     renamedTask.name += ' (${timeSlot.event.name})';
+      //           //     return renamedTask;
+      //           //   }()
+      //           // :
+      //           task,
+      //     ));
     }
   }
 
@@ -99,6 +112,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
           height: 56,
           margin: const EdgeInsets.only(bottom: 9.0),
           decoration: BoxDecoration(
+              // TODO: variabilize the color
               color: const Color(0xFFffc2a9),
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: const [

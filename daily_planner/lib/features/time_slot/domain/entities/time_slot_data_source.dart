@@ -1,6 +1,7 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -14,7 +15,7 @@ class TimeSlotDataSource extends CalendarDataSource {
   @override
   List<dynamic> get appointments => source;
 
-  static CalendarDataSource getDataSource(
+  static TimeSlotDataSource getDataSource(
       BuildContext context, List<TimeSlot> storedTimeSlots,
       {bool isTomorrow = false}) {
     List<TimeSlot> builtTimeSlots =
@@ -142,23 +143,59 @@ class TimeSlotDataSource extends CalendarDataSource {
     }
   }
 
-  TimeSlot? searchForEmptyTimeSlot(TimeSlot timeSlot,
+  TimeSlot? searchForEmptyTimeSlot(TimeSlotEvent timeSlotEvent,
       {bool isTomorrow = false}) {
-    DateTime startDate = isTomorrow
-        ? DateTime.now().add(const Duration(days: 1))
-        : DateTime.now();
+    DateTime startDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    startDate = isTomorrow ? startDate.add(const Duration(days: 1)) : startDate;
 
     List<Appointment> appointments = getVisibleAppointments(startDate, '');
 
     // traitement
+    switch (timeSlotEvent.runtimeType) {
+      case Task:
+        return _searchForEmptyTimeSlotTask(appointments, timeSlotEvent as Task);
+      case Block:
+      case WorkBlock:
+        return _searchForEmptyTimeSlotBlock(appointments, timeSlotEvent);
+    }
+    return null;
 
-    return TimeSlot(
-      startTime: appointments[0].startTime,
-      endTime: appointments[0].endTime.add(const Duration(minutes: 60)),
-      subject: timeSlot.subject,
-      color: timeSlot.color,
-      event: timeSlot.event,
-      recurrenceRule: timeSlot.event is Block ? 'FREQ=DAILY;' : null,
-    );
+    // return TimeSlot(
+    //   startTime: appointments[0].startTime,
+    //   endTime: appointments[0].endTime.add(const Duration(minutes: 60)),
+    //   subject: timeSlotEvent.subject,
+    //   color: timeSlotEvent.color,
+    //   event: timeSlotEvent.event,
+    //   recurrenceRule: timeSlotEvent.event is Block ? 'FREQ=DAILY;' : null,
+    // );
+  }
+
+  TimeSlot? _searchForEmptyTimeSlotTask(
+      List<Appointment> appointments, Task task) {
+    print('searching for empty time slot for task');
+    print('appointments: $appointments');
+    print('timeSlotEvent: $task');
+
+    // if there is no appointment, we return the first time slot of the day
+    if (appointments.isEmpty) {
+      return TimeSlot(
+        startTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, 0, 0),
+        endTime: DateTime(DateTime.now().year, DateTime.now().month,
+                DateTime.now().day, 0, 0)
+            .add(const Duration(days: 1)),
+        subject: task.name,
+        color: const Color(0xFFffc2a9),
+        event: task,
+      );
+    }
+
+    return null;
+  }
+
+  TimeSlot? _searchForEmptyTimeSlotBlock(
+      List<Appointment> appointments, TimeSlotEvent timeSlotEvent) {
+    return null;
   }
 }
