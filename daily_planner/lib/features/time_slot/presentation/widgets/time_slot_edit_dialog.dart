@@ -78,7 +78,7 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
               backgroundColor: MaterialStateProperty.all(
                   Theme.of(context).colorScheme.primary)),
           onPressed: () {
-            if (!TimeSlotUseCases().isValidTimeSlot(widget.timeSlot)) {
+            if (!TimeSlotUseCases.isValidTimeSlot(widget.timeSlot)) {
               // if the timeslot is invalid, set isTimeSlotValid to false
               setState(() {
                 isTimeSlotValid = false;

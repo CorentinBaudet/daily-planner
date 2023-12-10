@@ -1,14 +1,12 @@
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 // TODO this class might have too much methods, some of them may be moved to extensions for example
 class TimeSlotUseCases {
   // method to get all 15min start time slots for tomorrow
-  List<DateTime> getTomorrowStartTimes() {
+  static List<DateTime> getTomorrowStartTimes() {
     final timeSlots = <DateTime>[];
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
@@ -24,13 +22,13 @@ class TimeSlotUseCases {
   }
 
   // method to retrieve timeslots that contains a work block
-  List<TimeSlot> getWorkBlockTimeSlots(List<TimeSlot> timeSlots) {
+  static List<TimeSlot> getWorkBlockTimeSlots(List<TimeSlot> timeSlots) {
     return timeSlots
         .where((timeSlot) => timeSlot.event.runtimeType == WorkBlock)
         .toList();
   }
 
-  List<TimeSlot> getTomorrowTimeSlots(List<TimeSlot> timeSlots) {
+  static List<TimeSlot> getTomorrowTimeSlots(List<TimeSlot> timeSlots) {
     final tomorrowTimeSlots = <TimeSlot>[];
     final tomorrow = DateTime.now().add(const Duration(days: 1));
     for (var timeSlot in timeSlots) {
@@ -47,7 +45,7 @@ class TimeSlotUseCases {
   }
 
   // method to sort time slots by start time and end time
-  List<TimeSlot> sortTimeSlots(List<TimeSlot> timeSlots) {
+  static List<TimeSlot> sortTimeSlots(List<TimeSlot> timeSlots) {
     timeSlots.sort((a, b) {
       final aStart = TimeOfDay.fromDateTime(a.startTime);
       final bStart = TimeOfDay.fromDateTime(b.startTime);
@@ -75,18 +73,19 @@ class TimeSlotUseCases {
     return timeSlots;
   }
 
-  bool isBeforeOrSameTimeInDay(DateTime first, DateTime second) {
+  static bool isBeforeOrSameTimeInDay(DateTime first, DateTime second) {
     return first.hour <= second.hour ||
         (first.hour == second.hour && first.minute <= second.minute);
   }
 
-  bool isAfterInDay(DateTime second, DateTime first) {
+  static bool isAfterInDay(DateTime second, DateTime first) {
     return second.hour > first.hour ||
         (second.hour == first.hour && second.minute > first.minute);
   }
 
   // method to check if a given time is between two boundaries
-  bool isBetweenInDay(DateTime time, DateTime startTime, DateTime endTime) {
+  static bool isBetweenInDay(
+      DateTime time, DateTime startTime, DateTime endTime) {
     // if the time slot is in the same day
     if (startTime.isBefore(endTime)) {
       return isBeforeOrSameTimeInDay(startTime, time) &&
@@ -98,11 +97,26 @@ class TimeSlotUseCases {
   }
 
   // method to check if two time slots are starting and ending at the same hour and minute
-  bool isSameTimeSlot(TimeSlot timeSlot, first) {
+  static bool isSameTimeSlot(TimeSlot timeSlot, first) {
     return timeSlot.startTime.hour == first.startTime.hour &&
         timeSlot.startTime.minute == first.startTime.minute &&
         timeSlot.endTime.hour == first.endTime.hour &&
         timeSlot.endTime.minute == first.endTime.minute;
+  }
+
+  static bool isValidTimeSlot(TimeSlot timeSlot) {
+    // test if the end time is before the start time
+    if (timeSlot.endTime.isBefore(timeSlot.startTime) ||
+        timeSlot.endTime.isAtSameMomentAs(timeSlot.startTime)) {
+      return false;
+    }
+
+    // test if the time slot duration is at least 15 min
+    if (timeSlot.endTime.difference(timeSlot.startTime).inMinutes < 15) {
+      return false;
+    }
+
+    return true;
   }
 
   // TimeSlot? searchForEmptyTimeSlot(BuildContext context, Task task) {
@@ -124,60 +138,60 @@ class TimeSlotUseCases {
   //   return _searchForTimeSlot(timeSlots, task);
   // }
 
-  TimeSlot? getEmptyTimeSlotForTask(List<TimeSlot> timeSlots, Task task) {
-    // first look for the first empty work block
-    _searchForWorkBlock(timeSlots);
+  // static TimeSlot? getEmptyTimeSlotForTask(List<TimeSlot> timeSlots, Task task) {
+  //   // first look for the first empty work block
+  //   _searchForWorkBlock(timeSlots);
 
-    DateTime taskStartTime =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    bool isTaskStartTimeFound = false;
+  //   DateTime taskStartTime =
+  //       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  //   bool isTaskStartTimeFound = false;
 
-    // search for the first empty time slot by looking at start times of today
-    while (isTaskStartTimeFound == false) {
-      // is the current start time at the same time as a time slot tomorrow ?
-      if (timeSlots.any((element) => TimeSlotUseCases()
-          .isBetweenInDay(taskStartTime, element.startTime, element.endTime))) {
-        // the current start time is not free, so we reset the flag
-        taskStartTime = taskStartTime.add(const Duration(minutes: 15));
-      } else {
-        isTaskStartTimeFound = true;
-      }
-    }
+  //   // search for the first empty time slot by looking at start times of today
+  //   while (isTaskStartTimeFound == false) {
+  //     // is the current start time at the same time as a time slot tomorrow ?
+  //     if (timeSlots.any((element) => TimeSlotUseCases()
+  //         .isBetweenInDay(taskStartTime, element.startTime, element.endTime))) {
+  //       // the current start time is not free, so we reset the flag
+  //       taskStartTime = taskStartTime.add(const Duration(minutes: 15));
+  //     } else {
+  //       isTaskStartTimeFound = true;
+  //     }
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
-  TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
-    List<TimeSlot> blockTimeSlots =
-        TimeSlotUseCases().getWorkBlockTimeSlots(timeSlots);
+  // TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
+  //   List<TimeSlot> blockTimeSlots =
+  //       TimeSlotUseCases().getWorkBlockTimeSlots(timeSlots);
 
-    print("blockTimeSlots: $blockTimeSlots");
+  //   print("blockTimeSlots: $blockTimeSlots");
 
-    // for (var block in blockTimeSlots) {
-    //   if (block.runtimeType != WorkBlock) {
-    //     continue;
-    //   }
+  //   // for (var block in blockTimeSlots) {
+  //   //   if (block.runtimeType != WorkBlock) {
+  //   //     continue;
+  //   //   }
 
-    //   // is there a time slot that starts at the same time as the block ?
-    //   if (!timeSlots.any((timeSlot) {
-    //     // if the time slot is a block, we don't compare it
-    //     if (timeSlot.event is Block) {
-    //       return false;
-    //     }
-    //     // if the task time slot starts at the same time as the block time slot
-    //     if (timeSlot.startTime.hour == block.startTime.hour &&
-    //         timeSlot.startTime.minute == block.startTime.minute) {
-    //       // the block is already used
-    //       return true;
-    //     }
-    //     // the block is not used
-    //     return false;
-    //   })) {
-    //     return block;
-    //   }
-    // }
-    return null;
-  }
+  //   //   // is there a time slot that starts at the same time as the block ?
+  //   //   if (!timeSlots.any((timeSlot) {
+  //   //     // if the time slot is a block, we don't compare it
+  //   //     if (timeSlot.event is Block) {
+  //   //       return false;
+  //   //     }
+  //   //     // if the task time slot starts at the same time as the block time slot
+  //   //     if (timeSlot.startTime.hour == block.startTime.hour &&
+  //   //         timeSlot.startTime.minute == block.startTime.minute) {
+  //   //       // the block is already used
+  //   //       return true;
+  //   //     }
+  //   //     // the block is not used
+  //   //     return false;
+  //   //   })) {
+  //   //     return block;
+  //   //   }
+  //   // }
+  //   return null;
+  // }
 
   // TimeSlot? _searchForTimeSlot(List<TimeSlot> timeSlots, Task task) {
   //   // search for the first empty time slot by looking at start times of today
@@ -207,19 +221,4 @@ class TimeSlotUseCases {
   //   // if no empty time slot was found
   //   return null;
   // }
-
-  bool isValidTimeSlot(TimeSlot timeSlot) {
-    // test if the end time is before the start time
-    if (timeSlot.endTime.isBefore(timeSlot.startTime) ||
-        timeSlot.endTime.isAtSameMomentAs(timeSlot.startTime)) {
-      return false;
-    }
-
-    // test if the time slot duration is at least 15 min
-    if (timeSlot.endTime.difference(timeSlot.startTime).inMinutes < 15) {
-      return false;
-    }
-
-    return true;
-  }
 }

@@ -40,16 +40,16 @@ class _IntroPageState extends State<IntroPage> {
       recurrenceRule: 'FREQ=DAILY');
 
   TimeSlot workTimeSlot = TimeSlot(
-      startTime: DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day, 9, 0)
-          .troncateDateTime(),
-      endTime: DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day, 10, 30)
-          .troncateDateTime(),
-      subject: 'deep work 🧠',
-      color: const Color(0xFFffe7dc),
-      event: WorkBlock(createdAt: DateTime.now().troncateDateTime()),
-      recurrenceRule: 'FREQ=DAILY');
+    startTime: DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day, 9, 0)
+        .troncateDateTime(),
+    endTime: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, 10, 30)
+        .troncateDateTime(),
+    subject: 'deep work 🧠',
+    color: const Color(0xFFffe7dc),
+    event: WorkBlock(createdAt: DateTime.now().troncateDateTime()),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +219,7 @@ class _IntroPageState extends State<IntroPage> {
 
   _createDefaultData() async {
     // check if the work time slot is valid
-    if (!TimeSlotUseCases().isValidTimeSlot(workTimeSlot)) {
+    if (!TimeSlotUseCases.isValidTimeSlot(workTimeSlot)) {
       // show error message with snack bar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -1,6 +1,7 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_data_source_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart'
     as ts_cubit;
 import 'package:flutter/material.dart';
@@ -23,12 +24,13 @@ class TimeSlotDrawerListTile extends StatelessWidget {
     }
 
     // get the time slots from the data source
-    TimeSlotDataSource timeSlotDataSource =
-        TimeSlotDataSource.getDataSource(context, storedTimeSlots);
+    List<TimeSlot> builtTimeSlots =
+        TimeSlotDataSource.getCalendarDataSource(storedTimeSlots).timeSlots;
 
     // search for an empty time slot
-    TimeSlot? timeSlot =
-        timeSlotDataSource.searchForEmptyTimeSlot(task, isTomorrow: true);
+    TimeSlot? timeSlot = TimeSlotDataSourceUseCases.searchForEmptyTimeSlot(
+        builtTimeSlots, task,
+        isTomorrow: true);
 
     if (timeSlot == null) {
       // display a dialog indicating that there is no available time slot
