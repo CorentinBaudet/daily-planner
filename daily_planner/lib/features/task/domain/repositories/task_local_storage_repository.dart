@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/domain/repositories/task_base_repository.dart';
 import 'package:hive/hive.dart';
@@ -37,7 +39,7 @@ class TaskLocalStorageRepository implements TaskBaseRepository {
     // add a task in Hive box 'my_tasks'
     task.id = task.hashCode;
     await _myTasks.put(task.id, task.toJson());
-    return Future<int>.value(task.id);
+    return Future<int>.value(task.id as FutureOr<int>?);
   }
 
   @override

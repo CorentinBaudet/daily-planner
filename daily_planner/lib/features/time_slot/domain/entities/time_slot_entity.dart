@@ -1,42 +1,38 @@
 import 'dart:ui';
 
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/utils/extension.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlot extends Appointment {
-  final TimeSlotEvent event;
+  // final TimeSlotEvent event;
+  final DateTime createdAt;
 
   TimeSlot({
-    super.id,
     required super.startTime,
     required super.endTime,
     required super.subject,
-    required this.event,
+    super.id,
     super.color,
     super.recurrenceRule = '',
-  });
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
   factory TimeSlot.fromJson(Map<dynamic, dynamic> json) {
-    TimeSlotEvent event;
-    try {
-      event = Task.fromJson(json['event']);
-    } catch (e) {
-      if (json['event']['taskId'] != null) {
-        event = WorkBlock.fromJson(json['event']);
-      } else {
-        event = Block.fromJson(json['event']);
-      }
-    }
+    // try {
+    //   event = Task.fromJson(json['event']);
+    // } catch (e) {
+    //   if (json['event']['taskId'] != null) {
+    //     event = WorkBlock.fromJson(json['event']);
+    //   } else {
+    //     event = Block.fromJson(json['event']);
+    //   }
+    // }
     return TimeSlot(
-      id: json['id'],
       startTime: DateTime.parse(json['startTime']),
       endTime: DateTime.parse(json['endTime']),
       subject: json['subject'],
-      event: event,
+      createdAt: DateTime.parse(json['createdAt']),
+      id: json['id'],
       color: Color(int.parse(json['color'])),
       recurrenceRule: json['recurrenceRule'],
     );
@@ -44,11 +40,11 @@ class TimeSlot extends Appointment {
 
   Map<dynamic, dynamic> toJson() {
     return {
-      'id': id,
       'startTime': startTime.troncateDateTime().toString(),
       'endTime': endTime.troncateDateTime().toString(),
       'subject': subject,
-      'event': event.toJson(),
+      'createdAt': createdAt.troncateDateTime().toString(),
+      'id': id,
       'color': color.value.toString(),
       'recurrenceRule': recurrenceRule,
     };

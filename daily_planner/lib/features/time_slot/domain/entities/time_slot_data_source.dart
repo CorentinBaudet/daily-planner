@@ -42,13 +42,13 @@ class TimeSlotDataSource extends CalendarDataSource {
 
     for (var appointment in appointments!) {
       timeSlots.add(TimeSlot(
-        id: appointment.id,
         startTime: appointment.from,
         endTime: appointment.to,
         subject: appointment.eventName,
+        id: appointment.id,
         color: appointment.background,
-        event: appointment.event,
         recurrenceRule: appointment.recurrenceRule,
+        createdAt: appointment.createdAt,
       ));
     }
 
@@ -63,11 +63,11 @@ class TimeSlotDataSource extends CalendarDataSource {
         <TimeSlot>[]; // the SfCalendar requires a list of Appointment objects to build the data source
 
     for (var timeSlot in storedTimeSlots) {
-      switch (timeSlot.event.runtimeType) {
+      switch (timeSlot.runtimeType) {
         case Task:
           // this will never be called I think
           // TODO handle overlapping tasks
-          builtTimeSlots.add(timeSlot);
+          builtTimeSlots.add(timeSlot as Task);
           break;
 
         case Block:
@@ -108,9 +108,9 @@ class TimeSlotDataSource extends CalendarDataSource {
           23,
           59),
       subject: timeSlot.subject,
-      event: timeSlot.event,
       color: timeSlot.color,
       recurrenceRule: timeSlot.recurrenceRule,
+      // createdAt: timeSlot.createdAt,
     ));
     builtTimeSlots.add(_addOverlap(timeSlot));
   }
@@ -138,9 +138,9 @@ class TimeSlotDataSource extends CalendarDataSource {
           23,
           59),
       subject: timeSlot.subject,
-      event: timeSlot.event,
       color: timeSlot.color,
       recurrenceRule: timeSlot.recurrenceRule,
+      // createdAt: timeSlot.createdAt,
     ));
     builtTimeSlots.add(_addOverlap(timeSlot));
   }
@@ -157,7 +157,6 @@ class TimeSlotDataSource extends CalendarDataSource {
             timeSlot.endTime.hour,
             timeSlot.endTime.minute),
         subject: timeSlot.subject,
-        event: timeSlot.event,
         color: timeSlot.color,
         recurrenceRule: 'FREQ=DAILY;');
   }

@@ -1,7 +1,7 @@
-abstract class TimeSlotEvent {
-  final DateTime createdAt;
+// abstract class TimeSlotEvent {
+//   final DateTime createdAt;
 
-  TimeSlotEvent({required this.createdAt});
+//   TimeSlotEvent({required this.createdAt});
 
-  Map<dynamic, dynamic> toJson();
-}
+//   Map<dynamic, dynamic> toJson();
+// }

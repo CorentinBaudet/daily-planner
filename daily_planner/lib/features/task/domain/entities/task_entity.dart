@@ -1,38 +1,36 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
-import 'package:daily_planner/utils/extension.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
-class Task extends TimeSlotEvent {
-  int? id;
-  String name;
+class Task extends TimeSlot {
   final Priority priority;
   bool isPlanned;
-  DateTime? plannedOn;
   bool isDone;
   bool isRescheduled;
 
   Task({
-    this.id,
-    required this.name,
-    required this.priority,
+    required super.startTime,
+    required super.endTime,
+    required super.subject,
     required super.createdAt,
+    required this.priority,
     this.isPlanned = false,
-    this.plannedOn,
     this.isDone = false,
     this.isRescheduled = false,
   });
 
   factory Task.fromJson(Map<dynamic, dynamic> json) {
+    TimeSlot timeSlot = TimeSlot.fromJson(json);
+
     return Task(
-      id: json['id'] as int?,
-      name: json['name'],
+      startTime: timeSlot.startTime,
+      endTime: timeSlot.endTime,
+      subject: timeSlot.subject,
+      createdAt: timeSlot.createdAt,
       priority: Priority.values.firstWhere(
         (priority) => priority.toString() == 'Priority.${json['priority']}',
         orElse: () => Priority.normal,
       ),
-      createdAt: DateTime.parse(json['createdAt'] ?? "0000-00-00"),
       isPlanned: json['isPlanned'] as bool,
-      plannedOn: DateTime.parse(json['plannedOn'] ?? "0000-00-00"),
       isDone: json['isDone'] as bool,
       isRescheduled: json['isRescheduled'] as bool,
     );
@@ -40,15 +38,25 @@ class Task extends TimeSlotEvent {
 
   @override
   Map<dynamic, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
+    Map timeSlotJson = super.toJson();
+
+    timeSlotJson.addAll({
       'priority': priority.toString().split('.').last,
-      'createdAt': createdAt.troncateDateTime().toString(),
       'isPlanned': isPlanned,
-      'plannedOn': plannedOn?.formatDate(),
       'isDone': isDone,
       'isRescheduled': isRescheduled,
-    };
+    });
+
+    return timeSlotJson;
+    // return {
+    //   'id': id,
+    //   'name': name,
+    //   'priority': priority.toString().split('.').last,
+    //   'createdAt': createdAt.troncateDateTime().toString(),
+    //   'isPlanned': isPlanned,
+    //   'plannedOn': plannedOn?.formatDate(),
+    //   'isDone': isDone,
+    //   'isRescheduled': isRescheduled,
+    // };
   }
 }

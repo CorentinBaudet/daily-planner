@@ -1,23 +1,40 @@
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
-import 'package:daily_planner/utils/extension.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
-class WorkBlock extends TimeSlotEvent {
-  int? taskId;
+class WorkBlock extends TimeSlot {
+  int taskId;
 
-  WorkBlock({required super.createdAt, this.taskId});
+  WorkBlock({
+    required super.startTime,
+    required super.endTime,
+    required super.subject,
+    required super.createdAt,
+    this.taskId = 0,
+  });
 
   factory WorkBlock.fromJson(Map<dynamic, dynamic> json) {
+    TimeSlot timeSlot = TimeSlot.fromJson(json);
+
     return WorkBlock(
-      createdAt: DateTime.parse(json['createdAt']),
+      startTime: timeSlot.startTime,
+      endTime: timeSlot.endTime,
+      subject: timeSlot.subject,
+      createdAt: timeSlot.createdAt,
       taskId: json['taskId'],
     );
   }
 
   @override
   Map toJson() {
-    return {
-      'createdAt': createdAt.troncateDateTime().toString(),
-      'taskId': taskId ?? 0,
-    };
+    Map timeSlotJson = super.toJson();
+
+    timeSlotJson.addAll({
+      'taskId': taskId,
+    });
+
+    return timeSlotJson;
+    // return {
+    //   'createdAt': createdAt.troncateDateTime().toString(),
+    //   'taskId': taskId ?? 0,
+    // };
   }
 }
