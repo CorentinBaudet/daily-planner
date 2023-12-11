@@ -31,10 +31,10 @@ class TimeSlot extends Appointment {
       startTime: DateTime.parse(json['startTime']),
       endTime: DateTime.parse(json['endTime']),
       subject: json['subject'],
-      createdAt: DateTime.parse(json['createdAt']),
       id: json['id'],
       color: Color(int.parse(json['color'])),
       recurrenceRule: json['recurrenceRule'],
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
@@ -43,10 +43,10 @@ class TimeSlot extends Appointment {
       'startTime': startTime.troncateDateTime().toString(),
       'endTime': endTime.troncateDateTime().toString(),
       'subject': subject,
-      'createdAt': createdAt.troncateDateTime().toString(),
       'id': id,
       'color': color.value.toString(),
       'recurrenceRule': recurrenceRule,
+      'createdAt': createdAt.troncateDateTime().toString(),
     };
   }
 }

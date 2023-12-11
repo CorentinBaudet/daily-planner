@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
 class WorkBlock extends TimeSlot {
@@ -7,9 +9,11 @@ class WorkBlock extends TimeSlot {
     required super.startTime,
     required super.endTime,
     required super.subject,
-    required super.createdAt,
+    super.color = const Color(0xFFffe7dc),
+    DateTime? createdAt,
     this.taskId = 0,
-  });
+  }) : super(createdAt: createdAt ?? DateTime.now());
+  // if createdAt is not provided, the superclass's constructor will handle its initialization
 
   factory WorkBlock.fromJson(Map<dynamic, dynamic> json) {
     TimeSlot timeSlot = TimeSlot.fromJson(json);
@@ -18,6 +22,7 @@ class WorkBlock extends TimeSlot {
       startTime: timeSlot.startTime,
       endTime: timeSlot.endTime,
       subject: timeSlot.subject,
+      color: timeSlot.color,
       createdAt: timeSlot.createdAt,
       taskId: json['taskId'],
     );
@@ -29,6 +34,7 @@ class WorkBlock extends TimeSlot {
 
     timeSlotJson.addAll({
       'taskId': taskId,
+      'type': runtimeType.toString(),
     });
 
     return timeSlotJson;

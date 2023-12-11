@@ -24,7 +24,7 @@ class TimeSlotUseCases {
   // method to retrieve timeslots that contains a work block
   static List<TimeSlot> getWorkBlockTimeSlots(List<TimeSlot> timeSlots) {
     return timeSlots
-        .where((timeSlot) => timeSlot.event.runtimeType == WorkBlock)
+        .where((timeSlot) => timeSlot.runtimeType == WorkBlock)
         .toList();
   }
 
@@ -33,7 +33,7 @@ class TimeSlotUseCases {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
     for (var timeSlot in timeSlots) {
       // if this is a block time slot, keep it
-      if (timeSlot.event.runtimeType == Block) {
+      if (timeSlot.runtimeType == Block) {
         tomorrowTimeSlots.add(timeSlot);
         continue;
       }

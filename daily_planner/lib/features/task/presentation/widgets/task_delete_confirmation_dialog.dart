@@ -23,7 +23,7 @@ class TaskDeleteConfirmationDialog extends StatelessWidget {
         ? AlertDialog(
             title: const Text("delete task"),
             content: Text(
-                'would you like to permanently delete "${selectedTasks.first.name}"?'),
+                'would you like to permanently delete "${selectedTasks.first.subject}"?'),
             actions: [
               noButton,
               yesButton,

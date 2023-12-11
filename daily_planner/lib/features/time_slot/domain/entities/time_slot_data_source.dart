@@ -10,33 +10,6 @@ class TimeSlotDataSource extends CalendarDataSource {
     appointments = source;
   }
 
-  // /* #region SfCalendar methods */
-  // @override
-  // DateTime getStartTime(int index) {
-  //   return appointments?[index].from;
-  // }
-
-  // @override
-  // DateTime getEndTime(int index) {
-  //   return appointments?[index].to;
-  // }
-
-  // @override
-  // String getSubject(int index) {
-  //   return appointments?[index].eventName;
-  // }
-
-  // @override
-  // bool isAllDay(int index) {
-  //   return appointments?[index].isAllDay;
-  // }
-
-  // @override
-  // Color getColor(int index) {
-  //   return appointments?[index].background;
-  // }
-  // /* #endregion */
-
   List<TimeSlot> get timeSlots {
     List<TimeSlot> timeSlots = <TimeSlot>[];
 
@@ -65,9 +38,9 @@ class TimeSlotDataSource extends CalendarDataSource {
     for (var timeSlot in storedTimeSlots) {
       switch (timeSlot.runtimeType) {
         case Task:
-          // this will never be called I think
           // TODO handle overlapping tasks
-          builtTimeSlots.add(timeSlot as Task);
+          if ((timeSlot as Task).isPlanned)
+            builtTimeSlots.add(timeSlot as Task);
           break;
 
         case Block:
@@ -76,6 +49,10 @@ class TimeSlotDataSource extends CalendarDataSource {
 
         case WorkBlock:
           _handleWorkBlock(builtTimeSlots, timeSlot, isTomorrow);
+          break;
+
+        default:
+          // TODO: handle this case by logging an error
           break;
       }
     }

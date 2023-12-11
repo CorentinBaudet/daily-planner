@@ -1,4 +1,7 @@
+import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_base_repository.dart';
 import 'package:hive/hive.dart';
 
@@ -9,12 +12,24 @@ class TimeSlotLocalStorageRepository extends TimeSlotBaseRepository {
 
   @override
   List<TimeSlot> getTimeSlots() {
-    final timeSlots = _myTimeSlots.values;
+    final jsonTimeSlots = _myTimeSlots.values;
 
     List<TimeSlot> timeSlotList = [];
 
-    for (var timeSlot in timeSlots) {
-      timeSlotList.add(TimeSlot.fromJson(timeSlot));
+    for (var item in jsonTimeSlots) {
+      switch (item['type']) {
+        case 'Task':
+          timeSlotList.add(Task.fromJson(item));
+          break;
+        case 'Block':
+          timeSlotList.add(Block.fromJson(item));
+          break;
+        case 'WorkBlock':
+          timeSlotList.add(WorkBlock.fromJson(item));
+          break;
+        default:
+        // TODO: handle this case by logging an error
+      }
     }
     return timeSlotList;
   }

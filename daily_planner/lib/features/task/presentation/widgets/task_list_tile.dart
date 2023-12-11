@@ -92,7 +92,7 @@ class _TaskListTileState extends State<TaskListTile> {
                 isSelected = false;
                 return Colors.transparent;
               }(),
-        title: Text(widget.task.name),
+        title: Text(widget.task.subject),
         leading: Checkbox.adaptive(
             value: widget.task.isDone,
             shape: const CircleBorder(),

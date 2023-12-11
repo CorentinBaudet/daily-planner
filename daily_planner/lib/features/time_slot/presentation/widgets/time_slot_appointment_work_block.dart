@@ -1,6 +1,5 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_task.dart';
-import 'package:daily_planner/utils/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -17,9 +16,10 @@ class TimeSlotAppointmentWorkBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isTaskPlannedOnSameDay = task != null &&
-        task!.plannedOn != null &&
-        task!.plannedOn!.isSameDay(appointment.startTime);
+    bool isTaskPlannedOnSameDay = task != null;
+    //  &&
+    //     task!.plannedOn != null &&
+    //     task!.plannedOn!.isSameDay(appointment.startTime);
 
     return isTaskPlannedOnSameDay
         ? // if there is a task, and the planned date is corresponding, we use a stack to display the task on top of the work block

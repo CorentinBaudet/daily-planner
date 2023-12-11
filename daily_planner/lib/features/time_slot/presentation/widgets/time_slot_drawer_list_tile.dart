@@ -115,7 +115,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 9.0),
           decoration: BoxDecoration(
               // TODO: variabilize the color
-              color: const Color(0xFFffc2a9),
+              color: task.color,
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: const [
                 BoxShadow(
@@ -125,7 +125,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
                 )
               ]),
           child: ListTile(
-            title: Text(task.name,
+            title: Text(task.subject,
                 style: const TextStyle(fontSize: 14),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis),

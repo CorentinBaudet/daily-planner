@@ -36,18 +36,19 @@ class _TimeSlotAppointmentBuilderState
         .repository
         .getTimeSlot(appointment.id as int);
 
-    debugPrint('timeSlotEvent: ${timeSlot.event}');
+    debugPrint('timeSlot: $timeSlot');
 
     if (appointment.appointmentType == AppointmentType.normal) {
       // if the appointment is normal (not recurring), retrieve the task from the current time slot
-      task = timeSlot.event as Task;
-    } else if (timeSlot.event is WorkBlock) {
+      // TODO: now WorkBlock are normal appointments
+      task = timeSlot as Task;
+    } else if (timeSlot is WorkBlock) {
       // if it is a work block, we should be able to retrieve the task from it
-      if ((timeSlot.event as WorkBlock).taskId != null) {
+      if ((timeSlot as WorkBlock).taskId != 0) {
         task = context
             .read<TaskCubit>()
             .repository
-            .getTask((timeSlot.event as WorkBlock).taskId!);
+            .getTask((timeSlot as WorkBlock).taskId);
       }
 
       // // check if there is a task associated to it
@@ -80,7 +81,7 @@ class _TimeSlotAppointmentBuilderState
         child: () {
           if (appointment.appointmentType != AppointmentType.normal) {
             // if it is a recurring appointment
-            if (timeSlot.event is WorkBlock) {
+            if (timeSlot is WorkBlock) {
               // if it is a work block, we use a Stack widget to display the task on top of it
               return TimeSlotAppointmentWorkBlock(
                   appointment: appointment,

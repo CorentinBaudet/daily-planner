@@ -6,7 +6,6 @@ import 'package:daily_planner/features/task/domain/entities/priority_entity.dart
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
@@ -27,7 +26,7 @@ class _IntroPageState extends State<IntroPage> {
   int activeStep = 0; // Initial step set to 5.
   int upperBound = 2; // upperBound MUST BE total number of icons minus 1.
 
-  TimeSlot sleepTimeSlot = TimeSlot(
+  Block sleepBlock = Block(
       startTime: DateTime(DateTime.now().year, DateTime.now().month,
               DateTime.now().day, 23, 0)
           .troncateDateTime(),
@@ -35,11 +34,9 @@ class _IntroPageState extends State<IntroPage> {
               DateTime.now().day, 8, 0)
           .troncateDateTime(),
       subject: 'sleep 💤',
-      event: Block(createdAt: DateTime.now().troncateDateTime()),
-      color: const Color(0xFFffe7dc),
       recurrenceRule: 'FREQ=DAILY');
 
-  TimeSlot workTimeSlot = TimeSlot(
+  WorkBlock workBlock = WorkBlock(
     startTime: DateTime(
             DateTime.now().year, DateTime.now().month, DateTime.now().day, 9, 0)
         .troncateDateTime(),
@@ -48,7 +45,6 @@ class _IntroPageState extends State<IntroPage> {
         .troncateDateTime(),
     subject: 'deep work 🧠',
     color: const Color(0xFFffe7dc),
-    event: WorkBlock(createdAt: DateTime.now().troncateDateTime()),
   );
 
   @override
@@ -83,9 +79,9 @@ class _IntroPageState extends State<IntroPage> {
                 case 0:
                   return const IntroStartStep();
                 case 1:
-                  return IntroSleepStep(sleepTimeSlot: sleepTimeSlot);
+                  return IntroSleepStep(sleepTimeSlot: sleepBlock);
                 case 2:
-                  return IntroWorkStep(workTimeSlot: workTimeSlot);
+                  return IntroWorkStep(workTimeSlot: workBlock);
                 default:
                   return const IntroStartStep();
               }
@@ -219,7 +215,7 @@ class _IntroPageState extends State<IntroPage> {
 
   _createDefaultData() async {
     // check if the work time slot is valid
-    if (!TimeSlotUseCases.isValidTimeSlot(workTimeSlot)) {
+    if (!TimeSlotUseCases.isValidTimeSlot(workBlock)) {
       // show error message with snack bar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -234,21 +230,20 @@ class _IntroPageState extends State<IntroPage> {
     }
 
     // create the sleep time slot
-    context.read<TimeSlotCubit>().createTimeSlot(sleepTimeSlot);
+    context.read<TimeSlotCubit>().createTimeSlot(sleepBlock);
 
     // create the default task
-    context.read<TaskCubit>().createTask(Task(
-        name: 'setup your everyday blocks 🔧',
-        priority: Priority.normal,
-        createdAt: DateTime.now().troncateDateTime(),
-        plannedOn: DateTime.now().add(const Duration(days: 1))));
-    if (!context.mounted) {
-      return; // to avoid using build context across asynchronous gap
-    }
+    context.read<TaskCubit>().createTask(Task.unplanned(
+          subject: 'setup your everyday blocks 🔧',
+          priority: Priority.normal,
+        ));
+    // if (!context.mounted) {
+    //   return; // to avoid using build context across asynchronous gap
+    // }
 
     // create the deep work time slot
     // (workTimeSlot.event as WorkBlock).taskId = id;
-    context.read<TimeSlotCubit>().createTimeSlot(workTimeSlot);
+    context.read<TimeSlotCubit>().createTimeSlot(workBlock);
   }
 }
 

@@ -1,10 +1,9 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_event_entity.dart';
 
 class TimeSlotDataSourceUseCases {
   static TimeSlot? searchForEmptyTimeSlot(
-      List<TimeSlot> timeSlots, TimeSlotEvent timeSlotEvent,
+      List<TimeSlot> timeSlots, TimeSlot timeSlot,
       {bool isTomorrow = false}) {
     DateTime startDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -14,9 +13,9 @@ class TimeSlotDataSourceUseCases {
     // List<Appointment> appointments = getVisibleAppointments(startDate, '');
 
     // traitement
-    switch (timeSlotEvent.runtimeType) {
+    switch (timeSlot.runtimeType) {
       case Task:
-        return _searchForEmptyTimeSlotForTask(timeSlots, timeSlotEvent as Task);
+        return _searchForEmptyTimeSlotForTask(timeSlots, timeSlot as Task);
     }
     return null;
 

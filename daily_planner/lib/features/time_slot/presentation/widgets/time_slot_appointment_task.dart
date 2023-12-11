@@ -37,9 +37,11 @@ class TimeSlotAppointmentTask extends StatelessWidget {
                       // set task to done
                       context.read<TaskCubit>().updateTask(
                             Task(
-                              id: task.id as int,
-                              name: task.name,
+                              startTime: task.startTime,
+                              endTime: task.endTime,
+                              subject: task.subject,
                               priority: task.priority,
+                              id: task.id as int,
                               createdAt: task.createdAt,
                               isPlanned: task.isPlanned,
                               isDone: !task.isDone,
@@ -169,7 +171,7 @@ class TimeSlotAppointmentTask extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
                     child: Text(
-                      task.name,
+                      task.subject,
                     ),
                   ),
                 ],
@@ -180,7 +182,7 @@ class TimeSlotAppointmentTask extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Text(
-                      task.name,
+                      task.subject,
                       style: task.isDone || task.isRescheduled
                           ? const TextStyle(
                               decoration: TextDecoration.lineThrough)

@@ -1,5 +1,4 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
-import 'package:daily_planner/utils/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -50,10 +49,10 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
         if (!formKey.currentState!.validate()) {
           return;
         }
-        context.read<TaskCubit>().createTask(Task(
-            name: taskNameController.text,
-            priority: isHighPriority ? Priority.high : Priority.normal,
-            createdAt: DateTime.now().troncateDateTime()));
+        context.read<TaskCubit>().createTask(Task.unplanned(
+              subject: taskNameController.text,
+              priority: isHighPriority ? Priority.high : Priority.normal,
+            ));
 
         Navigator.of(context).pop();
       },
