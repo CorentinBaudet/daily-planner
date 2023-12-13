@@ -1,3 +1,4 @@
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +46,9 @@ class TimeSlotTomorrowPage extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is LoadedState) {
+                  // synchronize the state of TimeSlotDataSource with the state of the TimeSlot cubit
+                  TimeSlotDataSource().buildTimeSlotDataSource(state.timeSlots,
+                      isTomorrow: true);
                   return Column(
                     children: [
                       TimeSlotTomorrowPlanner(

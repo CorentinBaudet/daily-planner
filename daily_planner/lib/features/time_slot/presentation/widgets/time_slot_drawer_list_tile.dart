@@ -1,9 +1,10 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
+import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_data_source_usecases.dart';
-import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart'
-    as ts_cubit;
 import 'package:flutter/material.dart';
 
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
@@ -15,32 +16,35 @@ class TimeSlotDrawerListTile extends StatelessWidget {
   const TimeSlotDrawerListTile({super.key, required this.task});
 
   _addTimeSlot(BuildContext context) {
-    List<TimeSlot> storedTimeSlots = [];
+    // Get the time slots from the data source
+    List<TimeSlot> dataSourceTimeSlots = TimeSlotDataSource().timeSlots;
 
-    if (context.read<ts_cubit.TimeSlotCubit>().state is ts_cubit.LoadedState) {
-      storedTimeSlots =
-          (context.read<ts_cubit.TimeSlotCubit>().state as ts_cubit.LoadedState)
-              .timeSlots;
-    }
-
-    // get the time slots from the data source
-    List<TimeSlot> builtTimeSlots =
-        TimeSlotDataSource.getCalendarDataSource(storedTimeSlots).timeSlots;
-
-    // search for an empty time slot
+    // Search for an empty time slot
     TimeSlot? timeSlot = TimeSlotDataSourceUseCases.searchForEmptyTimeSlot(
-        builtTimeSlots, task,
+        dataSourceTimeSlots, task,
         isTomorrow: true);
 
     if (timeSlot == null) {
-      // display a dialog indicating that there is no available time slot
+      // Display a dialog indicating that there is no available time slot
       _noTimeSlotDialog(context);
     } else {
-      print('timeSlot: $timeSlot');
+      debugPrint('timeSlot: $timeSlot');
 
-      // // set the task isPlanned to true
-      // task.isPlanned = true;
-      // context.read<TaskCubit>().updateTask(task);
+      // Set the task isPlanned to true
+      task.isPlanned = true;
+      context.read<TaskCubit>().updateTask(task);
+
+      switch (timeSlot.runtimeType) {
+        case Block:
+          // Create the block in database
+          break;
+        case WorkBlock:
+          // Add the task to the work block
+          (timeSlot as WorkBlock).taskId = task.id as int;
+          // TODO : edit the work block in database
+          break;
+        default:
+      }
 
       // // add the task to the time slot
       // context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(

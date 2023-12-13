@@ -2,60 +2,35 @@ import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
-import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-// TODO refactor this entity, too much logic in it
 class TimeSlotDataSource extends CalendarDataSource {
-  TimeSlotDataSource(List<TimeSlot> source) {
-    appointments = source;
+  // Singleton instance
+  static final TimeSlotDataSource _singleton = TimeSlotDataSource._internal();
+
+  // Named constructor
+  TimeSlotDataSource._internal();
+
+  // Factory method to return the same instance
+  factory TimeSlotDataSource() {
+    return _singleton;
   }
 
-  TimeSlotDataSource.empty() {
-    appointments = <TimeSlot>[];
-  }
+  // TimeSlotDataSource(List<TimeSlot> source) {
+  //   appointments = source;
+  // }
 
-  // TODO : make sure to return the right type of timeSlot with their complete data
   List<TimeSlot> get timeSlots {
-    List<TimeSlot> timeSlots = <TimeSlot>[];
-
-    for (var timeSlot in appointments!) {
-      switch (timeSlot.runtimeType) {
-        case Task:
-          debugPrint('task: ${timeSlot.subject}');
-          break;
-
-        case Block:
-          debugPrint('block: ${timeSlot.subject}');
-          break;
-
-        case WorkBlock:
-          debugPrint('workBlock: ${timeSlot.subject}');
-          break;
-
-        default:
-      }
-    }
-
-    for (var appointment in appointments!) {
-      timeSlots.add(TimeSlot(
-        startTime: appointment.from,
-        endTime: appointment.to,
-        subject: appointment.eventName,
-        id: appointment.id,
-        color: appointment.background,
-        recurrenceRule: appointment.recurrenceRule,
-        createdAt: appointment.createdAt,
-      ));
-    }
-
-    return timeSlots;
+    return appointments as List<TimeSlot>;
   }
 
-  static TimeSlotDataSource getCalendarDataSource(
-      List<TimeSlot> storedTimeSlots,
+  set timeSlots(List<TimeSlot> source) {
+    appointments = timeSlots;
+  }
+
+  // Returns the TimeSlotDataSource
+  void buildTimeSlotDataSource(List<TimeSlot> storedTimeSlots,
       {bool isTomorrow = false}) {
-    // TODO something is wrong : buildTimeSlots is created two times
     List<TimeSlot> builtTimeSlots =
         <TimeSlot>[]; // the SfCalendar requires a list of Appointment objects to build the data source
 
@@ -85,7 +60,10 @@ class TimeSlotDataSource extends CalendarDataSource {
     // update the tasks visually if they are passed
     // _handleTasksPassed(context, builtTimeSlots);
 
-    return TimeSlotDataSource(builtTimeSlots);
+    // update the data source
+    appointments = builtTimeSlots;
+
+    // return TimeSlotDataSource();
   }
 
   static void _handleBlock(List<TimeSlot> builtTimeSlots, TimeSlot timeSlot) {

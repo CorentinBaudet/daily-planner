@@ -16,7 +16,7 @@ class TimeSlotTodayPlanner extends StatelessWidget {
     // TODO center the calendar on the current time
     return Expanded(
       child: SfCalendar(
-        dataSource: TimeSlotDataSource.getCalendarDataSource(timeSlots),
+        dataSource: TimeSlotDataSource(),
         headerHeight: 0,
         backgroundColor: Colors.transparent,
         allowDragAndDrop: true,

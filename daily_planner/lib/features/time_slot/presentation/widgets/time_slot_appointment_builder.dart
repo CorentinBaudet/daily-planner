@@ -37,8 +37,6 @@ class _TimeSlotAppointmentBuilderState
         .repository
         .getTimeSlot(appointment.id as int);
 
-    debugPrint('timeSlot: $timeSlot');
-
     switch (timeSlot.runtimeType) {
       case Task:
         task = timeSlot as Task;

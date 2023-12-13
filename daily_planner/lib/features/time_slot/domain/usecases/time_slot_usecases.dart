@@ -22,10 +22,14 @@ class TimeSlotUseCases {
   }
 
   // method to retrieve timeslots that contains a work block
-  static List<TimeSlot> getWorkBlockTimeSlots(List<TimeSlot> timeSlots) {
-    return timeSlots
-        .where((timeSlot) => timeSlot.runtimeType == WorkBlock)
-        .toList();
+  static List<WorkBlock> getWorkBlockTimeSlots(List<TimeSlot> timeSlots) {
+    List<WorkBlock> workBlocks = [];
+    for (var timeSlot in timeSlots) {
+      if (timeSlot.runtimeType == WorkBlock) {
+        workBlocks.add(timeSlot as WorkBlock);
+      }
+    }
+    return workBlocks;
   }
 
   static List<TimeSlot> getTomorrowTimeSlots(List<TimeSlot> timeSlots) {
@@ -164,8 +168,6 @@ class TimeSlotUseCases {
   // TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
   //   List<TimeSlot> blockTimeSlots =
   //       TimeSlotUseCases().getWorkBlockTimeSlots(timeSlots);
-
-  //   print("blockTimeSlots: $blockTimeSlots");
 
   //   // for (var block in blockTimeSlots) {
   //   //   if (block.runtimeType != WorkBlock) {

@@ -1,5 +1,8 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
+import 'package:flutter/material.dart';
 
 class TimeSlotDataSourceUseCases {
   static TimeSlot? searchForEmptyTimeSlot(
@@ -9,7 +12,6 @@ class TimeSlotDataSourceUseCases {
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     startDate = isTomorrow ? startDate.add(const Duration(days: 1)) : startDate;
 
-    print("timeSlots: $timeSlots");
     // List<Appointment> appointments = getVisibleAppointments(startDate, '');
 
     // traitement
@@ -31,10 +33,15 @@ class TimeSlotDataSourceUseCases {
 
   static TimeSlot? _searchForEmptyTimeSlotForTask(
       List<TimeSlot> timeSlots, Task task) {
-    print('searching for empty time slot for task');
+    debugPrint('searching for empty time slot for task');
 
     // first look for the first empty work block
-    //   _searchForWorkBlock(timeSlots);
+    WorkBlock? workBlock = _searchForWorkBlock(timeSlots);
+
+    // if a work block was found, return it
+    if (workBlock != null) {
+      return workBlock;
+    }
 
     //   DateTime taskStartTime =
     //       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -60,37 +67,34 @@ class TimeSlotDataSourceUseCases {
     return null;
   }
 
-  // static TimeSlot? _searchForWorkBlock(List<TimeSlot> timeSlots) {
-  //   List<TimeSlot> blockTimeSlots =
-  //       TimeSlotUseCases().getWorkBlockTimeSlots(timeSlots);
+  static WorkBlock? _searchForWorkBlock(List<TimeSlot> timeSlots) {
+    List<WorkBlock> workBlockTimeSlots =
+        TimeSlotUseCases.getWorkBlockTimeSlots(timeSlots);
 
-  //   print("blockTimeSlots: $blockTimeSlots");
-
-  //   // for (var block in blockTimeSlots) {
-  //   //   if (block.runtimeType != WorkBlock) {
-  //   //     continue;
-  //   //   }
-
-  //   //   // is there a time slot that starts at the same time as the block ?
-  //   //   if (!timeSlots.any((timeSlot) {
-  //   //     // if the time slot is a block, we don't compare it
-  //   //     if (timeSlot.event is Block) {
-  //   //       return false;
-  //   //     }
-  //   //     // if the task time slot starts at the same time as the block time slot
-  //   //     if (timeSlot.startTime.hour == block.startTime.hour &&
-  //   //         timeSlot.startTime.minute == block.startTime.minute) {
-  //   //       // the block is already used
-  //   //       return true;
-  //   //     }
-  //   //     // the block is not used
-  //   //     return false;
-  //   //   })) {
-  //   //     return block;
-  //   //   }
-  //   // }
-  //   return null;
-  // }
+    for (WorkBlock workBlock in workBlockTimeSlots) {
+      if (workBlock.taskId == 0) {
+        return workBlock;
+      }
+      //   // is there a time slot that starts at the same time as the block ?
+      //   if (!timeSlots.any((timeSlot) {
+      //     // if the time slot is a block, we don't compare it
+      //     if (timeSlot.event is Block) {
+      //       return false;
+      //     }
+      //     // if the task time slot starts at the same time as the block time slot
+      //     if (timeSlot.startTime.hour == block.startTime.hour &&
+      //         timeSlot.startTime.minute == block.startTime.minute) {
+      //       // the block is already used
+      //       return true;
+      //     }
+      //     // the block is not used
+      //     return false;
+      //   })) {
+      //     return block;
+      //   }
+    }
+    return null;
+  }
 
   // static TimeSlot? _searchForTimeSlot(List<TimeSlot> timeSlots, Task task) {
   //   // search for the first empty time slot by looking at start times of today
