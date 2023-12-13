@@ -8,6 +8,7 @@ class Block extends TimeSlot {
     required super.endTime,
     required super.subject,
     required super.recurrenceRule,
+    super.id,
     super.color = const Color(0xFFffe7dc),
     DateTime? createdAt,
   }) : super(createdAt: createdAt ?? DateTime.now());
@@ -20,6 +21,8 @@ class Block extends TimeSlot {
       startTime: timeSlot.startTime,
       endTime: timeSlot.endTime,
       subject: timeSlot.subject,
+      id: timeSlot.id,
+      color: timeSlot.color,
       recurrenceRule: timeSlot.recurrenceRule,
       createdAt: timeSlot.createdAt,
     );

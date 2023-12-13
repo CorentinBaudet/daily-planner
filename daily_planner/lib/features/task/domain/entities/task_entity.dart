@@ -16,7 +16,7 @@ class Task extends TimeSlot {
     required super.subject,
     required this.priority,
     super.id,
-    super.color,
+    super.color = const Color(0xFFffc2a9),
     DateTime? createdAt,
     this.isPlanned = true,
     this.isDone = false,
@@ -44,6 +44,7 @@ class Task extends TimeSlot {
       startTime: timeSlot.startTime,
       endTime: timeSlot.endTime,
       subject: timeSlot.subject,
+      id: timeSlot.id,
       color: timeSlot.color,
       createdAt: timeSlot.createdAt,
       priority: Priority.values.firstWhere(
