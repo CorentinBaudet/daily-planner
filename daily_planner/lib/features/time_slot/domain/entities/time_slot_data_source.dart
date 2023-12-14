@@ -39,6 +39,7 @@ class TimeSlotDataSource extends CalendarDataSource {
         case Task:
           // TODO handle overlapping tasks
           if ((timeSlot as Task).isPlanned) {
+            // If the task is planned, we add it to the calendar
             builtTimeSlots.add(timeSlot);
           }
           break;
@@ -95,28 +96,28 @@ class TimeSlotDataSource extends CalendarDataSource {
     builtTimeSlots.add(_addOverlap(timeSlot));
   }
 
-  // TODO : make WorkBlock non recurring, handle today and tomorrow difference
   static void _handleWorkBlock(
       List<TimeSlot> builtTimeSlots, TimeSlot timeSlot, bool isTomorrow) {
-    builtTimeSlots.add(WorkBlock(
-      id: timeSlot.id,
-      startTime: DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-          timeSlot.startTime.hour,
-          timeSlot.startTime.minute),
-      endTime: DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-          timeSlot.endTime.hour,
-          timeSlot.endTime.minute),
-      subject: timeSlot.subject,
-      color: timeSlot.color,
-      createdAt: timeSlot.createdAt,
-      taskId: (timeSlot as WorkBlock).taskId,
-    ));
+    builtTimeSlots.add(timeSlot);
+    // builtTimeSlots.add(WorkBlock(
+    //   id: timeSlot.id,
+    //   startTime: DateTime(
+    //       DateTime.now().year,
+    //       DateTime.now().month,
+    //       isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
+    //       timeSlot.startTime.hour,
+    //       timeSlot.startTime.minute),
+    //   endTime: DateTime(
+    //       DateTime.now().year,
+    //       DateTime.now().month,
+    //       isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
+    //       timeSlot.endTime.hour,
+    //       timeSlot.endTime.minute),
+    //   subject: timeSlot.subject,
+    //   color: timeSlot.color,
+    //   createdAt: timeSlot.createdAt,
+    //   todayTaskId: (timeSlot as WorkBlock).todayTaskId,
+    // ));
     return;
   }
 

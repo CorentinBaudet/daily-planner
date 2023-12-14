@@ -33,8 +33,7 @@ class _IntroPageState extends State<IntroPage> {
       endTime: DateTime(DateTime.now().year, DateTime.now().month,
               DateTime.now().day, 8, 0)
           .troncateDateTime(),
-      subject: 'sleep 💤',
-      recurrenceRule: 'FREQ=DAILY');
+      subject: 'sleep 💤');
 
   WorkBlock workBlock = WorkBlock(
     startTime: DateTime(
@@ -44,7 +43,6 @@ class _IntroPageState extends State<IntroPage> {
             DateTime.now().day, 10, 30)
         .troncateDateTime(),
     subject: 'deep work 🧠',
-    color: const Color(0xFFffe7dc),
   );
 
   @override

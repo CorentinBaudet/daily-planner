@@ -7,12 +7,14 @@ class Block extends TimeSlot {
     required super.startTime,
     required super.endTime,
     required super.subject,
-    required super.recurrenceRule,
     super.id,
     super.color = const Color(0xFFffe7dc),
+    String? recurrenceRule,
     DateTime? createdAt,
-  }) : super(createdAt: createdAt ?? DateTime.now());
-  // if createdAt is not provided, the superclass's constructor will handle its initialization
+  }) : super(
+            // if recurrenceRule is not provided, the superclass's constructor will handle its initialization
+            recurrenceRule: recurrenceRule ?? 'FREQ=DAILY',
+            createdAt: createdAt ?? DateTime.now());
 
   factory Block.fromJson(Map<dynamic, dynamic> json) {
     TimeSlot timeSlot = TimeSlot.fromJson(json);

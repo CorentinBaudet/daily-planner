@@ -1,10 +1,10 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_data_source_usecases.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
@@ -30,60 +30,25 @@ class TimeSlotDrawerListTile extends StatelessWidget {
     } else {
       debugPrint('timeSlot: $timeSlot');
 
-      // Set the task isPlanned to true
-      task.isPlanned = true;
-      context.read<TaskCubit>().updateTask(task);
-
       switch (timeSlot.runtimeType) {
-        case Block:
-          // Create the block in database
+        case TimeSlot:
+          // Edit the task in database
+          task.startTime = timeSlot.startTime;
+          task.endTime = timeSlot.endTime;
+          task.isPlanned = true;
+          context.read<TaskCubit>().updateTask(task);
           break;
         case WorkBlock:
+          // Set the task isPlanned to true
+          task.isPlanned = true;
+          context.read<TaskCubit>().updateTask(task);
+
           // Add the task to the work block
-          (timeSlot as WorkBlock).taskId = task.id as int;
-          // TODO : edit the work block in database
+          (timeSlot as WorkBlock).tomorrowTaskId = task.id as int;
+          context.read<TimeSlotCubit>().updateTimeSlot(timeSlot);
           break;
         default:
       }
-
-      // // add the task to the time slot
-      // context.read<ts_cubit.TimeSlotCubit>().createTimeSlot(TimeSlot(
-      //       startTime: DateTime(
-      //               DateTime.now().year,
-      //               DateTime.now().month,
-      //               DateTime.now().day + 1,
-      //               timeSlot.startTime.hour,
-      //               timeSlot.startTime.minute)
-      //           .troncateDateTime(),
-      //       endTime: timeSlot.event is Block
-      //           // if the free time slot found is a block, we use its end time for the task
-      //           ? DateTime(
-      //                   DateTime.now().year,
-      //                   DateTime.now().month,
-      //                   DateTime.now().day + 1,
-      //                   timeSlot.endTime.hour,
-      //                   timeSlot.endTime.minute)
-      //               .troncateDateTime()
-      //           // else we simply make the task last 1 hour
-      //           : DateTime(
-      //                   DateTime.now().year,
-      //                   DateTime.now().month,
-      //                   DateTime.now().day + 1,
-      //                   timeSlot.startTime.hour + 1,
-      //                   timeSlot.startTime.minute)
-      //               .troncateDateTime(),
-      //       subject: task.name,
-      //       event:
-      //           // timeSlot.event is Block
-      //           // // if the free time slot found is a block, we happen its name to the task name
-      //           // ? () {
-      //           //     Task renamedTask = task;
-      //           //     renamedTask.name += ' (${timeSlot.event.name})';
-      //           //     return renamedTask;
-      //           //   }()
-      //           // :
-      //           task,
-      //     ));
     }
   }
 

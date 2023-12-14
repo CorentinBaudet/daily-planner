@@ -44,11 +44,20 @@ class _TimeSlotAppointmentBuilderState
       case Block:
         break;
       case WorkBlock:
-        if ((timeSlot as WorkBlock).taskId != 0) {
-          task = context
-              .read<TaskCubit>()
-              .repository
-              .getTask((timeSlot as WorkBlock).taskId);
+        if (!widget.isTomorrow) {
+          (timeSlot as WorkBlock).todayTaskId != 0
+              ? task = context
+                  .read<TaskCubit>()
+                  .repository
+                  .getTask((timeSlot as WorkBlock).todayTaskId)
+              : task = null;
+        } else {
+          (timeSlot as WorkBlock).tomorrowTaskId != 0
+              ? task = context
+                  .read<TaskCubit>()
+                  .repository
+                  .getTask((timeSlot as WorkBlock).tomorrowTaskId)
+              : task = null;
         }
         break;
       default:
