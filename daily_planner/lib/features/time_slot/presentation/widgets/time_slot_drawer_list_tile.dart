@@ -1,7 +1,7 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
+import 'package:daily_planner/features/block/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_data_source_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';

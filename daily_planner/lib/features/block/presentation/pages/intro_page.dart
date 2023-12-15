@@ -4,8 +4,8 @@ import 'package:daily_planner/features/block/presentation/widgets/intro_start_st
 import 'package:daily_planner/features/block/presentation/widgets/intro_work_step.dart';
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/block/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/utils/extension.dart';

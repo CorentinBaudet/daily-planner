@@ -1,6 +1,6 @@
-import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
+import 'package:daily_planner/features/block/domain/entities/work_block_entity.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class TimeSlotDataSource extends CalendarDataSource {

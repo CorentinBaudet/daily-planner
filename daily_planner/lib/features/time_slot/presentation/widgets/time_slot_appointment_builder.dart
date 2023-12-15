@@ -1,7 +1,7 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
+import 'package:daily_planner/features/block/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_task.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_work_block.dart';
