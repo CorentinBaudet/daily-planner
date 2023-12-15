@@ -1,9 +1,9 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/domain/usecases/task_usecases.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_add_dialog.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_delete_mode_widgets.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_list_tile.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/utils/double_value_listenable_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,8 +19,8 @@ class TaskPage extends StatelessWidget {
 
   Widget _buildTaskList(
       BuildContext context, List<Task> tasks, List<Task> selectedTasks) {
-    tasks = TaskUseCases().getUndoneTasks(tasks);
-    tasks = TaskUseCases().sortTasks(tasks);
+    tasks = TaskUseCases.getUndoneTasks(tasks);
+    tasks = TaskUseCases.sortTasks(tasks);
 
     return tasks.isEmpty
         ? const Center(
@@ -53,7 +53,9 @@ class TaskPage extends StatelessWidget {
                 task.isDone = false;
                 // and reflect the change in the UI using the scaffold key to access the context
                 // because the task's widget is not in the widget tree anymore
-                _scaffoldKey.currentContext?.read<TaskCubit>().updateTask(task);
+                _scaffoldKey.currentContext
+                    ?.read<TimeSlotCubit>()
+                    .updateTimeSlot(task);
               })),
     );
   }
@@ -63,7 +65,7 @@ class TaskPage extends StatelessWidget {
     if (!_isDeleteModeOn.value) {
       _selectedTasks.clear();
     }
-    context.read<TaskCubit>().getTasks();
+    context.read<TimeSlotCubit>().getTimeSlots();
   }
 
   _handleSelectedTask(
@@ -103,7 +105,7 @@ class TaskPage extends StatelessWidget {
             ])
           ],
         ),
-        body: BlocBuilder<TaskCubit, TaskState>(
+        body: BlocBuilder<TimeSlotCubit, TimeSlotState>(
           builder: (context, state) {
             if (state is InitialState) {
               return const Center(
@@ -114,7 +116,11 @@ class TaskPage extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else if (state is LoadedState) {
-              return _buildTaskList(context, state.tasks, _selectedTasks);
+              // Only pass timeslots of type Task
+              return _buildTaskList(
+                  context,
+                  TaskUseCases.getTasksFromTimeSlots(state.timeSlots),
+                  _selectedTasks);
             } else if (state is ErrorState) {
               return const Center(
                 child: Text('error loading tasks'),

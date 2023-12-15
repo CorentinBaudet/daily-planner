@@ -1,5 +1,4 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
@@ -36,12 +35,13 @@ class TimeSlotDrawerListTile extends StatelessWidget {
           task.startTime = timeSlot.startTime;
           task.endTime = timeSlot.endTime;
           task.isPlanned = true;
-          context.read<TaskCubit>().updateTask(task);
+          context.read<TimeSlotCubit>().updateTimeSlot(task);
           break;
+
         case WorkBlock:
           // Set the task isPlanned to true
           task.isPlanned = true;
-          context.read<TaskCubit>().updateTask(task);
+          context.read<TimeSlotCubit>().updateTimeSlot(task);
 
           // Add the task to the work block
           (timeSlot as WorkBlock).tomorrowTaskId = task.id as int;
@@ -83,7 +83,6 @@ class TimeSlotDrawerListTile extends StatelessWidget {
           height: 56,
           margin: const EdgeInsets.only(bottom: 9.0),
           decoration: BoxDecoration(
-              // TODO: variabilize the color
               color: task.color,
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: const [

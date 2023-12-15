@@ -1,10 +1,10 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 
 // TODO make the free task creation faster by not using a dialog, but directly typing into a new list item
 class TaskAddDialog extends StatefulWidget {
@@ -49,7 +49,7 @@ class _TaskAddDialogState extends State<TaskAddDialog> {
         if (!formKey.currentState!.validate()) {
           return;
         }
-        context.read<TaskCubit>().createTask(Task.unplanned(
+        context.read<TimeSlotCubit>().createTimeSlot(Task.unplanned(
               subject: taskNameController.text,
               priority: isHighPriority ? Priority.high : Priority.normal,
             ));

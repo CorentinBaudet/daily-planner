@@ -1,7 +1,6 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
-import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart'
-    as ts_cubit;
+// import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -35,21 +34,21 @@ class TimeSlotAppointmentTask extends StatelessWidget {
                 TextButton(
                     onPressed: () {
                       // set task to done
-                      context.read<TaskCubit>().updateTask(
+                      context.read<TimeSlotCubit>().updateTimeSlot(
                             Task(
                               startTime: task.startTime,
                               endTime: task.endTime,
                               subject: task.subject,
                               priority: task.priority,
-                              id: task.id as int,
-                              createdAt: task.createdAt,
-                              isPlanned: task.isPlanned,
+                              // id: task.id as int,
+                              // createdAt: task.createdAt,
+                              // isPlanned: task.isPlanned,
                               isDone: !task.isDone,
-                              isRescheduled: task.isRescheduled,
+                              // isRescheduled: task.isRescheduled,
                             ),
                           );
                       // ask for reload of timeslot state
-                      context.read<ts_cubit.TimeSlotCubit>().getTimeSlots();
+                      context.read<TimeSlotCubit>().getTimeSlots();
 
                       Navigator.pop(context, true);
                     },
@@ -158,7 +157,7 @@ class TimeSlotAppointmentTask extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ts_cubit.TimeSlotCubit, ts_cubit.TimeSlotState>(
+    return BlocListener<TimeSlotCubit, TimeSlotState>(
         listener: (context, state) {
           // TODO: implement listener
           if (state is LoadedState) {}

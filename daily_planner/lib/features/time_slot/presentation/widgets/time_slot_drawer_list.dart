@@ -1,6 +1,6 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/task/domain/usecases/task_usecases.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_drawer_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +9,8 @@ class TimeSlotDrawerList extends StatelessWidget {
   const TimeSlotDrawerList({super.key});
 
   Widget _buildTaskList(BuildContext context, List<Task> tasks) {
-    tasks = TaskUseCases().getUnplannedTasks(tasks);
-    tasks = TaskUseCases().sortTasks(tasks);
+    tasks = TaskUseCases.getUnplannedTasks(tasks);
+    tasks = TaskUseCases.sortTasks(tasks);
 
     return tasks.isEmpty
         ? const Center(
@@ -27,7 +27,7 @@ class TimeSlotDrawerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TaskCubit, TaskState>(
+    return BlocBuilder<TimeSlotCubit, TimeSlotState>(
       builder: (context, state) {
         if (state is InitialState) {
           return const Center(
@@ -42,7 +42,9 @@ class TimeSlotDrawerList extends StatelessWidget {
           );
         } else if (state is LoadedState) {
           // we need expanded to indicate that the _buildTaskList should take the remaining space
-          return Expanded(child: _buildTaskList(context, state.tasks));
+          return Expanded(
+              child: _buildTaskList(context,
+                  TaskUseCases.getTasksFromTimeSlots(state.timeSlots)));
         } else if (state is ErrorState) {
           return const Center(
             child: Text('error loading tasks'),

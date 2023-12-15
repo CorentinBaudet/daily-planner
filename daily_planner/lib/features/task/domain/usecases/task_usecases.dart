@@ -1,22 +1,34 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
 class TaskUseCases {
-  // method to retrieve tasks that are not done
-  List<Task> getUndoneTasks(List<Task> tasks) {
+  // Method to retrive tasks from a list of timeslots
+  static List<Task> getTasksFromTimeSlots(List<TimeSlot> timeSlots) {
+    List<Task> tasks = [];
+
+    timeSlots.map((timeSlot) {
+      timeSlot.runtimeType == Task ? tasks.add(timeSlot as Task) : null;
+    });
+
+    return tasks;
+  }
+
+  // Method to retrieve tasks that are not done
+  static List<Task> getUndoneTasks(List<Task> tasks) {
     return tasks.where((task) => !task.isDone).toList(growable: false);
   }
 
-  // method to retrieve tasks that are not planned
-  List<Task> getUnplannedTasks(List<Task> tasks) {
+  // Method to retrieve tasks that are not planned
+  static List<Task> getUnplannedTasks(List<Task> tasks) {
     return tasks
         .where((task) => !task.isPlanned && !task.isDone)
         .toList(growable: false);
   }
 
-  // method to sort tasks by both creation date and priority
-  List<Task> sortTasks(List<Task> tasks) {
-    // separate tasks in two lists by priority
+  // Method to sort tasks by both creation date and priority
+  static List<Task> sortTasks(List<Task> tasks) {
+    // Separate tasks in two lists by priority
     final highPriorityTasks = tasks
         .where((task) => task.priority == Priority.high)
         .toList(growable: false);
@@ -24,18 +36,18 @@ class TaskUseCases {
         .where((task) => task.priority == Priority.normal)
         .toList(growable: false);
 
-    // sort each list by creation date in reverse order
+    // Sort each list by creation date in reverse order
     highPriorityTasks.sort((a, b) => _compareCreationDate(a, b));
     normalPriorityTasks.sort((a, b) => _compareCreationDate(a, b));
 
-    // merge the two lists
+    // Merge the two lists
     tasks = [...highPriorityTasks, ...normalPriorityTasks];
 
     return tasks;
   }
 
-  // method to sort tasks by creation date
-  int _compareCreationDate(Task a, Task b) {
+  // Method to sort tasks by creation date
+  static int _compareCreationDate(Task a, Task b) {
     if (a == b) return 0;
     return a.createdAt.compareTo(b.createdAt);
   }

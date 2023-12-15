@@ -1,6 +1,6 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/task/presentation/widgets/task_delete_confirmation_dialog.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,7 +41,7 @@ class _TaskDeleteModeWidgetsState extends State<TaskDeleteModeWidgets> {
           }
 
           for (var task in selectedTasks) {
-            context.read<TaskCubit>().deleteTask(task.id as int);
+            context.read<TimeSlotCubit>().deleteTimeSlot(task.id as int);
           }
           widget.toggleDeleteMode(context);
 

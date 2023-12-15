@@ -1,6 +1,6 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
+import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,7 +29,7 @@ class _TaskListTileState extends State<TaskListTile> {
 
   onChecked(BuildContext context, bool? value) {
     widget.task.isDone = value!;
-    context.read<TaskCubit>().updateTask(widget.task);
+    context.read<TimeSlotCubit>().updateTimeSlot(widget.task);
 
     widget.onChecked();
   }

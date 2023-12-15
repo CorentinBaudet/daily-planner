@@ -4,7 +4,6 @@ import 'package:daily_planner/features/block/presentation/widgets/intro_start_st
 import 'package:daily_planner/features/block/presentation/widgets/intro_work_step.dart';
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_usecases.dart';
@@ -231,7 +230,7 @@ class _IntroPageState extends State<IntroPage> {
     context.read<TimeSlotCubit>().createTimeSlot(sleepBlock);
 
     // create the default task
-    context.read<TaskCubit>().createTask(Task.unplanned(
+    context.read<TimeSlotCubit>().createTimeSlot(Task.unplanned(
           subject: 'setup your everyday blocks 🔧',
           priority: Priority.normal,
         ));

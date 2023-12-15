@@ -1,4 +1,3 @@
-import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
@@ -36,13 +35,13 @@ class TimeSlotDataSource extends CalendarDataSource {
 
     for (var timeSlot in storedTimeSlots) {
       switch (timeSlot.runtimeType) {
-        case Task:
-          // TODO handle overlapping tasks
-          if ((timeSlot as Task).isPlanned) {
-            // If the task is planned, we add it to the calendar
-            builtTimeSlots.add(timeSlot);
-          }
-          break;
+        // case Task:
+        //   // TODO handle overlapping tasks
+        //   if ((timeSlot as Task).isPlanned) {
+        //     // If the task is planned, we add it to the calendar
+        //     builtTimeSlots.add(timeSlot);
+        //   }
+        //   break;
 
         case Block:
           _handleBlock(builtTimeSlots, timeSlot);
@@ -99,25 +98,7 @@ class TimeSlotDataSource extends CalendarDataSource {
   static void _handleWorkBlock(
       List<TimeSlot> builtTimeSlots, TimeSlot timeSlot, bool isTomorrow) {
     builtTimeSlots.add(timeSlot);
-    // builtTimeSlots.add(WorkBlock(
-    //   id: timeSlot.id,
-    //   startTime: DateTime(
-    //       DateTime.now().year,
-    //       DateTime.now().month,
-    //       isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-    //       timeSlot.startTime.hour,
-    //       timeSlot.startTime.minute),
-    //   endTime: DateTime(
-    //       DateTime.now().year,
-    //       DateTime.now().month,
-    //       isTomorrow ? DateTime.now().day + 1 : DateTime.now().day,
-    //       timeSlot.endTime.hour,
-    //       timeSlot.endTime.minute),
-    //   subject: timeSlot.subject,
-    //   color: timeSlot.color,
-    //   createdAt: timeSlot.createdAt,
-    //   todayTaskId: (timeSlot as WorkBlock).todayTaskId,
-    // ));
+
     return;
   }
 

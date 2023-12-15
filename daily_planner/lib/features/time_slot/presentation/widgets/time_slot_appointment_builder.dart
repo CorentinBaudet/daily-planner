@@ -1,5 +1,4 @@
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/task/presentation/cubit/task_cubit.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/work_block_entity.dart';
@@ -47,16 +46,16 @@ class _TimeSlotAppointmentBuilderState
         if (!widget.isTomorrow) {
           (timeSlot as WorkBlock).todayTaskId != 0
               ? task = context
-                  .read<TaskCubit>()
+                  .read<TimeSlotCubit>()
                   .repository
-                  .getTask((timeSlot as WorkBlock).todayTaskId)
+                  .getTimeSlot((timeSlot as WorkBlock).todayTaskId) as Task
               : task = null;
         } else {
           (timeSlot as WorkBlock).tomorrowTaskId != 0
               ? task = context
-                  .read<TaskCubit>()
+                  .read<TimeSlotCubit>()
                   .repository
-                  .getTask((timeSlot as WorkBlock).tomorrowTaskId)
+                  .getTimeSlot((timeSlot as WorkBlock).tomorrowTaskId) as Task
               : task = null;
         }
         break;
