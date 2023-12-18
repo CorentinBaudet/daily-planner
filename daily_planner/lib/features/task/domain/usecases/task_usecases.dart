@@ -1,19 +1,7 @@
 import 'package:daily_planner/features/task/domain/entities/priority_entity.dart';
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
-import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
 class TaskUseCases {
-  // Method to retrive tasks from a list of timeslots
-  static List<Task> getTasksFromTimeSlots(List<TimeSlot> timeSlots) {
-    List<Task> tasks = [];
-
-    timeSlots.map((timeSlot) {
-      timeSlot.runtimeType == Task ? tasks.add(timeSlot as Task) : null;
-    });
-
-    return tasks;
-  }
-
   // Method to retrieve tasks that are not done
   static List<Task> getUndoneTasks(List<Task> tasks) {
     return tasks.where((task) => !task.isDone).toList(growable: false);

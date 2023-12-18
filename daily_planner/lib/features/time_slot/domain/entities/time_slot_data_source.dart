@@ -1,4 +1,5 @@
 import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
+import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/block/domain/entities/work_block_entity.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -35,13 +36,12 @@ class TimeSlotDataSource extends CalendarDataSource {
 
     for (var timeSlot in storedTimeSlots) {
       switch (timeSlot.runtimeType) {
-        // case Task:
-        //   // TODO handle overlapping tasks
-        //   if ((timeSlot as Task).isPlanned) {
-        //     // If the task is planned, we add it to the calendar
-        //     builtTimeSlots.add(timeSlot);
-        //   }
-        //   break;
+        case Task:
+          if ((timeSlot as Task).isPlanned) {
+            // If the task is planned, we add it to the calendar
+            builtTimeSlots.add(timeSlot);
+          }
+          break;
 
         case Block:
           _handleBlock(builtTimeSlots, timeSlot);

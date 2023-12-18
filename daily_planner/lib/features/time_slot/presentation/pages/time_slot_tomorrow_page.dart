@@ -22,30 +22,40 @@ class TimeSlotTomorrowPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text('tomorrow',
-              style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold)),
-        ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: BlocBuilder<TimeSlotCubit, TimeSlotState>(
-                  builder: (context, state) {
-                if (state is InitialState) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is LoadingState) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is LoadedState) {
+    return BlocBuilder<TimeSlotCubit, TimeSlotState>(builder: (context, state) {
+      if (state is InitialState) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      } else if (state is LoadingState) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      } else if (state is LoadedState) {
+        return Stack(children: [
+          Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: Text('tomorrow',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold)),
+            ),
+            body: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(child: () {
+                  // BlocBuilder<TimeSlotCubit, TimeSlotState>(
+                  //     builder: (context, state) {
+                  //   if (state is InitialState) {
+                  //     return const Center(
+                  //       child: CircularProgressIndicator(),
+                  //     );
+                  //   } else if (state is LoadingState) {
+                  //     return const Center(
+                  //       child: CircularProgressIndicator(),
+                  //     );
+                  //   } else if (state is LoadedState) {
                   // synchronize the state of TimeSlotDataSource with the state of the TimeSlot cubit
                   TimeSlotDataSource().buildTimeSlotDataSource(state.timeSlots,
                       isTomorrow: true);
@@ -55,59 +65,71 @@ class TimeSlotTomorrowPage extends StatelessWidget {
                           context: context, timeSlots: state.timeSlots),
                     ],
                   );
-                } else if (state is ErrorState) {
-                  return const Center(
-                    child: Text('error loading planning'),
-                  );
-                } else {
-                  return const Center(
-                    child: Text('unknown error'),
-                  );
-                }
-              }),
-            )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-            heroTag: 'show_task_list',
-            child: const Icon(Icons.edit_rounded),
-            onPressed: () {
-              _isTaskListVisible.value = !_isTaskListVisible.value;
-            }),
-      ),
-      Positioned(
-          right: 0,
-          top: 60, // default height of the appbar
-          child: ValueListenableBuilder(
-            valueListenable: _isTaskListVisible,
-            builder: (context, value, child) {
-              firstOpenDrawer
-                  ? Future.delayed(const Duration(milliseconds: 250), () {
-                      _isTaskListVisible.value = true;
-                      firstOpenDrawer = false;
-                    })
-                  : null;
-              return value
-                  ? Animate(
-                      effects: const [
-                        // animate a slide in effect
-                        SlideEffect(
-                          // set a curve and duration for the animation
-                          curve: Curves.easeInOut,
-                          duration: Duration(milliseconds: 200),
-                          // set begin offset to slide in from the right
-                          begin: Offset(1, 0),
-                          // set end offset to default to 0,0
-                          end: Offset.zero,
-                        ),
-                      ],
-                      child: TimeSlotDrawer(
-                          isTaskListVisible: value,
-                          onClosing: drawerClosingCallBack),
+                }()
+                    //   } else if (state is ErrorState) {
+                    //     return const Center(
+                    //       child: Text('error loading planning'),
+                    //     );
+                    //   } else {
+                    //     return const Center(
+                    //       child: Text('unknown error'),
+                    //     );
+                    //   }
+                    // }),
                     )
-                  : const SizedBox();
-            },
-          )),
-    ]);
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+                heroTag: 'show_task_list',
+                child: const Icon(Icons.edit_rounded),
+                onPressed: () {
+                  _isTaskListVisible.value = !_isTaskListVisible.value;
+                }),
+          ),
+          Positioned(
+              right: 0,
+              top: 60, // default height of the appbar
+              child: ValueListenableBuilder(
+                valueListenable: _isTaskListVisible,
+                builder: (context, value, child) {
+                  firstOpenDrawer
+                      ? Future.delayed(const Duration(milliseconds: 250), () {
+                          _isTaskListVisible.value = true;
+                          firstOpenDrawer = false;
+                        })
+                      : null;
+                  return value
+                      ? Animate(
+                          effects: const [
+                            // animate a slide in effect
+                            SlideEffect(
+                              // set a curve and duration for the animation
+                              curve: Curves.easeInOut,
+                              duration: Duration(milliseconds: 200),
+                              // set begin offset to slide in from the right
+                              begin: Offset(1, 0),
+                              // set end offset to default to 0,0
+                              end: Offset.zero,
+                            ),
+                          ],
+                          child: TimeSlotDrawer(
+                              timeSlots: state.timeSlots,
+                              isTaskListVisible: value,
+                              onClosing: drawerClosingCallBack),
+                        )
+                      : const SizedBox();
+                },
+              )),
+        ]);
+      } else if (state is ErrorState) {
+        return const Center(
+          child: Text('error loading planning'),
+        );
+      } else {
+        return const Center(
+          child: Text('unknown error'),
+        );
+      }
+    });
   }
 }

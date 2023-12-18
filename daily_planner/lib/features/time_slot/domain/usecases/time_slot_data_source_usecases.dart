@@ -5,25 +5,22 @@ import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_useca
 import 'package:flutter/material.dart';
 
 class TimeSlotDataSourceUseCases {
-  static TimeSlot? searchForEmptyTimeSlot(
+  static TimeSlot? searchEmptyTimeSlot(
       List<TimeSlot> timeSlots, TimeSlot timeSlot,
       {bool isTomorrow = false}) {
     DateTime startDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     startDate = isTomorrow ? startDate.add(const Duration(days: 1)) : startDate;
 
-    // traitement
     switch (timeSlot.runtimeType) {
       case Task:
-        return _searchForEmptyTimeSlotForTask(timeSlots, timeSlot as Task);
+        return _searchEmptyTimeSlotForTask(timeSlots, timeSlot as Task);
     }
     return null;
   }
 
-  static TimeSlot? _searchForEmptyTimeSlotForTask(
+  static TimeSlot? _searchEmptyTimeSlotForTask(
       List<TimeSlot> timeSlots, Task task) {
-    debugPrint('searching for empty time slot for task');
-
     // first look for the first empty work block
     WorkBlock? emptyWorkBlock = _searchForWorkBlock(timeSlots);
 
@@ -47,7 +44,7 @@ class TimeSlotDataSourceUseCases {
         TimeSlotUseCases.getWorkBlockTimeSlots(timeSlots);
 
     for (WorkBlock workBlock in workBlockTimeSlots) {
-      if (workBlock.todayTaskId == 0) {
+      if (workBlock.tomorrowTaskId == 0) {
         return workBlock;
       }
     }

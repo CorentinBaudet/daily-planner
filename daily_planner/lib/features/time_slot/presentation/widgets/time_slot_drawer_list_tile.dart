@@ -19,7 +19,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
     List<TimeSlot> dataSourceTimeSlots = TimeSlotDataSource().timeSlots;
 
     // Search for an empty time slot
-    TimeSlot? timeSlot = TimeSlotDataSourceUseCases.searchForEmptyTimeSlot(
+    TimeSlot? timeSlot = TimeSlotDataSourceUseCases.searchEmptyTimeSlot(
         dataSourceTimeSlots, task,
         isTomorrow: true);
 
@@ -27,8 +27,6 @@ class TimeSlotDrawerListTile extends StatelessWidget {
       // Display a dialog indicating that there is no available time slot
       _noTimeSlotDialog(context);
     } else {
-      debugPrint('timeSlot: $timeSlot');
-
       switch (timeSlot.runtimeType) {
         case TimeSlot:
           // Edit the task in database
@@ -39,7 +37,7 @@ class TimeSlotDrawerListTile extends StatelessWidget {
           break;
 
         case WorkBlock:
-          // Set the task isPlanned to true
+          // Plan the task
           task.isPlanned = true;
           context.read<TimeSlotCubit>().updateTimeSlot(task);
 

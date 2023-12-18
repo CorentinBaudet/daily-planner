@@ -29,12 +29,10 @@ class _TimeSlotAppointmentBuilderState
 
   _initTimeSlot(BuildContext context) {
     appointment = widget.appointmentDetails.appointments.first;
+    final timeSlotCubit = context.read<TimeSlotCubit>();
 
     // pass the timeSlot to the widget instead of retrieving it here ? Custom AppointmentDetails class ? => hard to do
-    timeSlot = context
-        .read<TimeSlotCubit>()
-        .repository
-        .getTimeSlot(appointment.id as int);
+    timeSlot = timeSlotCubit.repository.getTimeSlot(appointment.id as int);
 
     switch (timeSlot.runtimeType) {
       case Task:
@@ -45,16 +43,12 @@ class _TimeSlotAppointmentBuilderState
       case WorkBlock:
         if (!widget.isTomorrow) {
           (timeSlot as WorkBlock).todayTaskId != 0
-              ? task = context
-                  .read<TimeSlotCubit>()
-                  .repository
+              ? task = timeSlotCubit.repository
                   .getTimeSlot((timeSlot as WorkBlock).todayTaskId) as Task
               : task = null;
         } else {
           (timeSlot as WorkBlock).tomorrowTaskId != 0
-              ? task = context
-                  .read<TimeSlotCubit>()
-                  .repository
+              ? task = timeSlotCubit.repository
                   .getTimeSlot((timeSlot as WorkBlock).tomorrowTaskId) as Task
               : task = null;
         }

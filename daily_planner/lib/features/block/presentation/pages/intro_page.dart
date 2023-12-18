@@ -234,9 +234,6 @@ class _IntroPageState extends State<IntroPage> {
           subject: 'setup your everyday blocks 🔧',
           priority: Priority.normal,
         ));
-    // if (!context.mounted) {
-    //   return; // to avoid using build context across asynchronous gap
-    // }
 
     // create the deep work time slot
     // (workTimeSlot.event as WorkBlock).taskId = id;

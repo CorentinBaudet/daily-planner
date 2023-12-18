@@ -3,7 +3,6 @@ import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_useca
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_picker.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class TimeSlotEditDialog extends StatefulWidget {
   TimeSlot timeSlot;
 
@@ -79,7 +78,7 @@ class _TimeSlotEditDialogState extends State<TimeSlotEditDialog> {
                   Theme.of(context).colorScheme.primary)),
           onPressed: () {
             if (!TimeSlotUseCases.isValidTimeSlot(widget.timeSlot)) {
-              // if the timeslot is invalid, set isTimeSlotValid to false
+              // If the timeslot is invalid, set isTimeSlotValid to false
               setState(() {
                 isTimeSlotValid = false;
               });

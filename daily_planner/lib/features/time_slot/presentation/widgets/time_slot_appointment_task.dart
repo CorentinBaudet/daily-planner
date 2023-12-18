@@ -157,66 +157,60 @@ class TimeSlotAppointmentTask extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TimeSlotCubit, TimeSlotState>(
-        listener: (context, state) {
-          // TODO: implement listener
-          if (state is LoadedState) {}
-        },
-        child: isTomorrow
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Text(
-                      task.subject,
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text(
-                      task.subject,
-                      style: task.isDone || task.isRescheduled
-                          ? const TextStyle(
-                              decoration: TextDecoration.lineThrough)
-                          : null,
-                    ),
-                  ),
-                  appointment.endTime.isBefore(DateTime.now())
-                      ? Row(
-                          children: [
-                            // on affiche le bouton si la tâche n'est pas replanifiée, ou si elle n'est pas done
-                            (task.isDone || task.isRescheduled)
-                                ? const SizedBox.shrink()
-                                : _taskStateButton(context),
+    return isTomorrow
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  task.subject,
+                ),
+              ),
+            ],
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  task.subject,
+                  style: task.isDone || task.isRescheduled
+                      ? const TextStyle(decoration: TextDecoration.lineThrough)
+                      : null,
+                ),
+              ),
+              appointment.endTime.isBefore(DateTime.now())
+                  ? Row(
+                      children: [
+                        // on affiche le bouton si la tâche n'est pas replanifiée, ou si elle n'est pas done
+                        (task.isDone || task.isRescheduled)
+                            ? const SizedBox.shrink()
+                            : _taskStateButton(context),
 
-                            // if the task is rescheduled, we display a schedule icon
-                            task.isRescheduled
-                                ? const Padding(
-                                    padding: EdgeInsets.only(right: 8),
-                                    child: Icon(Icons.calendar_today_rounded,
-                                        size: 19),
-                                  )
-                                : const SizedBox.shrink(),
+                        // if the task is rescheduled, we display a schedule icon
+                        task.isRescheduled
+                            ? const Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child: Icon(Icons.calendar_today_rounded,
+                                    size: 19),
+                              )
+                            : const SizedBox.shrink(),
 
-                            // if the task is done, we display a check icon
-                            task.isDone
-                                ? const Padding(
-                                    padding: EdgeInsets.only(right: 8),
-                                    child: Icon(Icons.check_circle_rounded,
-                                        size: 19),
-                                  )
-                                : const SizedBox.shrink(),
-                          ],
-                        )
-                      : const SizedBox.shrink()
-                ],
-              ));
+                        // if the task is done, we display a check icon
+                        task.isDone
+                            ? const Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child:
+                                    Icon(Icons.check_circle_rounded, size: 19),
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    )
+                  : const SizedBox.shrink()
+            ],
+          );
   }
 }

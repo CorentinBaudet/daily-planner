@@ -1,13 +1,17 @@
+import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_drawer_list.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class TimeSlotDrawer extends StatefulWidget {
-  bool isTaskListVisible = false;
+  final List<TimeSlot> timeSlots;
+  bool isTaskListVisible;
   final VoidCallback onClosing;
 
   TimeSlotDrawer(
-      {super.key, required this.isTaskListVisible, required this.onClosing});
+      {super.key,
+      required this.timeSlots,
+      required this.isTaskListVisible,
+      required this.onClosing});
 
   @override
   State<TimeSlotDrawer> createState() => _TimeSlotDrawerState();
@@ -52,7 +56,7 @@ class _TimeSlotDrawerState extends State<TimeSlotDrawer> {
               const Text('my tasks',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ]),
-            const TimeSlotDrawerList(),
+            TimeSlotDrawerList(timeSlots: widget.timeSlots),
           ],
         ),
       ),
