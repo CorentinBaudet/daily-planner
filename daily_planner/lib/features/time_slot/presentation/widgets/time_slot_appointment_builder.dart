@@ -25,14 +25,13 @@ class _TimeSlotAppointmentBuilderState
     extends State<TimeSlotAppointmentBuilder> {
   late Appointment appointment;
   late TimeSlot timeSlot;
-  Task? task;
 
   _initTimeSlot(BuildContext context) {
     appointment = widget.appointmentDetails.appointments.first;
     final timeSlotCubit = context.read<TimeSlotCubit>();
-
     // pass the timeSlot to the widget instead of retrieving it here ? Custom AppointmentDetails class ? => hard to do
     timeSlot = timeSlotCubit.repository.getTimeSlot(appointment.id as int);
+    Task? task;
 
     switch (timeSlot.runtimeType) {
       case Task:
@@ -56,13 +55,12 @@ class _TimeSlotAppointmentBuilderState
       default:
       // TODO: handle this case by logging it
     }
+    return task;
   }
-
-  // TODO bug when a block duration is modified, the task does not appear under it anymore (because the link is created with the same duration, should be with an id for example)
 
   @override
   Widget build(BuildContext context) {
-    _initTimeSlot(context);
+    Task? task = _initTimeSlot(context);
     return Container(
         width: widget.appointmentDetails.bounds.width,
         height: widget.appointmentDetails.bounds.height,

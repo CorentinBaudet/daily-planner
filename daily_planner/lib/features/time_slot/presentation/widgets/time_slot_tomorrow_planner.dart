@@ -35,16 +35,18 @@ class TimeSlotTomorrowPlanner extends StatelessWidget {
       return;
     }
 
-    if (timeSlot is WorkBlock && timeSlot.tomorrowTaskId != 0) {
-      // Get the task from the work block and unplan it
-      Task task =
-          timeSlotCubit.repository.getTimeSlot(timeSlot.tomorrowTaskId) as Task;
-      task.isPlanned = false;
-      timeSlotCubit.updateTimeSlot(task);
+    if (timeSlot is WorkBlock) {
+      if (timeSlot.tomorrowTaskId != 0) {
+        // Get the task from the work block and unplan it
+        Task task = timeSlotCubit.repository
+            .getTimeSlot(timeSlot.tomorrowTaskId) as Task;
+        task.isPlanned = false;
+        timeSlotCubit.updateTimeSlot(task);
 
-      // Update the work block
-      timeSlot.tomorrowTaskId = 0;
-      timeSlotCubit.updateTimeSlot(timeSlot);
+        // Update the work block
+        timeSlot.tomorrowTaskId = 0;
+        timeSlotCubit.updateTimeSlot(timeSlot);
+      }
       return;
     }
 
@@ -73,7 +75,8 @@ class TimeSlotTomorrowPlanner extends StatelessWidget {
     // TODO center the calendar on the current time
     return Expanded(
       child: SfCalendar(
-        dataSource: TimeSlotDataSource(),
+        dataSource: TimeSlotDataSource()
+            .getTimeSlotDataSource(timeSlots, isTomorrow: true),
         headerHeight: 0,
         backgroundColor: Colors.transparent,
         allowDragAndDrop: true,

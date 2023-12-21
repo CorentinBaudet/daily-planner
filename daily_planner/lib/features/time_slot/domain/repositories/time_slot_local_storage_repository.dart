@@ -36,7 +36,13 @@ class TimeSlotLocalStorageRepository extends TimeSlotBaseRepository {
 
   @override
   TimeSlot getTimeSlot(int id) {
-    final timeSlot = getTimeSlots().firstWhere((timeSlot) => timeSlot.id == id);
+    TimeSlot timeSlot;
+    try {
+      timeSlot = getTimeSlots().firstWhere((timeSlot) => timeSlot.id == id);
+    } catch (e) {
+      timeSlot =
+          TimeSlot(startTime: DateTime(0), endTime: DateTime(0), subject: '');
+    }
     return timeSlot;
   }
 

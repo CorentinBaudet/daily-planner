@@ -56,6 +56,7 @@ class TimeSlotTomorrowPage extends StatelessWidget {
                   //       child: CircularProgressIndicator(),
                   //     );
                   //   } else if (state is LoadedState) {
+
                   // synchronize the state of TimeSlotDataSource with the state of the TimeSlot cubit
                   TimeSlotDataSource().buildTimeSlotDataSource(state.timeSlots,
                       isTomorrow: true);

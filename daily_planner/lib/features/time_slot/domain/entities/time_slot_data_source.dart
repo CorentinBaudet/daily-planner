@@ -16,17 +16,17 @@ class TimeSlotDataSource extends CalendarDataSource {
     return _singleton;
   }
 
-  // TimeSlotDataSource(List<TimeSlot> source) {
-  //   appointments = source;
-  // }
+  TimeSlotDataSource._updateDataSource(List<TimeSlot> source) {
+    appointments = source;
+  }
 
   List<TimeSlot> get timeSlots {
     return appointments as List<TimeSlot>;
   }
 
-  set timeSlots(List<TimeSlot> source) {
-    appointments = timeSlots;
-  }
+  // set timeSlots(List<TimeSlot> source) {
+  //   appointments = timeSlots;
+  // }
 
   // Returns the TimeSlotDataSource
   void buildTimeSlotDataSource(List<TimeSlot> storedTimeSlots,
@@ -56,17 +56,45 @@ class TimeSlotDataSource extends CalendarDataSource {
           break;
       }
     }
-
-    // update the tasks visually if they are passed
-    // _handleTasksPassed(context, builtTimeSlots);
-
     // update the data source
     appointments = builtTimeSlots;
-
-    // return TimeSlotDataSource();
   }
 
-  static void _handleBlock(List<TimeSlot> builtTimeSlots, TimeSlot timeSlot) {
+  // Get the time slot data source
+  TimeSlotDataSource getTimeSlotDataSource(List<TimeSlot> storedTimeSlots,
+      {bool isTomorrow = false}) {
+    List<TimeSlot> builtTimeSlots =
+        <TimeSlot>[]; // the SfCalendar requires a list of Appointment objects to build the data source
+
+    for (var timeSlot in storedTimeSlots) {
+      switch (timeSlot.runtimeType) {
+        case Task:
+          if ((timeSlot as Task).isPlanned) {
+            // If the task is planned, we add it to the calendar
+            builtTimeSlots.add(timeSlot);
+          }
+          break;
+
+        case Block:
+          _handleBlock(builtTimeSlots, timeSlot);
+          break;
+
+        case WorkBlock:
+          _handleWorkBlock(builtTimeSlots, timeSlot, isTomorrow);
+          break;
+
+        default:
+          // TODO: handle this case by logging an error
+          break;
+      }
+    }
+    // update the data source
+    // appointments = builtTimeSlots;
+    // return the data source
+    return TimeSlotDataSource._updateDataSource(builtTimeSlots);
+  }
+
+  void _handleBlock(List<TimeSlot> builtTimeSlots, TimeSlot timeSlot) {
     // if the end time is before the start time, it means that the block ends the next day
     bool isOverlap =
         timeSlot.endTime.isBefore(timeSlot.startTime) ? true : false;
@@ -95,7 +123,7 @@ class TimeSlotDataSource extends CalendarDataSource {
     builtTimeSlots.add(_addOverlap(timeSlot));
   }
 
-  static void _handleWorkBlock(
+  void _handleWorkBlock(
       List<TimeSlot> builtTimeSlots, TimeSlot timeSlot, bool isTomorrow) {
     builtTimeSlots.add(timeSlot);
 
@@ -103,7 +131,7 @@ class TimeSlotDataSource extends CalendarDataSource {
   }
 
   // mettre un attribut isOverlapped dans la classe Block pour faire la différence ?
-  static Block _addOverlap(TimeSlot timeSlot, {bool isTomorrow = false}) {
+  Block _addOverlap(TimeSlot timeSlot, {bool isTomorrow = false}) {
     return Block(
       startTime: DateTime(DateTime.now().year, DateTime.now().month,
           isTomorrow ? DateTime.now().day + 1 : DateTime.now().day, 0, 0),
@@ -142,4 +170,8 @@ class TimeSlotDataSource extends CalendarDataSource {
   //     }
   //   }
   // }
+
+  int searchForEmptyTimeSlot() {
+    return appointments!.length;
+  }
 }

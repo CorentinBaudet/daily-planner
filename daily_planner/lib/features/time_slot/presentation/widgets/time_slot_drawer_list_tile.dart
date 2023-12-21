@@ -16,6 +16,8 @@ class TimeSlotDrawerListTile extends StatelessWidget {
 
   _addTimeSlot(BuildContext context) {
     // Get the time slots from the data source
+    debugPrint(
+        'TimeSlotDrawerListTile: _addTimeSlot: ${TimeSlotDataSource().searchForEmptyTimeSlot()}');
     List<TimeSlot> dataSourceTimeSlots = TimeSlotDataSource().timeSlots;
 
     // Search for an empty time slot

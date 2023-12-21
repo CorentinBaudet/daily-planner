@@ -7,11 +7,11 @@ import 'package:daily_planner/features/time_slot/domain/repositories/time_slot_b
 part 'time_slot_state.dart';
 
 class TimeSlotCubit extends Cubit<TimeSlotState> {
+  final TimeSlotBaseRepository repository;
+
   TimeSlotCubit({required this.repository}) : super(InitialState()) {
     getTimeSlots();
   }
-
-  final TimeSlotBaseRepository repository;
 
   void getTimeSlots() {
     try {

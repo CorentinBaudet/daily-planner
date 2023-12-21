@@ -16,12 +16,9 @@ class TimeSlotAppointmentWorkBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isTaskPlannedOnSameDay = task != null;
-    //  &&
-    //     task!.plannedOn != null &&
-    //     task!.plannedOn!.isSameDay(appointment.startTime);
+    bool isTaskPlanned = task != null;
 
-    return isTaskPlannedOnSameDay
+    return isTaskPlanned
         ? // if there is a task, and the planned date is corresponding, we use a stack to display the task on top of the work block
         Stack(
             children: [
