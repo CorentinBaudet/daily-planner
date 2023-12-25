@@ -8,6 +8,7 @@ class Task extends TimeSlot {
   bool isPlanned;
   bool isDone;
   bool isRescheduled;
+  int workBlockId;
 
   // default constructor
   Task({
@@ -21,6 +22,7 @@ class Task extends TimeSlot {
     this.isPlanned = true,
     this.isDone = false,
     this.isRescheduled = false,
+    this.workBlockId = 0,
   }) : super(createdAt: createdAt ?? DateTime.now());
 
   // named constructor
@@ -31,6 +33,7 @@ class Task extends TimeSlot {
     this.isPlanned = false,
     this.isDone = false,
     this.isRescheduled = false,
+    this.workBlockId = 0,
   }) : super(
           startTime: DateTime(0), // able to give a default value
           endTime: DateTime(0),
@@ -54,6 +57,7 @@ class Task extends TimeSlot {
       isPlanned: json['isPlanned'] as bool,
       isDone: json['isDone'] as bool,
       isRescheduled: json['isRescheduled'] as bool,
+      workBlockId: json['workBlockId'] as int,
     );
   }
 
@@ -66,6 +70,7 @@ class Task extends TimeSlot {
       'isPlanned': isPlanned,
       'isDone': isDone,
       'isRescheduled': isRescheduled,
+      'workBlockId': workBlockId,
       'type': runtimeType.toString(),
     });
 

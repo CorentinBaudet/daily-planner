@@ -29,28 +29,24 @@ class _TimeSlotAppointmentBuilderState
   _initTimeSlot(BuildContext context) {
     appointment = widget.appointmentDetails.appointments.first;
     final timeSlotCubit = context.read<TimeSlotCubit>();
-    // pass the timeSlot to the widget instead of retrieving it here ? Custom AppointmentDetails class ? => hard to do
     timeSlot = timeSlotCubit.repository.getTimeSlot(appointment.id as int);
     Task? task;
 
     switch (timeSlot.runtimeType) {
       case Task:
-        task = timeSlot as Task;
-        break;
-      case Block:
-        break;
       case WorkBlock:
-        if (!widget.isTomorrow) {
-          (timeSlot as WorkBlock).todayTaskId != 0
-              ? task = timeSlotCubit.repository
-                  .getTimeSlot((timeSlot as WorkBlock).todayTaskId) as Task
-              : task = null;
-        } else {
-          (timeSlot as WorkBlock).tomorrowTaskId != 0
-              ? task = timeSlotCubit.repository
-                  .getTimeSlot((timeSlot as WorkBlock).tomorrowTaskId) as Task
-              : task = null;
-        }
+        task = timeSlot as Task;
+        // if (!widget.isTomorrow) {
+        //   (timeSlot as WorkBlock).todayTaskId != 0
+        //       ? task = timeSlotCubit.repository
+        //           .getTimeSlot((timeSlot as WorkBlock).todayTaskId) as Task
+        //       : task = null;
+        // } else {
+        //   (timeSlot as WorkBlock).tomorrowTaskId != 0
+        //       ? task = timeSlotCubit.repository
+        //           .getTimeSlot((timeSlot as WorkBlock).tomorrowTaskId) as Task
+        //       : task = null;
+        // }
         break;
       default:
       // TODO: handle this case by logging it

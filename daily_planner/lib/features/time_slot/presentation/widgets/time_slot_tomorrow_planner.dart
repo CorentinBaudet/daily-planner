@@ -3,6 +3,7 @@ import 'package:daily_planner/features/block/domain/entities/work_block_entity.d
 import 'package:daily_planner/features/task/domain/entities/task_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_data_source.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
+import 'package:daily_planner/features/time_slot/domain/usecases/time_slot_data_source_usecases.dart';
 import 'package:daily_planner/features/time_slot/presentation/cubit/time_slot_cubit.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_appointment_builder.dart';
 import 'package:daily_planner/features/time_slot/presentation/widgets/time_slot_edit_dialog.dart';
@@ -36,18 +37,19 @@ class TimeSlotTomorrowPlanner extends StatelessWidget {
     }
 
     if (timeSlot is WorkBlock) {
-      if (timeSlot.tomorrowTaskId != 0) {
-        // Get the task from the work block and unplan it
-        Task task = timeSlotCubit.repository
-            .getTimeSlot(timeSlot.tomorrowTaskId) as Task;
-        task.isPlanned = false;
-        timeSlotCubit.updateTimeSlot(task);
-
-        // Update the work block
-        timeSlot.tomorrowTaskId = 0;
-        timeSlotCubit.updateTimeSlot(timeSlot);
+      // Get the task from the work block
+      Task? task = TimeSlotDataSourceUseCases.getTaskStartingAt(
+          timeSlots, timeSlot.startTime);
+      if (task == null) {
+        return;
       }
-      return;
+
+      // Unplan the task
+      task.workBlockId = 0;
+      task.startTime = DateTime(0);
+      task.endTime = DateTime(0);
+      task.isPlanned = false;
+      timeSlotCubit.updateTimeSlot(task);
     }
 
     // Display the edit dialog

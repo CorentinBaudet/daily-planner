@@ -3,9 +3,6 @@ import 'dart:ui';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 
 class WorkBlock extends TimeSlot {
-  int todayTaskId;
-  int tomorrowTaskId;
-
   WorkBlock({
     required super.startTime,
     required super.endTime,
@@ -14,8 +11,6 @@ class WorkBlock extends TimeSlot {
     super.color = const Color(0xFFffe7dc),
     String? recurrenceRule,
     DateTime? createdAt,
-    this.todayTaskId = 0,
-    this.tomorrowTaskId = 0,
   }) : super(
             // if recurrenceRule is not provided, the superclass's constructor will handle its initialization
             recurrenceRule: recurrenceRule ?? 'FREQ=DAILY',
@@ -32,8 +27,6 @@ class WorkBlock extends TimeSlot {
       color: timeSlot.color,
       recurrenceRule: timeSlot.recurrenceRule,
       createdAt: timeSlot.createdAt,
-      todayTaskId: json['todayTaskId'],
-      tomorrowTaskId: json['tomorrowTaskId'],
     );
   }
 
@@ -42,8 +35,6 @@ class WorkBlock extends TimeSlot {
     Map timeSlotJson = super.toJson();
 
     timeSlotJson.addAll({
-      'todayTaskId': todayTaskId,
-      'tomorrowTaskId': tomorrowTaskId,
       'type': runtimeType.toString(),
     });
 

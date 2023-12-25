@@ -1,7 +1,5 @@
-import 'package:daily_planner/features/block/domain/entities/block_entity.dart';
 import 'package:daily_planner/features/time_slot/domain/entities/time_slot_entity.dart';
 import 'package:daily_planner/features/block/domain/entities/work_block_entity.dart';
-import 'package:daily_planner/utils/extension.dart';
 import 'package:flutter/material.dart';
 
 // TODO this class might have too much methods, some of them may be moved to extensions for example

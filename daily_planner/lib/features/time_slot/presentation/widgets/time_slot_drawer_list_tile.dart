@@ -16,8 +16,6 @@ class TimeSlotDrawerListTile extends StatelessWidget {
 
   _addTimeSlot(BuildContext context) {
     // Get the time slots from the data source
-    debugPrint(
-        'TimeSlotDrawerListTile: _addTimeSlot: ${TimeSlotDataSource().searchForEmptyTimeSlot()}');
     List<TimeSlot> dataSourceTimeSlots = TimeSlotDataSource().timeSlots;
 
     // Search for an empty time slot
@@ -40,12 +38,15 @@ class TimeSlotDrawerListTile extends StatelessWidget {
 
         case WorkBlock:
           // Plan the task
+          task.workBlockId = timeSlot.id as int;
+          task.startTime = timeSlot.startTime;
+          task.endTime = timeSlot.endTime;
           task.isPlanned = true;
           context.read<TimeSlotCubit>().updateTimeSlot(task);
 
-          // Add the task to the work block
-          (timeSlot as WorkBlock).tomorrowTaskId = task.id as int;
-          context.read<TimeSlotCubit>().updateTimeSlot(timeSlot);
+          // // Add the task to the work block
+          // (timeSlot as WorkBlock).tomorrowTaskId = task.id as int;
+          // context.read<TimeSlotCubit>().updateTimeSlot(timeSlot);
           break;
         default:
       }
